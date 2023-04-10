@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Ping</string>
+    <string name="title_activity_sign_in">SignIn</string>
+    <string name="title_activity_sign_up">SignUp</string>
 </resources>

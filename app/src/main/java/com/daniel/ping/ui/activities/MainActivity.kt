@@ -1,4 +1,4 @@
-package com.daniel.ping
+package com.daniel.ping.ui.activities
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
