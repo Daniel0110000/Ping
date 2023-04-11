@@ -1,5 +1,19 @@
 <resources>
     <string name="app_name">Ping</string>
-    <string name="title_activity_sign_in">SignIn</string>
-    <string name="title_activity_sign_up">SignUp</string>
+
+    <!-- Sign In & Sign Up -->
+    <string name="sign_in">Iniciar Sesión</string>
+    <string name="sign_up">Crear Cuenta</string>
+    <string name="email">Correo electrónico</string>
+    <string name="password">Contraseña</string>
+
+    <!-- Sign In -->
+    <string name="sign_in_description">Estamos felices de tenerte de nuevo</string>
+    <string name="youDoNotHaveAnAccount">¿No tienes una cuenta?</string>
+
+    <!-- Sign Up -->
+    <string name="sign_up_description">Estamos emocionados de tenerte como parte de nuestra comunidad</string>
+    <string name="doYouAlreadyHaveAnAccount">¿Ya tienes una cuenta?</string>
+
+
 </resources>

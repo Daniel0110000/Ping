@@ -64,4 +64,10 @@ dependencies {
     // Splash Screen
     implementation 'androidx.core:core-splashscreen:1.0.0'
 
+    // ConstraintLayout
+    implementation 'androidx.constraintlayout:constraintlayout-compose:1.0.1'
+
+    // Animatoo
+    implementation 'com.github.AtifSayings:Animatoo:1.0.1'
+
 }

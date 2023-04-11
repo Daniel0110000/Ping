@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 
 private val DarkColorPalette = darkColors(
     primary = Onyx,
-    primaryVariant = RangoonGreen,
+    background = RangoonGreen,
     secondary = UltramarineBlue
 )
 
