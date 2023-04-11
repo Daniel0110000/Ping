@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'com.google.gms.google-services'
 }
 
 android {
@@ -69,5 +70,11 @@ dependencies {
 
     // Animatoo
     implementation 'com.github.AtifSayings:Animatoo:1.0.1'
+
+    // Firebase
+    implementation 'com.google.firebase:firebase-messaging:23.1.2'
+    implementation 'com.google.firebase:firebase-auth-ktx:21.2.0'
+    implementation 'com.google.firebase:firebase-firestore-ktx:24.4.5'
+    implementation 'com.google.android.gms:play-services-auth:20.5.0'
 
 }
