@@ -83,7 +83,7 @@ fun SignUpScreen(
 
             LaunchedEffect(state.message){ // Execute a side effect when the message state changes
                 if(state.message.isNotEmpty()){ // Check if the message is not empty
-                    scope.launch { // Launch a coroutine
+                    scope.launch {
                         scaffoldState.snackbarHostState.showSnackbar( // Show a snackBar with the message
                             message = state.message
                         )

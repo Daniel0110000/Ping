@@ -1,6 +1,6 @@
 package com.daniel.ping.ui.viewModels
 
-import android.content.Context
+import android.app.Application
 import androidx.lifecycle.viewModelScope
 import com.daniel.ping.domain.models.ValidationResult
 import com.daniel.ping.domain.repositories.AuthenticationRepository
@@ -11,7 +11,6 @@ import com.daniel.ping.domain.utilities.SecurityService
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -20,8 +19,8 @@ import javax.inject.Inject
 class SignUpViewModel @Inject constructor(
     private val authenticationRepository: AuthenticationRepository,
     authCredentialsUseCase: AuthCredentialsUseCase,
-    @ApplicationContext private val context: Context
-) : AuthViewModelBase(authenticationRepository, authCredentialsUseCase, context) {
+    private val application: Application
+) : AuthViewModelBase(authenticationRepository, authCredentialsUseCase, application) {
 
     // Function to initiate the sign-up process
     fun signUp(){
@@ -60,7 +59,7 @@ class SignUpViewModel @Inject constructor(
         return SecurityService.emailAndPasswordValidation(
             email = state.value.email,
             password = state.value.password,
-            context = context
+            context = application.applicationContext
         )
     }
 

@@ -8,16 +8,27 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
+/**
+ * A Dagger module that provides Firebase authentication and Firebase instances as singleton object
+ */
 @Module
 @InstallIn(SingletonComponent::class)
 object DataModule {
 
-    // This provides a singleton instance of FirebaseAuth
+    /**
+     * Provides the singleton instance of Firebase authentication
+     *
+     * @return The Firebase authentication instance
+     */
     @Singleton
     @Provides
     fun providerFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
 
-    // This provides a singleton instance of FirebaseFireStore
+    /**
+     * Provides the singleton instance of Firebase FireStore
+     *
+     * @return The Firebase FireStore instance
+     */
     @Singleton
     @Provides
     fun providerFirebaseFireStore(): FirebaseFirestore = FirebaseFirestore.getInstance()

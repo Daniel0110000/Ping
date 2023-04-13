@@ -1,6 +1,7 @@
 package com.daniel.ping.ui.viewModels
 
 import android.app.Activity
+import android.app.Application
 import android.content.Context
 import android.content.Intent
 import androidx.lifecycle.ViewModel
@@ -22,7 +23,7 @@ import kotlinx.coroutines.launch
 open class AuthViewModelBase(
     private val authenticationRepository: AuthenticationRepository,
     private val authCredentialsUseCase: AuthCredentialsUseCase,
-    private val application: Context
+    private val application: Application
 ) : ViewModel() {
 
     // Mutable state flow to hold the authentication state
