@@ -19,15 +19,17 @@ import com.daniel.ping.ui.theme.White
 
 @Composable
 fun InputComponent(
+    value: String,
     hilt: String,
+    onValueChange: (String) -> Unit,
     modifier: Modifier,
     keyboardOptions: KeyboardOptions,
     visualTransformation: VisualTransformation = VisualTransformation.None
 ) {
 
     TextField(
-        value = "",
-        onValueChange = { },
+        value = value,
+        onValueChange = { onValueChange(it) },
         textStyle = TextStyle(color = White, fontSize = 12.sp),
         modifier = modifier,
         placeholder = { Text(

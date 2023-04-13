@@ -1,11 +1,21 @@
 <resources>
     <string name="app_name">Ping</string>
 
+    <!-- Facebook -->
+    <string name="facebook_app_id">798623694527691</string>
+    <string name="fb_login_protocol_scheme">fb798623694527691</string>
+    <string name="facebook_client_token">56789</string>
+
     <!-- Sign In & Sign Up -->
     <string name="sign_in">Iniciar Sesión</string>
     <string name="sign_up">Crear Cuenta</string>
     <string name="email">Correo electrónico</string>
     <string name="password">Contraseña</string>
+    <string name="invalidEmailErrorMessage">Correo electrónico no válido. Por favor, ingrese un correo electrónico válido (por ejemplo: example@gmail.com).</string>
+    <string name="passwordTooShortErrorMessage">Contraseña demasiado corta. Por favor, ingrese una contraseña de al menos 8 caracteres.</string>
+    <string name="emptyFieldsErrorMessage">Campos incompletos. Por favor revise y complete los campos requeridos.</string>
+    <string name="successful">Successful</string>
+    <string name="errorMessage">Ha ocurrido un error inesperado. Verifica tu conexión a internet e intenta nuevamente.</string>
 
     <!-- Sign In -->
     <string name="sign_in_description">Estamos felices de tenerte de nuevo</string>
@@ -14,6 +24,5 @@
     <!-- Sign Up -->
     <string name="sign_up_description">Estamos emocionados de tenerte como parte de nuestra comunidad</string>
     <string name="doYouAlreadyHaveAnAccount">¿Ya tienes una cuenta?</string>
-
 
 </resources>

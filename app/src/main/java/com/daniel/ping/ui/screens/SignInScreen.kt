@@ -6,7 +6,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.shape.ZeroCornerSize
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
@@ -19,15 +18,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.daniel.ping.R
-import com.daniel.ping.ui.components.*
+import com.daniel.ping.ui.components.AppBarComponent
+import com.daniel.ping.ui.components.AuthenticationAlternativeComponent
+import com.daniel.ping.ui.components.DescriptionScreenComponent
+import com.daniel.ping.ui.components.QuestionComponent
 import com.daniel.ping.ui.theme.Onyx
 import com.daniel.ping.ui.theme.UltramarineBlue
 import com.daniel.ping.ui.theme.White
@@ -91,7 +90,7 @@ fun BodySignInScreen(
                 .fillMaxSize()
                 .height(30.dp))
 
-            InputComponent(
+            /*InputComponent(
                 hilt = stringResource(id = R.string.email),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -100,13 +99,13 @@ fun BodySignInScreen(
                     keyboardType = KeyboardType.Email,
                     imeAction = ImeAction.Next
                 )
-            )
+            )*/
 
             Spacer(modifier = Modifier
                 .fillMaxWidth()
                 .height(10.dp))
 
-            InputComponent(
+            /*InputComponent(
                 hilt = stringResource(id = R.string.password),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -116,7 +115,7 @@ fun BodySignInScreen(
                     imeAction = ImeAction.Done
                 ),
                 visualTransformation = PasswordVisualTransformation()
-            )
+            )*/
 
             Spacer(modifier = Modifier
                 .fillMaxWidth()

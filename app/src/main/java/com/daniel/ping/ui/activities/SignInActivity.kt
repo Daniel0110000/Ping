@@ -9,7 +9,7 @@ import com.blogspot.atifsoftwares.animatoolib.Animatoo
 import com.daniel.ping.ui.screens.SignInScreen
 import com.daniel.ping.ui.theme.PingTheme
 
-class SignIn : ComponentActivity() {
+class SignInActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val splashScreen = installSplashScreen()
@@ -17,7 +17,7 @@ class SignIn : ComponentActivity() {
             PingTheme {
                 splashScreen.setKeepOnScreenCondition{ false }
                 SignInScreen{
-                    startActivity(Intent(this, SignUp::class.java))
+                    startActivity(Intent(this, SignUpActivity::class.java))
                     Animatoo.animateSlideLeft(this)
                 }
             }
