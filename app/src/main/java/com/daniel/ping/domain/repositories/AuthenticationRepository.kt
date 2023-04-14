@@ -7,6 +7,7 @@ import com.daniel.ping.domain.utilities.Resource
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.AuthResult
+import com.google.firebase.firestore.DocumentReference
 
 interface AuthenticationRepository {
 
@@ -29,5 +30,7 @@ interface AuthenticationRepository {
     fun getBooleanToPrefs(key: String): Boolean
 
     fun cleanPrefs()
+
+    suspend fun insertProfileDescription(description: HashMap<String, Any>): Resource<Task<DocumentReference>>
 
 }

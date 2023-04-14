@@ -3,6 +3,7 @@ package com.daniel.ping.ui.screens
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -28,18 +29,41 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberImagePainter
 import com.daniel.ping.R
 import com.daniel.ping.ui.components.AppBarComponent
 import com.daniel.ping.ui.components.InputComponent
 import com.daniel.ping.ui.theme.Onyx
+import com.daniel.ping.ui.theme.RangoonGreen
 import com.daniel.ping.ui.theme.UltramarineBlue
 import com.daniel.ping.ui.theme.White
+import com.daniel.ping.ui.viewModels.ProfileSetupViewModel
+import kotlinx.coroutines.launch
 
 @Composable
-fun ProfileSetupScreen() {
+fun ProfileSetupScreen(
+    viewModel: ProfileSetupViewModel = hiltViewModel(),
+    state: ProfileSetupViewModel.ProSetupState,
+    onRedirectToMainActivity: () -> Unit
+) {
+
+    val scaffoldState = rememberScaffoldState() // Remember the state of the scaffold
+    val scope = rememberCoroutineScope() // Remember the coroutines scope
+
     Scaffold(
-        topBar = { AppBarComponent() }
+        topBar = { AppBarComponent() },
+        scaffoldState = scaffoldState,
+        snackbarHost = { // Define the snackBar host
+            SnackbarHost(it){ data ->
+                Snackbar(
+                    snackbarData = data,
+                    backgroundColor = RangoonGreen,
+                    contentColor = White,
+                    elevation = 10.dp
+                )
+            }
+        }
     ) { padding ->
 
         ConstraintLayout(
@@ -50,12 +74,31 @@ fun ProfileSetupScreen() {
 
             val (imagePreview, openGallery, container) = createRefs()
 
-            var name by remember { mutableStateOf("") }
-            var description by remember { mutableStateOf("") }
-            var imageProfilePreview by remember { mutableStateOf<Uri?>(null) }
+            var name by remember { mutableStateOf("") } // Variable for profile name
+            var description by remember { mutableStateOf("") } // Variable for profile description
+            var imageProfilePreview by remember { mutableStateOf<Uri?>(null) } // Variable for profile image preview
 
-            val galleryLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()){ result: Uri? ->
-                result?.let { imageProfilePreview = result }
+            LaunchedEffect(state.message){  // Effect launched when the state message changes
+                if(state.message.isNotEmpty()){
+                    scope.launch {
+                        scaffoldState.snackbarHostState.showSnackbar( // Shows a snackBar on the screen
+                            message = state.message
+                        )
+                        viewModel.setMessage("") // Resets the state message in the viewModel
+                    }
+                }
+            }
+
+            LaunchedEffect(state.completed){ // Effect launched when the profile iss completed
+                if(state.completed){
+                    onRedirectToMainActivity() // Redirects to the MainActivity
+                    viewModel.setCompleted(false) // Resets the completed variable in the viewModel
+                    viewModel.setNameAndDescription("", "") // Resets the name and description values in the viewModel
+                }
+            }
+
+            val galleryLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()){ result: Uri? -> // Launcher to open the image gallery
+                result?.let { imageProfilePreview = result } // Updates the profile image preview variable if an image is selected
             }
 
             Image(
@@ -142,23 +185,37 @@ fun ProfileSetupScreen() {
                 
                 Spacer(modifier = Modifier.height(50.dp))
 
-                Button(
-                    onClick = {},
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(45.dp),
-                    shape = CutCornerShape(ZeroCornerSize),
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = UltramarineBlue,
-                        contentColor = White
+                AnimatedVisibility(visible = state.isLoading) {
+                    CircularProgressIndicator(
+                        color = UltramarineBlue,
+                        strokeWidth = 3.dp,
+                        modifier = Modifier.size(25.dp)
                     )
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.finish),
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = FontFamily(Font(R.font.roboto))
-                    )
+                }
+
+                AnimatedVisibility(visible = !state.isLoading) {
+                    Button(
+                        onClick = {
+                            viewModel.setProfileImage(imageProfilePreview)
+                            viewModel.setNameAndDescription(name, description)
+                            viewModel.finish()
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(45.dp),
+                        shape = CutCornerShape(ZeroCornerSize),
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = UltramarineBlue,
+                            contentColor = White
+                        )
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.finish),
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Bold,
+                            fontFamily = FontFamily(Font(R.font.roboto))
+                        )
+                    }
                 }
                 
             }

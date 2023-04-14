@@ -54,7 +54,7 @@ fun SignInScreen(
 ) {
 
     val scaffoldState = rememberScaffoldState() // Remember the state  of the scaffold
-    val scope = rememberCoroutineScope() // Remember teh coroutine scope
+    val scope = rememberCoroutineScope() // Remember the coroutine scope
 
     Scaffold(
         topBar = { AppBarComponent() },

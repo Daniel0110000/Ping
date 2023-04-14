@@ -3,10 +3,7 @@ package com.daniel.ping.data.repositories
 import android.app.Activity
 import android.content.Intent
 import com.daniel.ping.data.local.SharedPreferenceManager
-import com.daniel.ping.data.remote.FacebookAuthManager
-import com.daniel.ping.data.remote.signInWithEmailAndPasswordM
-import com.daniel.ping.data.remote.signUpWithEmailAndPassword
-import com.daniel.ping.data.remote.withCredentials
+import com.daniel.ping.data.remote.*
 import com.daniel.ping.domain.repositories.AuthenticationRepository
 import com.daniel.ping.domain.useCases.AuthCredentialsUseCase
 import com.daniel.ping.domain.utilities.CallHandler
@@ -15,12 +12,15 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.FirebaseFirestore
 import javax.inject.Inject
 
 class AuthenticationRepositoryImpl @Inject constructor(
     private val auth: FirebaseAuth,
     private val prefs: SharedPreferenceManager,
-    private val facebookAuthManager: FacebookAuthManager
+    private val facebookAuthManager: FacebookAuthManager,
+    private val firestore: FirebaseFirestore
 ) : AuthenticationRepository {
 
     // Function to sign up with email and password
@@ -49,4 +49,8 @@ class AuthenticationRepositoryImpl @Inject constructor(
     override fun getString(key: String): String = prefs.getString(key)
     override fun getBooleanToPrefs(key: String): Boolean = prefs.getBoolean(key)
     override fun cleanPrefs() = prefs.clean()
+
+    // This function inserts a profile description into FireStore and returns a Resource object
+    override suspend fun insertProfileDescription(description: HashMap<String, Any>): Resource<Task<DocumentReference>> =
+        CallHandler.callHandler { firestore.insertProfileDescription(description) }
 }
