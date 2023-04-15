@@ -30,4 +30,9 @@
     <string name="description">Descripción</string>
     <string name="finish">Finalizar</string>
 
+    <!-- Red Screen -->
+    <string name="search">Buscar</string>
+    <string name="network">Red</string>
+
+
 </resources>
