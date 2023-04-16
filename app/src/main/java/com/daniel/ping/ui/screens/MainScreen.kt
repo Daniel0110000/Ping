@@ -54,7 +54,7 @@ fun MainScreen(
 
                 FloatingActionButton(
                     onClick = {
-                         navController.navigate(route = ScreenRoutes.Red.route)
+                         navController.navigate(route = ScreenRoutes.NetworkUsers.route)
                     },
                     backgroundColor = UltramarineBlue,
                     shape = RoundedCornerShape(10.dp),

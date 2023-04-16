@@ -7,8 +7,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.daniel.ping.ui.screens.ChatScreen
 import com.daniel.ping.ui.screens.HomeScreen
-import com.daniel.ping.ui.screens.RedScreen
+import com.daniel.ping.ui.screens.NetworkUsersScreen
 
+/**
+ * A composable function that sets up the navigation graph and defines the routes for the app
+ * @param navController the NavHostController that manages app navigation
+ * @param modifier a Modifier to be applied to the NavHost
+ */
 @Composable
 fun SetupNavGraph(
     navController: NavHostController,
@@ -18,8 +23,8 @@ fun SetupNavGraph(
         composable(route = ScreenRoutes.Home.route){
             HomeScreen(navController)
         }
-        composable(route = ScreenRoutes.Red.route){
-            RedScreen(navController)
+        composable(route = ScreenRoutes.NetworkUsers.route){
+            NetworkUsersScreen(navController)
         }
         composable(route = ScreenRoutes.Chat.route){
             ChatScreen(navController)

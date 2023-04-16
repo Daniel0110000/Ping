@@ -1,7 +1,9 @@
 package com.daniel.ping.domain.di
 
 import com.daniel.ping.data.repositories.AuthenticationRepositoryImpl
+import com.daniel.ping.data.repositories.UserDataRepositoryImpl
 import com.daniel.ping.domain.repositories.AuthenticationRepository
+import com.daniel.ping.domain.repositories.UserDataRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -24,5 +26,14 @@ abstract class DomainModule {
      */
     @Binds
     @Singleton
-    abstract fun providerUserDataRepository(authenticationRepositoryImpl: AuthenticationRepositoryImpl): AuthenticationRepository
+    abstract fun providerAuthenticationRepository(authenticationRepositoryImpl: AuthenticationRepositoryImpl): AuthenticationRepository
+
+    /**
+     * Abstract method that binds a concrete implementation of UserDataRepository to the abstract UserDataRepository interface.
+     * @param userDataRepositoryImpl the concrete implementation of UserDataRepository to be bound
+     * @return a UserDataRepository object
+     */
+    @Binds
+    @Singleton
+    abstract fun providerUserDataRepository(userDataRepositoryImpl: UserDataRepositoryImpl): UserDataRepository
 }
