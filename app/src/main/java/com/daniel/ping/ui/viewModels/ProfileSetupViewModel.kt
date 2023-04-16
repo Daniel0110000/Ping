@@ -80,6 +80,7 @@ class ProfileSetupViewModel @Inject constructor(
             val bitmapImage = ImageConverter.uriToBitmap(application, state.value.profileImage!!)
             authenticationRepository.putStringToPrefs(Constants.KEY_USER_ID, document.id)
             authenticationRepository.putBooleanToPrefs(Constants.KEY_IS_PROFILE_FULLY_COMPLETED, true)
+            authenticationRepository.putStringToPrefs(Constants.KEY_NAME, state.value.name)
             authenticationRepository.putStringToPrefs(Constants.KEY_DESCRIPTION, state.value.description)
             authenticationRepository.putStringToPrefs(Constants.KEY_IMAGE, ImageConverter.encodedImage(bitmapImage))
             setCompleted(true)
