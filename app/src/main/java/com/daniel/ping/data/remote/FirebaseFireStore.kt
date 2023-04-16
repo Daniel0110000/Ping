@@ -47,7 +47,8 @@ suspend fun FirebaseFirestore.getAllUsers(currentUserId: String): ArrayList<User
                             id = queryDocumentSnapshot.id,
                             name = queryDocumentSnapshot.getString(Constants.KEY_NAME).toString(),
                             description = queryDocumentSnapshot.getString(Constants.KEY_DESCRIPTION).toString(),
-                            profileImage = queryDocumentSnapshot.getString(Constants.KEY_IMAGE).toString()
+                            profileImage = queryDocumentSnapshot.getString(Constants.KEY_IMAGE).toString(),
+                            token = queryDocumentSnapshot.getString(Constants.KEY_FCM_TOKEN).toString()
                         )
                         users.add(user)
                     }
@@ -58,3 +59,14 @@ suspend fun FirebaseFirestore.getAllUsers(currentUserId: String): ArrayList<User
             }
     }
 }
+
+/**
+ * Updates the Firebase Cloud Messaging (FCM) token for the user document with the given document path
+ * @param documentPath the path to the user document
+ * @param token teh new FCM token to be set for the user
+ * @return a Task<Void> representing the status of the update operation
+ */
+fun FirebaseFirestore.updateToken(documentPath: String, token: String): Task<Void> =
+    collection(Constants.KEY_COLLECTION_USERS)
+        .document(documentPath)
+        .update(Constants.KEY_FCM_TOKEN, token)

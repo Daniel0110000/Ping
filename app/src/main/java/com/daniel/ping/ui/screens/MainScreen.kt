@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.daniel.ping.ui.navigation.ScreenRoutes
 import com.daniel.ping.ui.navigation.SetupNavGraph
@@ -23,10 +24,12 @@ import com.daniel.ping.ui.theme.Onyx
 import com.daniel.ping.ui.theme.RangoonGreen
 import com.daniel.ping.ui.theme.UltramarineBlue
 import com.daniel.ping.ui.theme.White
+import com.daniel.ping.ui.viewModels.MainViewModel
 
 @Composable
 fun MainScreen(
-    navController: NavHostController
+    navController: NavHostController,
+    viewModel: MainViewModel = hiltViewModel()
 ) {
     ConstraintLayout(
         modifier = Modifier
@@ -60,7 +63,7 @@ fun MainScreen(
                     shape = RoundedCornerShape(10.dp),
                     modifier = Modifier
                         .size(40.dp)
-                        .constrainAs(fabNewConversation){
+                        .constrainAs(fabNewConversation) {
                             start.linkTo(parent.start)
                             end.linkTo(parent.end)
                             bottom.linkTo(parent.bottom, margin = 20.dp)
