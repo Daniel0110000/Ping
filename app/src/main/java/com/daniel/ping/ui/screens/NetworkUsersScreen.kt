@@ -1,13 +1,9 @@
 package com.daniel.ping.ui.screens
 
-import android.graphics.Bitmap
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -15,14 +11,10 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -33,8 +25,8 @@ import androidx.navigation.NavController
 import com.daniel.ping.R
 import com.daniel.ping.domain.utilities.ImageConverter
 import com.daniel.ping.ui.components.MaterialSearchComponent
+import com.daniel.ping.ui.components.lazyComponents.UserItem
 import com.daniel.ping.ui.navigation.ScreenRoutes
-import com.daniel.ping.ui.theme.SilverFoil
 import com.daniel.ping.ui.theme.UltramarineBlue
 import com.daniel.ping.ui.theme.White
 import com.daniel.ping.ui.viewModels.NetworkUsersViewModel
@@ -145,60 +137,14 @@ fun NetworkUsersScreen(
                         ignoreCase = true
                     )
                 }) { user ->
-                    // Use the LazyUsersItem composable to display information about each user
-                    LazyUsersItem(
+                    // Use the UserItem composable to display information about each user
+                    UserItem(
                         profileImage = ImageConverter.decodeFromString(user.profileImage),
                         username = user.name,
                         description = user.description
                     )
                 }
             }
-        }
-
-    }
-}
-
-@Composable
-fun LazyUsersItem(
-    profileImage: Bitmap,
-    username: String,
-    description: String
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { }
-            .padding(horizontal = 20.dp, vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Image(
-            bitmap = profileImage.asImageBitmap(),
-            contentDescription = username,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .size(45.dp)
-                .clip(CircleShape)
-        )
-
-        Column(
-            modifier = Modifier.padding(start = 10.dp)
-        ) {
-            Text(
-                text = username,
-                fontSize = 15.sp,
-                fontFamily = FontFamily(Font(R.font.roboto)),
-                fontWeight = FontWeight.Bold,
-                color = White,
-                maxLines = 1
-            )
-
-            Text(
-                text = description,
-                fontSize = 11.sp,
-                fontWeight = FontWeight.Bold,
-                color = SilverFoil,
-                maxLines = 1
-            )
         }
 
     }

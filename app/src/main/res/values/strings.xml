@@ -34,5 +34,8 @@
     <string name="search">Buscar</string>
     <string name="network">Red</string>
 
+    <!-- Chat Screen -->
+    <string name="message">Mensaje</string>
+
 
 </resources>
