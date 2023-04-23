@@ -20,14 +20,14 @@ fun SetupNavGraph(
     modifier: Modifier
 ) {
     NavHost(navController = navController, startDestination = ScreenRoutes.Home.route, modifier = modifier){
-        composable(route = ScreenRoutes.Home.route){
+        composable(route = ScreenRoutes.Home.route) {
             HomeScreen(navController)
         }
-        composable(route = ScreenRoutes.NetworkUsers.route){
+        composable(route = ScreenRoutes.NetworkUsers.route) {
             NetworkUsersScreen(navController)
         }
-        composable(route = ScreenRoutes.Chat.route){
-            ChatScreen(navController)
+        composable(route = ScreenRoutes.Chat.route) { entry ->
+            ChatScreen(navController, entry.requiredArg("userDetails"))
         }
     }
 }
