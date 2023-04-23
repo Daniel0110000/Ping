@@ -1,7 +1,6 @@
 package com.daniel.ping.ui.activities
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -14,7 +13,7 @@ import dagger.hilt.android.AndroidEntryPoint
  * MainActivity is the entry point for the app and sets up the navigation controller for the app
  */
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+class MainActivity : BaseActivity() {
 
     private lateinit var navController: NavHostController
 

@@ -120,6 +120,7 @@ fun ChatScreen(
     // Set the receiver user details and listen to messages
     LaunchedEffect(true) {
         viewModel.setReceiverUser(userDetails)
+        viewModel.availabilityUser()
         viewModel.listenerMessages()
     }
 
@@ -130,6 +131,7 @@ fun ChatScreen(
         val (backScreen, profileImage, username, onlineIndicator, lazyMessages, inputMessage, sendMessage) = createRefs()
 
         var message by remember { mutableStateOf("") }
+        val isOnline by viewModel.isOnline.observeAsState()
         val isLoading by viewModel.isLoading.observeAsState()
 
         IconButton(
@@ -179,15 +181,21 @@ fun ChatScreen(
                 }
         )
 
-        Box(modifier = Modifier
-            .clip(CircleShape)
-            .size(10.dp)
-            .background(LimeGreen)
-            .constrainAs(onlineIndicator) {
-                top.linkTo(parent.top, margin = 15.dp)
-                end.linkTo(parent.end, margin = 15.dp)
-            }
-        )
+        // Design to display if the user is online
+        AnimatedVisibility(
+            visible = isOnline!!,
+            modifier = Modifier
+                .constrainAs(onlineIndicator) {
+                    top.linkTo(parent.top, margin = 15.dp)
+                    end.linkTo(parent.end, margin = 15.dp)
+                }
+        ) {
+            Box(modifier = Modifier
+                .clip(CircleShape)
+                .size(10.dp)
+                .background(LimeGreen)
+            )
+        }
 
         // Modifier to position the lazy column that displays the chat messages
         val contentModifier = Modifier

@@ -1,5 +1,6 @@
 package com.daniel.ping.data.repositories
 
+import com.daniel.ping.data.remote.listenerAvailabilityOfReceiver
 import com.daniel.ping.data.remote.listenerMessage
 import com.daniel.ping.data.remote.sedMessage
 import com.daniel.ping.domain.models.Chat
@@ -27,11 +28,15 @@ class ChatRepositoryImpl @Inject constructor(
      * @param callback a function to be called when new messages arrive
      * @return Unit
      */
-    override fun listenerMessages(
-        userId: String,
-        receiverUserId: String,
-        callback: (ArrayList<Chat>) -> Unit
-    ) =
+    override fun listenerMessages(userId: String, receiverUserId: String, callback: (ArrayList<Chat>) -> Unit) =
         fireStore.listenerMessage(userId, receiverUserId, callback)
+
+    /**
+     * Listen for the availability status of the specified user
+     * @param receiverUserId the ID of the user to listen to
+     * @param listener a lambda function that takes an integer representing the availability status
+     */
+    override fun listenerAvailabilityOfReceiver(receiverUserId: String, listener: (Int) -> Unit) =
+        fireStore.listenerAvailabilityOfReceiver(receiverUserId, listener)
 
 }

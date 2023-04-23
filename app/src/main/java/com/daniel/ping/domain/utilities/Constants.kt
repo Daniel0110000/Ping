@@ -16,5 +16,5 @@ object Constants {
     const val KEY_SENDER_ID = "senderId"
     const val KEY_RECEIVER_ID = "receiverId"
     const val KEY_MESSAGE = "message"
-
+    const val KEY_AVAILABILITY = "availability"
 }

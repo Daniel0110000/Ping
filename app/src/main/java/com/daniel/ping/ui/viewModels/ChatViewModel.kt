@@ -20,7 +20,9 @@ import javax.inject.Inject
  * @property _allMessages MutableLiveData for storing a list of all the chat messages in the conversation
  * @property allMessages LiveData for accessing the list of all chat messages
  * @property _isLoading MutableLiveData to indicate if the upload is in progress
- * @property isLoading LiveData to access progress status
+ * @property isLoading LiveData for access progress status
+ * @property _isOnLine MutableLiveData to indicate if the user is available
+ * @property isOnline Livedata for access user status
  * @property messageText MutableLiveData for storing the message text entered by the user
  * @property receiverUser MutableLiveData for storing the user the current user is chatting with
  * @property userId the ID of the current user
@@ -37,6 +39,9 @@ class ChatViewModel @Inject constructor(
 
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
+
+    private val _isOnLine = MutableLiveData(false)
+    val isOnline: LiveData<Boolean> = _isOnLine
 
     private val messageText = MutableLiveData<String>()
 
@@ -76,6 +81,14 @@ class ChatViewModel @Inject constructor(
             ) { messages ->
                 _allMessages.value = messages
                 _isLoading.value = false
+            }
+        }
+    }
+
+     fun availabilityUser(){
+        viewModelScope.launch(Dispatchers.IO) {
+            chatRepository.listenerAvailabilityOfReceiver(receiverUser.value?.id.toString()){ online ->
+                _isOnLine.postValue(online == 1)
             }
         }
     }

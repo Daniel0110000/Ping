@@ -6,10 +6,8 @@ interface ChatRepository {
 
     suspend fun sendMessage(message: HashMap<String, Any>)
 
-    fun listenerMessages(
-        userId: String,
-        receiverUserId: String,
-        callback: (ArrayList<Chat>) -> Unit
-    )
+    fun listenerMessages(userId: String, receiverUserId: String, callback: (ArrayList<Chat>) -> Unit)
+
+    fun listenerAvailabilityOfReceiver(receiverUserId: String, listener: (Int) -> Unit)
 
 }

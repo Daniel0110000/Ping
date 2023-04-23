@@ -160,3 +160,19 @@ private fun eventListener(callback: (ArrayList<Chat>) -> Unit): EventListener<Qu
 private fun getReadableDateTime(date: Date): String {
     return SimpleDateFormat("MMMM dd, yyyy - hh:mm a", Locale.getDefault()).format(date)
 }
+
+/**
+ * Listens to the availability status of a receiver user
+ * @param receiverUserId the id of the receiver user
+ * @param listener a lambda function that will be called when the availability status changes.
+ *                 It takes an integer parameter which represents the new availability status
+ */
+fun FirebaseFirestore.listenerAvailabilityOfReceiver(receiverUserId: String, listener: (Int) -> Unit){
+    collection(Constants.KEY_COLLECTION_USERS).document(receiverUserId)
+        .addSnapshotListener{ value, _ ->
+            if(value != null && value.exists()){
+                val availability: Long = value.get(Constants.KEY_AVAILABILITY) as Long
+                listener(availability.toInt())
+            }
+        }
+}
