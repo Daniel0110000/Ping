@@ -66,11 +66,9 @@ class SignInViewModel @Inject constructor(
 
     // Function to handle successful sing-in
     private fun handleSingInSuccess(r1: Task<AuthResult>){
+        // It calls userAlreadyRegistered() function with the email entered by the user
         r1.addOnSuccessListener {
-            // If sign-in is success, update preference and registration status, stop loading
-            authenticationRepository.putBooleanToPrefs(Constants.KEY_IS_SIGNED_IN, true)
-            setRegistrationCompleted(true)
-            setIsLoading(false)
+            userAlreadyRegistered(state.value.email)
         }
         // If sign-in fails, set error message and stop loading
         r1.addOnFailureListener { e ->

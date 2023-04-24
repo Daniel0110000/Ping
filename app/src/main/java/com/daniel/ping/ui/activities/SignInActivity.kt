@@ -47,18 +47,27 @@ class SignInActivity : ComponentActivity() {
                         // On redirection, start the SignUpActivity and animate the screen transition
                         startActivity(Intent(this, SignUpActivity::class.java))
                         Animatoo.animateSlideLeft(this)
+                    },
+                    onRedirectToProfileSetup = {
+                        // On button click, navigate to the ProfileSetupActivity
+                        redirectActivity(ProfileSetupActivity::class.java)
+                    },
+                    onRedirectToMainScreen = {
+                        // Navigate to the MainActivity
+                        redirectActivity(MainActivity::class.java)
                     }
-                ) {
-                    // On button click, navigate to the ProfileSetupActivity
-                    val intent = Intent(this, ProfileSetupActivity::class.java)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                    startActivity(intent)
-                    Animatoo.animateSlideLeft(this)
-                }
+                )
 
             }
         }
+    }
+
+    private fun redirectActivity(activity: Class<*>){
+        val intent = Intent(this, activity)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        startActivity(intent)
+        Animatoo.animateSlideLeft(this)
     }
 
     // Start the specified activity and finish this activity

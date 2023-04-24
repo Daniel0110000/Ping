@@ -10,7 +10,6 @@ import com.daniel.ping.domain.utilities.Constants
 import com.daniel.ping.domain.utilities.ImageConverter
 import com.daniel.ping.domain.utilities.Resource
 import com.google.android.gms.tasks.Task
-import com.google.firebase.firestore.DocumentReference
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -61,7 +60,8 @@ class ProfileSetupViewModel @Inject constructor(
                     Constants.KEY_NAME to state.value.name,
                     Constants.KEY_DESCRIPTION to state.value.description,
                     Constants.KEY_IMAGE to ImageConverter.encodedImage(bitmapImage)
-                )
+                ),
+                authenticationRepository.getString(Constants.KEY_USER_ID)
             )
             when(dataResult){
                 is Resource.Success -> handleInsertSuccess(dataResult.data!!)
@@ -75,10 +75,9 @@ class ProfileSetupViewModel @Inject constructor(
      * Handles teh successful insertion of the user's profile information into the database
      * Saves the user's information to shared preferences and sets the "completed" state to tru
      */
-    private fun handleInsertSuccess(rtl: Task<DocumentReference>){
-        rtl.addOnSuccessListener { document ->
+    private fun handleInsertSuccess(rtl: Task<Void>){
+        rtl.addOnSuccessListener {
             val bitmapImage = ImageConverter.uriToBitmap(application, state.value.profileImage!!)
-            authenticationRepository.putStringToPrefs(Constants.KEY_USER_ID, document.id)
             authenticationRepository.putBooleanToPrefs(Constants.KEY_IS_PROFILE_FULLY_COMPLETED, true)
             authenticationRepository.putStringToPrefs(Constants.KEY_NAME, state.value.name)
             authenticationRepository.putStringToPrefs(Constants.KEY_DESCRIPTION, state.value.description)

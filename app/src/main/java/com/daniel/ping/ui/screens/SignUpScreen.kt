@@ -6,15 +6,34 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.shape.ZeroCornerSize
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Snackbar
+import androidx.compose.material.SnackbarHost
+import androidx.compose.material.Text
+import androidx.compose.material.rememberScaffoldState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,7 +52,11 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.daniel.ping.R
 import com.daniel.ping.domain.commons.ProviderGoogleSignInClient
-import com.daniel.ping.ui.components.*
+import com.daniel.ping.ui.components.AppBarComponent
+import com.daniel.ping.ui.components.AuthenticationAlternativeComponent
+import com.daniel.ping.ui.components.DescriptionScreenComponent
+import com.daniel.ping.ui.components.InputComponent
+import com.daniel.ping.ui.components.QuestionComponent
 import com.daniel.ping.ui.theme.Onyx
 import com.daniel.ping.ui.theme.RangoonGreen
 import com.daniel.ping.ui.theme.UltramarineBlue
@@ -49,7 +72,8 @@ fun SignUpScreen(
     context: Context,
     activity: Activity,
     onRedirect: () -> Unit,
-    onRedirectToProfileSetup: () -> Unit
+    onRedirectToProfileSetup: () -> Unit,
+    onRedirectToMainScreen: () -> Unit
 ) {
 
     val scaffoldState = rememberScaffoldState() // Remember the state of the scaffold
@@ -90,6 +114,11 @@ fun SignUpScreen(
                         viewModel.setMessage("") // Clear the message
                     }
                 }
+            }
+
+            // If all authentication is completed, the user is redirected to the main screen
+            LaunchedEffect(state.allAuthCompleted){
+                if(state.allAuthCompleted) onRedirectToMainScreen()
             }
 
             LaunchedEffect(state.registrationCompleted){ // Execute a side effect when the registrationCompleted state changes

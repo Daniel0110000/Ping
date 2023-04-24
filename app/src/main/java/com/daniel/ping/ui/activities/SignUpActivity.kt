@@ -31,19 +31,28 @@ class SignUpActivity : ComponentActivity() {
                     state = state,
                     context = this,
                     activity = this,
-                    onRedirect = { onBack() }
-                ){
-                    // On button click, navigate to the ProfileSetupActivity
-                    val intent = Intent(this, ProfileSetupActivity::class.java)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                    startActivity(intent)
-                    Animatoo.animateSlideLeft(this)
-                }
+                    onRedirect = { onBack() },
+                    onRedirectToProfileSetup = {
+                        // On button click, navigate to the ProfileSetupActivity
+                        redirectActivity(ProfileSetupActivity::class.java)
+                    },
+                    onRedirectToMainScreen = {
+                        // Navigate to the MainActivity
+                        redirectActivity(MainActivity::class.java)
+                    }
+                )
                 // Handle back button press with BackHandler composable function
                 BackHandler { onBack() }
             }
         }
+    }
+
+    private fun redirectActivity(activity: Class<*>){
+        val intent = Intent(this, activity)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        startActivity(intent)
+        Animatoo.animateSlideLeft(this)
     }
 
     // Function to handle back button press

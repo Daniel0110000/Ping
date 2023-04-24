@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.daniel.ping.domain.models.ValidationResult
 import com.daniel.ping.domain.repositories.AuthenticationRepository
 import com.daniel.ping.domain.useCases.AuthCredentialsUseCase
-import com.daniel.ping.domain.utilities.Constants
 import com.daniel.ping.domain.utilities.Resource
 import com.daniel.ping.domain.utilities.SecurityService
 import com.google.android.gms.tasks.Task
@@ -65,11 +64,9 @@ class SignUpViewModel @Inject constructor(
 
     // Function to handle successful sing-up
     private fun handleSignUpSuccess(result: Task<AuthResult>){
-        // If sing-up is successful, update preference and registration status, stop loading
+        // It calls userAlreadyRegistered() function with the email entered by the user
         result.addOnSuccessListener {
-            authenticationRepository.putBooleanToPrefs(Constants.KEY_IS_SIGNED_IN, true)
-            setRegistrationCompleted(true)
-            setIsLoading(false)
+            userAlreadyRegistered(state.value.email)
         }
         // If sign-up fails, set error message and stop loading
         result.addOnFailureListener { e ->

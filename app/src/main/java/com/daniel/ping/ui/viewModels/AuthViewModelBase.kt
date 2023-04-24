@@ -10,6 +10,7 @@ import com.daniel.ping.R
 import com.daniel.ping.domain.repositories.AuthenticationRepository
 import com.daniel.ping.domain.useCases.AuthCredentialsUseCase
 import com.daniel.ping.domain.utilities.Constants
+import com.daniel.ping.domain.utilities.handleResult
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.GoogleAuthProvider
@@ -42,6 +43,7 @@ open class AuthViewModelBase(
         val password: String = "",
         val isLoading: Boolean = false,
         val message: String = "",
+        val allAuthCompleted: Boolean = false,
         val registrationCompleted: Boolean = false
     )
 
@@ -58,12 +60,7 @@ open class AuthViewModelBase(
                 viewModelScope.launch(Dispatchers.IO) {
                     val google = authCredentialsUseCase.invoke(credential)
                     google?.apply {
-                        addOnSuccessListener {
-                            // Set the user as signed in and registration as completed
-                            authenticationRepository.putBooleanToPrefs(Constants.KEY_IS_SIGNED_IN, true)
-                            setRegistrationCompleted(true)
-
-                        }
+                        addOnSuccessListener { authResult -> userAlreadyRegistered(authResult.user?.email.toString()) }
                         addOnFailureListener { e -> setMessage(e.message.toString()) }
                     }
                 }
@@ -77,11 +74,7 @@ open class AuthViewModelBase(
             // Use the authentication repository to authenticate with Facebook
             val result = authenticationRepository.facebookAuth(activity, AuthCredentialsUseCase(authenticationRepository))
             result?.apply {
-                addOnSuccessListener {
-                    // Set the user as signed in and registration as completed
-                    authenticationRepository.putBooleanToPrefs(Constants.KEY_IS_SIGNED_IN, true)
-                    setRegistrationCompleted(true)
-                }
+                addOnSuccessListener { authResult -> userAlreadyRegistered(authResult.user?.email.toString()) }
                 addOnFailureListener { setMessage(application.getString(R.string.errorMessage)) }
             }
         }
@@ -97,6 +90,77 @@ open class AuthViewModelBase(
         setIsLoading(false)
     }
 
+    /**
+     * Coroutine function that checks if a user with a given email is already registered
+     * If not, inserts the email into the user's document in the database
+     * If yes, inserts the user data into the preference and skips the email insertion step
+     * @param email The email to check and possibly insert
+     */
+    fun userAlreadyRegistered(email: String){
+        viewModelScope.launch(Dispatchers.IO) {
+            val alreadyRegistration = authenticationRepository.userAlreadyRegistered(email)
+            alreadyRegistration.data?.let { isAlreadyRegistered ->
+                when {
+                    isAlreadyRegistered -> {
+                        val userData = authenticationRepository.getUserData(email)
+                        userData.data?.let {
+                            authenticationRepository.insertUserDataToPrefs(email)
+                        } ?: run {
+                            setMessage(userData.message.toString())
+                        }
+                    }
+                    else -> insertEmail(email)
+                }
+            } ?: run {
+                setMessage(alreadyRegistration.message.toString())
+            }
+        }
+    }
+
+    /**
+     * Inserts the given email into the user's document in the database
+     * Updates the user's status in the preferences upon successful insertion
+     * @param email The email to be inserted
+     */
+    private fun insertEmail(email: String){
+        viewModelScope.launch(Dispatchers.IO) {
+            val result = authenticationRepository.insertEmail(hashMapOf(Constants.KEY_EMAIL to email))
+            result.handleResult(
+                onSuccess = { document ->
+                    document.addOnSuccessListener {
+                        authenticationRepository.apply {
+                            putBooleanToPrefs(Constants.KEY_IS_SIGNED_IN, true)
+                            putStringToPrefs(Constants.KEY_USER_ID, document.result.id)
+                        }
+                    }
+                    setRegistrationCompleted(true)
+                    setIsLoading(false)
+                },
+                onError = { e -> setMessage(e.message.toString()) }
+            )
+        }
+    }
+
+    /**
+     * Inserts user data retrieved from database in to SharedPreferences
+     * @param email The email associated with the user
+     */
+    private suspend fun AuthenticationRepository.insertUserDataToPrefs(email: String){
+        val userData = getUserData(email)
+        userData.handleResult(
+            onSuccess = { document ->
+                putStringToPrefs(Constants.KEY_USER_ID, document?.id.toString())
+                putBooleanToPrefs(Constants.KEY_IS_PROFILE_FULLY_COMPLETED, true)
+                putBooleanToPrefs(Constants.KEY_IS_SIGNED_IN, true)
+                putStringToPrefs(Constants.KEY_NAME, document?.name.toString())
+                putStringToPrefs(Constants.KEY_DESCRIPTION, document?.description.toString())
+                putStringToPrefs(Constants.KEY_IMAGE, document?.profileImage.toString())
+                setAllAuthCompleted()
+            },
+            onError = { e -> setMessage(e.message.toString()) }
+        )
+    }
+
     fun setEmailAndPassword(email: String, password: String){
         viewModelScope.launch {
             _state.update { it.copy(
@@ -110,6 +174,14 @@ open class AuthViewModelBase(
         viewModelScope.launch {
             _state.update { it.copy(
                 message = text
+            ) }
+        }
+    }
+
+    private fun setAllAuthCompleted(){
+        viewModelScope.launch {
+            _state.update { it.copy(
+                allAuthCompleted = true
             ) }
         }
     }

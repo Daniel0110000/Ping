@@ -3,7 +3,15 @@ package com.daniel.ping.data.repositories
 import android.app.Activity
 import android.content.Intent
 import com.daniel.ping.data.local.SharedPreferenceManager
-import com.daniel.ping.data.remote.*
+import com.daniel.ping.data.remote.FacebookAuthManager
+import com.daniel.ping.data.remote.getUserData
+import com.daniel.ping.data.remote.insertEmail
+import com.daniel.ping.data.remote.insertProfileDescription
+import com.daniel.ping.data.remote.signInWithEmailAndPasswordM
+import com.daniel.ping.data.remote.signUpWithEmailAndPassword
+import com.daniel.ping.data.remote.userAlreadyRegistered
+import com.daniel.ping.data.remote.withCredentials
+import com.daniel.ping.domain.models.User
 import com.daniel.ping.domain.repositories.AuthenticationRepository
 import com.daniel.ping.domain.useCases.AuthCredentialsUseCase
 import com.daniel.ping.domain.utilities.CallHandler
@@ -20,7 +28,7 @@ class AuthenticationRepositoryImpl @Inject constructor(
     private val auth: FirebaseAuth,
     private val prefs: SharedPreferenceManager,
     private val facebookAuthManager: FacebookAuthManager,
-    private val firestore: FirebaseFirestore
+    private val fireStore: FirebaseFirestore
 ) : AuthenticationRepository {
 
     // Function to sign up with email and password
@@ -43,6 +51,18 @@ class AuthenticationRepositoryImpl @Inject constructor(
     override suspend fun facebookAuth(activity: Activity, authCredentialsUseCase: AuthCredentialsUseCase): Task<AuthResult>? =
         facebookAuthManager.performSignIn(activity, authCredentialsUseCase)
 
+    // Function to check if the user is registered
+    override suspend fun userAlreadyRegistered(email: String): Resource<Boolean> =
+        CallHandler.callHandler { fireStore.userAlreadyRegistered(email) }
+
+    // Function to insert the email to the database
+    override suspend fun insertEmail(email: HashMap<String, Any>): Resource<Task<DocumentReference>> =
+        CallHandler.callHandler { fireStore.insertEmail(email) }
+
+    // Function to get user data
+    override suspend fun getUserData(email: String): Resource<User?> =
+        CallHandler.callHandler { fireStore.getUserData(email) }
+
     // Functions to store and retrieve data from Shared Preferences
     override fun putStringToPrefs(key: String, value: String) = prefs.putString(key, value)
     override fun putBooleanToPrefs(key: String, value: Boolean) = prefs.putBoolean(key, value)
@@ -50,7 +70,9 @@ class AuthenticationRepositoryImpl @Inject constructor(
     override fun getBooleanToPrefs(key: String): Boolean = prefs.getBoolean(key)
     override fun cleanPrefs() = prefs.clean()
 
-    // This function inserts a profile description into FireStore and returns a Resource object
-    override suspend fun insertProfileDescription(description: HashMap<String, Any>): Resource<Task<DocumentReference>> =
-        CallHandler.callHandler { firestore.insertProfileDescription(description) }
+    // Function to insert the description of the user's profile
+    override suspend fun insertProfileDescription(description: HashMap<String, Any>, documentId: String): Resource<Task<Void>> =
+        CallHandler.callHandler { fireStore.insertProfileDescription(description, documentId) }
+
+
 }

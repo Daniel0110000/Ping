@@ -2,6 +2,7 @@ package com.daniel.ping.domain.repositories
 
 import android.app.Activity
 import android.content.Intent
+import com.daniel.ping.domain.models.User
 import com.daniel.ping.domain.useCases.AuthCredentialsUseCase
 import com.daniel.ping.domain.utilities.Resource
 import com.google.android.gms.tasks.Task
@@ -21,6 +22,12 @@ interface AuthenticationRepository {
 
     suspend fun facebookAuth(activity: Activity, authCredentialsUseCase: AuthCredentialsUseCase): Task<AuthResult>?
 
+    suspend fun userAlreadyRegistered(email: String): Resource<Boolean>
+
+    suspend fun insertEmail(email: HashMap<String, Any>): Resource<Task<DocumentReference>>
+
+    suspend fun getUserData(email: String): Resource<User?>
+
     fun putStringToPrefs(key: String, value: String)
 
     fun putBooleanToPrefs(key: String, value: Boolean)
@@ -31,6 +38,6 @@ interface AuthenticationRepository {
 
     fun cleanPrefs()
 
-    suspend fun insertProfileDescription(description: HashMap<String, Any>): Resource<Task<DocumentReference>>
+    suspend fun insertProfileDescription(description: HashMap<String, Any>, documentId: String): Resource<Task<Void>>
 
 }
