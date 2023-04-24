@@ -6,7 +6,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -50,6 +53,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -65,6 +69,7 @@ import com.daniel.ping.ui.components.lazyComponents.ReceivedMessageItem
 import com.daniel.ping.ui.components.lazyComponents.SentMessageItem
 import com.daniel.ping.ui.theme.LimeGreen
 import com.daniel.ping.ui.theme.Onyx
+import com.daniel.ping.ui.theme.OnyxTransparent
 import com.daniel.ping.ui.theme.SilverFoil
 import com.daniel.ping.ui.theme.UltramarineBlue
 import com.daniel.ping.ui.theme.White
@@ -128,7 +133,7 @@ fun ChatScreen(
         modifier = Modifier.fillMaxSize()
     ) {
 
-        val (backScreen, profileImage, username, onlineIndicator, lazyMessages, inputMessage, sendMessage) = createRefs()
+        val (backScreen, profileImage, username, onlineIndicator, containerDescription,lazyMessages, inputMessage, sendMessage) = createRefs()
 
         var message by remember { mutableStateOf("") }
         val isOnline by viewModel.isOnline.observeAsState()
@@ -241,6 +246,31 @@ fun ChatScreen(
                     }
                 }
             }
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(40.dp)
+                .background(OnyxTransparent)
+                .constrainAs(containerDescription) {
+                    top.linkTo(profileImage.bottom, margin = 10.dp)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                },
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = userDetails.description,
+                textAlign = TextAlign.Center,
+                color = White,
+                fontSize = 13.sp,
+                maxLines = 2,
+                fontFamily = FontFamily(Font(R.font.roboto)),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(5.dp)
+            )
         }
 
         TextField(
