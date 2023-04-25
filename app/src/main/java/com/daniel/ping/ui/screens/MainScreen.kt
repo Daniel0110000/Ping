@@ -2,10 +2,13 @@ package com.daniel.ping.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
@@ -20,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -70,7 +74,7 @@ fun MainScreen(
         ) {
             ConstraintLayout(modifier = Modifier.fillMaxSize()) {
 
-                val (profileImage, myName, fabNewConversation) = createRefs()
+                val (profileImage, myName, fabNewConversation, recentMessagesTitle, recentMessagesDivider, recentMessages) = createRefs()
 
                 state.value.profileImage?.let {
                     Image(
@@ -105,6 +109,42 @@ fun MainScreen(
                         }
 
                 )
+
+                Text(
+                    text = stringResource(id = R.string.message),
+                    fontSize = 14.sp,
+                    color = White,
+                    fontFamily = FontFamily(Font(R.font.roboto)),
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .constrainAs(recentMessagesTitle){
+                            top.linkTo(myName.bottom, margin = 20.dp)
+                            start.linkTo(parent.start, margin = 5.dp)
+                        }
+                )
+
+                Box(
+                    modifier = Modifier
+                        .height(2.dp)
+                        .background(RangoonGreen)
+                        .constrainAs(recentMessagesDivider) {
+                            width = Dimension.fillToConstraints
+                            start.linkTo(parent.start, margin = 5.dp)
+                            end.linkTo(parent.end, margin = 5.dp)
+                            top.linkTo(recentMessagesTitle.bottom, margin = 3.dp)
+                        }
+                )
+
+                LazyColumn(
+                    modifier = Modifier
+                        .constrainAs(recentMessages){
+                            height = Dimension.fillToConstraints
+                            top.linkTo(recentMessagesDivider.bottom)
+                            bottom.linkTo(parent.bottom)
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                        },
+                ){}
 
                 FloatingActionButton(
                     onClick = {

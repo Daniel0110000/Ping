@@ -37,5 +37,7 @@
     <!-- Chat Screen -->
     <string name="message">Mensaje</string>
 
+    <!-- Main Screen -->
+    <string name="messages">Mensajes</string>
 
 </resources>
