@@ -18,4 +18,8 @@ object Constants {
     const val KEY_RECEIVER_ID = "receiverId"
     const val KEY_MESSAGE = "message"
     const val KEY_AVAILABILITY = "availability"
+    const val BASE_URL = "https://fcm.googleapis.com/"
+    const val PATH_URL = "fcm/send"
+    const val NOTIFICATION_ID = 120002
+    const val CHANNEL_ID = "Channel"
 }

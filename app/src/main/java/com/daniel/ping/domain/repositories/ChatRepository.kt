@@ -1,5 +1,6 @@
 package com.daniel.ping.domain.repositories
 
+import com.daniel.ping.data.models.PushNotification
 import com.daniel.ping.domain.models.Chat
 
 interface ChatRepository {
@@ -9,5 +10,7 @@ interface ChatRepository {
     fun listenerMessages(userId: String, receiverUserId: String, callback: (ArrayList<Chat>) -> Unit)
 
     fun listenerAvailabilityOfReceiver(receiverUserId: String, listener: (Int) -> Unit)
+
+    suspend fun sendNotification(notification: PushNotification)
 
 }

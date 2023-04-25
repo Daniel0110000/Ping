@@ -1,9 +1,12 @@
 package com.daniel.ping.ui.activities
 
+import android.app.NotificationManager
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.daniel.ping.domain.utilities.Constants
 import com.daniel.ping.ui.screens.MainScreen
 import com.daniel.ping.ui.theme.PingTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -23,7 +26,21 @@ class MainActivity : BaseActivity() {
             PingTheme {
                 navController = rememberNavController()
                 MainScreen(navController)
+                closeNotification()
             }
         }
+
     }
+
+    /**
+     * Closes the notification with the given ID, if it exists
+     */
+    private fun closeNotification(){
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val activeNotification = notificationManager.activeNotifications
+        val notification = activeNotification.find { it.id == Constants.NOTIFICATION_ID }
+        if(notification != null)
+            notificationManager.cancel(Constants.NOTIFICATION_ID)
+    }
+
 }

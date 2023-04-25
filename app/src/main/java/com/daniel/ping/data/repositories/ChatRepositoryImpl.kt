@@ -1,7 +1,9 @@
 package com.daniel.ping.data.repositories
 
+import com.daniel.ping.data.models.PushNotification
 import com.daniel.ping.data.remote.listenerAvailabilityOfReceiver
 import com.daniel.ping.data.remote.listenerMessage
+import com.daniel.ping.data.remote.networkService.ApiService
 import com.daniel.ping.data.remote.sedMessage
 import com.daniel.ping.domain.models.Chat
 import com.daniel.ping.domain.repositories.ChatRepository
@@ -9,7 +11,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import javax.inject.Inject
 
 class ChatRepositoryImpl @Inject constructor(
-    private val fireStore: FirebaseFirestore
+    private val fireStore: FirebaseFirestore,
+    private val apiService: ApiService
 ) : ChatRepository {
 
     /**
@@ -38,5 +41,14 @@ class ChatRepositoryImpl @Inject constructor(
      */
     override fun listenerAvailabilityOfReceiver(receiverUserId: String, listener: (Int) -> Unit) =
         fireStore.listenerAvailabilityOfReceiver(receiverUserId, listener)
+
+    /**
+     * Function to send a push notification using the API service defined in the ApiService interface
+     * @param notification Push Notification object that contains the information of the notification to be sent
+     */
+    override suspend fun sendNotification(notification: PushNotification) {
+        try { apiService.sendNotification(notification) }
+        catch (e: Exception){ e.printStackTrace() }
+    }
 
 }

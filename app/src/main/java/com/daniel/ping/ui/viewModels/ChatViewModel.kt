@@ -4,6 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.daniel.ping.data.models.NotificationData
+import com.daniel.ping.data.models.PushNotification
 import com.daniel.ping.domain.models.Chat
 import com.daniel.ping.domain.models.User
 import com.daniel.ping.domain.repositories.AuthenticationRepository
@@ -66,6 +68,9 @@ class ChatViewModel @Inject constructor(
                 message[Constants.KEY_MESSAGE] = messageText.value.toString()
                 message[Constants.KEY_TIMESTAMP] = Date()
                 chatRepository.sendMessage(message)
+                // If the user is not online, a notification is sent
+                if(!isOnline.value!!)
+                    sendNotification(auth.getString(Constants.KEY_NAME), messageText.value.toString())
             }
         }
     }
@@ -91,6 +96,11 @@ class ChatViewModel @Inject constructor(
                 _isOnLine.postValue(online == 1)
             }
         }
+    }
+
+    private suspend fun sendNotification(title: String, body: String){
+        val notification = PushNotification(NotificationData(title, body), receiverUser.value?.token.toString())
+        chatRepository.sendNotification(notification)
     }
 
     fun setMessageText(value: String) {
