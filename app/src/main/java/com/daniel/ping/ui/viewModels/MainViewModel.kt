@@ -1,9 +1,12 @@
 package com.daniel.ping.ui.viewModels
 
 import android.graphics.Bitmap
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.daniel.ping.domain.models.RecentConversation
 import com.daniel.ping.domain.repositories.AuthenticationRepository
+import com.daniel.ping.domain.repositories.ChatRepository
 import com.daniel.ping.domain.repositories.UserDataRepository
 import com.daniel.ping.domain.utilities.Constants
 import com.daniel.ping.domain.utilities.ImageConverter
@@ -20,13 +23,16 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val userDataRepository: UserDataRepository,
-    authenticationRepository: AuthenticationRepository
-): ViewModel() {
+    private val authenticationRepository: AuthenticationRepository,
+    private val chatRepository: ChatRepository
+) : ViewModel() {
 
     // The ViewModel state flow that represents the main state of the application
     // Contains the user's name, profile image, and message
     private val _state = MutableStateFlow(MainState())
     val state = _state.asStateFlow()
+
+    val recentConversations = MutableLiveData<ArrayList<RecentConversation>>()
 
     /**
      * The data class that holds the main state of the application
@@ -43,6 +49,7 @@ class MainViewModel @Inject constructor(
     // Initializes the ViewModel state by calling getToken() and setting the user's name and profile image
     init {
         getToken()
+        listenerRecentConversations()
         setName(authenticationRepository.getString(Constants.KEY_NAME))
         setProfileImage(ImageConverter.decodeFromString(authenticationRepository.getString(Constants.KEY_IMAGE)))
     }
@@ -50,45 +57,62 @@ class MainViewModel @Inject constructor(
     /**
      * Initializes the ViewModel state by calling getToken() and setting the user's name and profile image
      */
-    private fun getToken(){
+    private fun getToken() {
         FirebaseMessaging.getInstance().token.addOnSuccessListener(this::updateToken)
     }
 
     /**
      * Updates the token in the user data repository via a coroutine in the IO dispatcher
-     * The _message MutableStateFlow is updated based on the success or failure of the update
      * @param token the token to update
      */
-    private fun updateToken(token: String){
+    private fun updateToken(token: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            when (val messaging = userDataRepository.updateToken(token)){
-                is Resource.Success -> messaging.data?.addOnFailureListener { e -> setMessage(e.message.toString()) }
+            when (val messaging = userDataRepository.updateToken(token)) {
+                is Resource.Success -> messaging.data?.let { task ->
+                    task.addOnSuccessListener { authenticationRepository.putStringToPrefs(Constants.KEY_FCM_TOKEN, token) }
+                    task.addOnFailureListener { e -> setMessage(e.message.toString()) }
+                }
+
                 is Resource.Error -> setMessage(messaging.message.toString())
             }
         }
     }
 
-    private fun setName(value: String){
-        viewModelScope.launch {
-            _state.update { it.copy(
-                name = value
-            ) }
+    private fun listenerRecentConversations() {
+        viewModelScope.launch(Dispatchers.IO) {
+            chatRepository.listerRecentConversations(authenticationRepository.getString(Constants.KEY_USER_ID)) { conversations ->
+                recentConversations.value = conversations
+            }
         }
     }
 
-    private fun setProfileImage(value: Bitmap){
+    private fun setName(value: String) {
         viewModelScope.launch {
-            _state.update { it.copy(
-                profileImage = value
-            ) }
+            _state.update {
+                it.copy(
+                    name = value
+                )
+            }
         }
     }
 
-    private fun setMessage(value: String){
+    private fun setProfileImage(value: Bitmap) {
         viewModelScope.launch {
-            _state.update { it.copy(
-                message = value
-            ) }
+            _state.update {
+                it.copy(
+                    profileImage = value
+                )
+            }
+        }
+    }
+
+    private fun setMessage(value: String) {
+        viewModelScope.launch {
+            _state.update {
+                it.copy(
+                    message = value
+                )
+            }
         }
     }
 

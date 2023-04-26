@@ -1,4 +1,4 @@
-package com.daniel.ping.data.remote
+package com.daniel.ping.data.remote.firebaseService
 
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthCredential

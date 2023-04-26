@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
@@ -18,11 +19,17 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -33,10 +40,16 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Observer
 import androidx.navigation.NavHostController
 import com.daniel.ping.R
+import com.daniel.ping.domain.models.RecentConversation
+import com.daniel.ping.domain.models.User
+import com.daniel.ping.domain.utilities.ImageConverter
+import com.daniel.ping.ui.components.lazyComponents.RecentMessageItem
 import com.daniel.ping.ui.navigation.ScreenRoutes
 import com.daniel.ping.ui.navigation.SetupNavGraph
+import com.daniel.ping.ui.navigation.navigateExt
 import com.daniel.ping.ui.theme.Onyx
 import com.daniel.ping.ui.theme.RangoonGreen
 import com.daniel.ping.ui.theme.UltramarineBlue
@@ -49,8 +62,37 @@ fun MainScreen(
     viewModel: MainViewModel = hiltViewModel()
 ) {
 
+    // Maintain a list of recent conversations
+    var recentConversations = remember { mutableStateListOf<RecentConversation>() }
+
     // Collects the current state of the viewModel using kotlin coroutines
     val state = viewModel.state.collectAsState()
+
+    // Maintain the state of the lazy list
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val updateLifecycleOwner = rememberUpdatedState(lifecycleOwner)
+
+    DisposableEffect(viewModel.recentConversations){
+        val observer = Observer<List<RecentConversation>> { conversations ->
+            if(conversations.isNotEmpty()){
+                // Adds all new conversations to the list of recent conversations
+                recentConversations.addAll(conversations)
+                // Sorts the list of recent conversations by date in descending order
+                recentConversations.sortWith { obj1, obj2 -> obj2.dateObject.compareTo(obj1.dateObject) }
+                // Removes any duplicate conversations from the list
+                recentConversations = recentConversations.distinctBy { conversation -> conversation.senderId + conversation.receiverId}.toMutableStateList()
+            }
+        }
+
+        // Observes changes to the list of recent conversations and updates the UI accordingly
+        viewModel.recentConversations.observe(updateLifecycleOwner.value, observer)
+
+        // Removes the observer when the composable is disposed to avoid leaks
+        onDispose {
+            viewModel.recentConversations.removeObserver(observer)
+        }
+
+    }
 
     ConstraintLayout(
         modifier = Modifier
@@ -144,7 +186,22 @@ fun MainScreen(
                             start.linkTo(parent.start)
                             end.linkTo(parent.end)
                         },
-                ){}
+                ){
+                    items(recentConversations){ conversation ->
+                        RecentMessageItem(image = ImageConverter.decodeFromString(conversation.profileImage)){
+                            val userDetails = User(
+                                id = conversation.receiverId,
+                                profileImage = conversation.profileImage,
+                                name = conversation.name,
+                                description = conversation.description,
+                                token = conversation.token
+                            )
+
+                            navController.navigateExt(ScreenRoutes.Chat.route, "userDetails" to userDetails)
+
+                        }
+                    }
+                }
 
                 FloatingActionButton(
                     onClick = {

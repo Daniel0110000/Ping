@@ -112,6 +112,8 @@ fun ChatScreen(
                     lazyListState.scrollToItem(chats.lastIndex)
                 }
 
+                if(!viewModel.hasCheckedForConversation) viewModel.checkForConversation()
+
             }
         }
 

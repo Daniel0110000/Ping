@@ -2,6 +2,7 @@ package com.daniel.ping.ui.components.lazyComponents
 
 import android.graphics.Bitmap
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -15,7 +16,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun RecentMessageItem(image: Bitmap) {
+fun RecentMessageItem(
+    image: Bitmap,
+    onClickListener: () -> Unit
+) {
     Column {
 
         Spacer(modifier = Modifier.height(10.dp))
@@ -25,7 +29,8 @@ fun RecentMessageItem(image: Bitmap) {
             contentDescription = "",
             modifier = Modifier
                 .size(45.dp)
-                .clip(CircleShape),
+                .clip(CircleShape)
+                .clickable { onClickListener() },
             contentScale = ContentScale.Crop
         )
     }

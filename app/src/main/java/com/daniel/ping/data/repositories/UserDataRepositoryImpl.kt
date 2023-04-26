@@ -1,8 +1,8 @@
 package com.daniel.ping.data.repositories
 
 import com.daniel.ping.data.local.SharedPreferenceManager
-import com.daniel.ping.data.remote.getAllUsers
-import com.daniel.ping.data.remote.updateToken
+import com.daniel.ping.data.remote.firebaseService.getAllUsers
+import com.daniel.ping.data.remote.firebaseService.updateToken
 import com.daniel.ping.domain.models.User
 import com.daniel.ping.domain.repositories.UserDataRepository
 import com.daniel.ping.domain.utilities.CallHandler

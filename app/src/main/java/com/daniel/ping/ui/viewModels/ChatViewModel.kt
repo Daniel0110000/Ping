@@ -1,5 +1,6 @@
 package com.daniel.ping.ui.viewModels
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,6 +12,10 @@ import com.daniel.ping.domain.models.User
 import com.daniel.ping.domain.repositories.AuthenticationRepository
 import com.daniel.ping.domain.repositories.ChatRepository
 import com.daniel.ping.domain.utilities.Constants
+import com.daniel.ping.domain.utilities.handleResult
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.QuerySnapshot
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -51,6 +56,10 @@ class ChatViewModel @Inject constructor(
 
     val userId = auth.getString(Constants.KEY_USER_ID)
 
+    var hasCheckedForConversation = false
+    private var conversationId: String = ""
+
+
     init {
         setMessageText("")
         _isLoading.value = true
@@ -71,6 +80,27 @@ class ChatViewModel @Inject constructor(
                 // If the user is not online, a notification is sent
                 if(!isOnline.value!!)
                     sendNotification(auth.getString(Constants.KEY_NAME), messageText.value.toString())
+
+                // Update the conversation history
+                if(conversationId.isNotEmpty())
+                    chatRepository.updateConversation(conversationId)
+                else{
+                    // If there is no conversation history, ada a new conversation
+                    val conversation: HashMap<String, Any> = hashMapOf()
+                    conversation[Constants.KEY_SENDER_ID] = auth.getString(Constants.KEY_USER_ID)
+                    conversation[Constants.KEY_SENDER_NAME] = auth.getString(Constants.KEY_NAME)
+                    conversation[Constants.KEY_SENDER_IMAGE] = auth.getString(Constants.KEY_IMAGE)
+                    conversation[Constants.KEY_SENDER_DESCRIPTION] = auth.getString(Constants.KEY_DESCRIPTION)
+                    conversation[Constants.KEY_SENDER_FCM_TOKEN] = auth.getString(Constants.KEY_FCM_TOKEN)
+                    conversation[Constants.KEY_RECEIVER_ID] = receiverUser.value?.id.toString()
+                    conversation[Constants.KEY_RECEIVER_NAME] = receiverUser.value?.name.toString()
+                    conversation[Constants.KEY_RECEIVER_IMAGE] = receiverUser.value?.profileImage.toString()
+                    conversation[Constants.KEY_RECEIVER_DESCRIPTION] = receiverUser.value?.description.toString()
+                    conversation[Constants.KEY_RECEIVER_FCM_TOKEN] = receiverUser.value?.token.toString()
+                    conversation[Constants.KEY_TIMESTAMP] = Date()
+                    addConversation(conversation)
+                }
+
             }
         }
     }
@@ -90,6 +120,11 @@ class ChatViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Sets up a listener to check the availability of the receiver user
+     * If the receiver user goes online, it sets the value of _isOnLine to true
+     * If the receiver user goes offline, it sets the value of _isOnLine to false
+     */
      fun availabilityUser(){
         viewModelScope.launch(Dispatchers.IO) {
             chatRepository.listenerAvailabilityOfReceiver(receiverUser.value?.id.toString()){ online ->
@@ -98,9 +133,68 @@ class ChatViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Suspended function that sends a push notification to the receiver user, notifying them of a new message
+     * @param title The title of the notification
+     * @param body The body text of the notification
+     */
     private suspend fun sendNotification(title: String, body: String){
         val notification = PushNotification(NotificationData(title, body), receiverUser.value?.token.toString())
         chatRepository.sendNotification(notification)
+    }
+
+    /**
+     * Checks if a conversation already exists between the current user and the receiver user
+     * by calling the checkForConversationRemotely function twice with both user IDs
+     * Updates the boolean flag hasCheckedForConversation once the check is complete
+     */
+    fun checkForConversation(){
+        val senderId = auth.getString(Constants.KEY_USER_ID)
+        val receiverId = receiverUser.value?.id.toString()
+        checkForConversationRemotely(senderId, receiverId)
+        checkForConversationRemotely(receiverId, senderId)
+        hasCheckedForConversation = true
+    }
+
+    /**
+     * Checks for a conversation between two users using the chatRepository
+     * If a conversation already exists, sets the conversationId to the existing conversationId
+     * @param senderId The id of the sender user
+     * @param receiverId The id of the reciever user
+     */
+    private fun checkForConversationRemotely(senderId: String, receiverId: String){
+        viewModelScope.launch(Dispatchers.IO) {
+            val onCompleteListener = chatRepository.checkForConversation(senderId, receiverId)
+            onCompleteListener.handleResult(
+                onSuccess = { query -> query.addOnCompleteListener(conversationOnCompleteListener) },
+                onError = { e -> Log.d(" [ChatViewModel] ", "${e.message}") }
+            )
+        }
+    }
+
+    /**
+     * Listener to handle the result if querying the FireStore for an existing conversation between two users
+     * If a conversation is found, the conversationId is set to the ID of the document
+     */
+    private val conversationOnCompleteListener = OnCompleteListener<QuerySnapshot>{ task ->
+        if(task.isSuccessful && task.result != null && task.result.documents.size > 0){
+            val documentSnapshot: DocumentSnapshot = task.result.documents[0]
+            conversationId = documentSnapshot.id
+        }
+    }
+
+    /**
+     * Adds a new conversation to the database using the chatRepository
+     * @param conversation HashMap containing the conversation data to be added
+     */
+    private fun addConversation(conversation: HashMap<String, Any>){
+        viewModelScope.launch(Dispatchers.IO) {
+            val idResult = chatRepository.addConversations(conversation)
+            idResult.handleResult(
+                onSuccess = { result -> conversationId = result },
+                onError = { e -> Log.d(" [ChatViewModel] ", e.message.toString()) }
+            )
+        }
     }
 
     fun setMessageText(value: String) {

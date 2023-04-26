@@ -1,6 +1,7 @@
-package com.daniel.ping.data.remote
+package com.daniel.ping.data.remote.firebaseService
 
 import com.daniel.ping.domain.models.Chat
+import com.daniel.ping.domain.models.RecentConversation
 import com.daniel.ping.domain.models.User
 import com.daniel.ping.domain.utilities.Constants
 import com.google.android.gms.tasks.Task
@@ -230,3 +231,114 @@ fun FirebaseFirestore.listenerAvailabilityOfReceiver(receiverUserId: String, lis
             }
         }
 }
+
+
+/**
+ * This function extends the FirebaseFireStore class to  search for conversations in a specific collection in the FireStore database
+ * @param senderId The ID of the conversation sender
+ * @param receiverId The ID of the conversation receiver
+ * @return A Task that returns a QuerySnapshot containing the document that meet the specified query criteria
+ */
+fun FirebaseFirestore.checkForConversationRemotely(senderId: String, receiverId: String): Task<QuerySnapshot> =
+    collection(Constants.KEY_COLLECTION_CONVERSATIONS)
+        .whereEqualTo(Constants.KEY_SENDER_ID, senderId)
+        .whereEqualTo(Constants.KEY_RECEIVER_ID, receiverId)
+        .get()
+
+
+/**
+ * Adds a nre conversation document to a specific collection in the FireStore database
+ * @param conversation A HashMap containing the conversation data to be added as fields in the new document
+ * @return A String representing the ID of the new document that was added to the conversation collection
+ */
+suspend fun FirebaseFirestore.addConversation(conversation: HashMap<String, Any>): String = suspendCoroutine { count ->
+    collection(Constants.KEY_COLLECTION_CONVERSATIONS)
+        .add(conversation)
+        .addOnSuccessListener { documentReference ->
+            count.resume(documentReference.id)
+        }
+}
+
+/**
+ * Updates the timestamp field of a conversation document in the FireStore database with the current date and time
+ * @param documentId A String representing the ID of the conversation document to be updated
+ */
+fun FirebaseFirestore.updateConversation(documentId: String){
+    collection(Constants.KEY_COLLECTION_CONVERSATIONS).document(documentId)
+        .update(Constants.KEY_TIMESTAMP, Date())
+}
+
+/**
+ * Listens to changes in the conversations collection of the FireStore database for recent conversations involving the specified sender user ID
+ * @param senderId A String representing the ID of the sender id whose recent conversations are being listened to
+ * @param listener A lambda function that takes an ArrayList of RecentConversation objects as a parameter, This function is called when changes to the conversations collection occur
+ */
+fun FirebaseFirestore.listenerRecentConversations(senderId: String, listener: (ArrayList<RecentConversation>) -> Unit){
+    collection(Constants.KEY_COLLECTION_CONVERSATIONS)
+        .whereEqualTo(Constants.KEY_SENDER_ID, senderId)
+        .addSnapshotListener(eventListenerRecentConversation(senderId, listener))
+    collection(Constants.KEY_COLLECTION_CONVERSATIONS)
+        .whereEqualTo(Constants.KEY_RECEIVER_ID, senderId)
+        .addSnapshotListener(eventListenerRecentConversation(senderId, listener))
+}
+
+val recentConversations: ArrayList<RecentConversation> = arrayListOf()
+
+/**
+ * Returns an event listener for listening to recent conversations
+ * @param senderId The id of the sender user
+ * @param listener a lambda function that will be called when recent conversation changes
+ * @return It takes an ArrayList parameter which represents the new list of recent conversations
+ */
+private fun eventListenerRecentConversation(senderId: String, listener: (ArrayList<RecentConversation>) -> Unit): EventListener<QuerySnapshot> =
+    EventListener<QuerySnapshot>{ value, error ->
+
+        if(error != null) return@EventListener
+
+        if(value != null){
+            for(documentChange: DocumentChange in value.documentChanges){
+                if(documentChange.type == DocumentChange.Type.ADDED){
+                    // Geta data from the document change and create a recent conversation object
+                    val senderIdDocument = documentChange.document.getString(Constants.KEY_SENDER_ID)
+                    val receiverId = documentChange.document.getString(Constants.KEY_RECEIVER_ID)
+                    if(senderIdDocument == senderId){
+                        val recentConversation = RecentConversation(
+                            senderId = senderIdDocument.toString(),
+                            receiverId = receiverId.toString(),
+                            profileImage = documentChange.document.getString(Constants.KEY_RECEIVER_IMAGE).toString(),
+                            name = documentChange.document.getString(Constants.KEY_RECEIVER_NAME).toString(),
+                            description = documentChange.document.getString(Constants.KEY_RECEIVER_DESCRIPTION).toString(),
+                            token = documentChange.document.getString(Constants.KEY_RECEIVER_FCM_TOKEN).toString(),
+                            dateObject = documentChange.document.getDate(Constants.KEY_TIMESTAMP)!!
+                        )
+                        recentConversations.add(recentConversation)
+                    } else {
+                        val recentConversation = RecentConversation(
+                            senderId = senderIdDocument.toString(),
+                            receiverId = receiverId.toString(),
+                            profileImage = documentChange.document.getString(Constants.KEY_SENDER_IMAGE).toString(),
+                            name = documentChange.document.getString(Constants.KEY_SENDER_NAME).toString(),
+                            description = documentChange.document.getString(Constants.KEY_SENDER_DESCRIPTION).toString(),
+                            token = documentChange.document.getString(Constants.KEY_SENDER_FCM_TOKEN).toString(),
+                            dateObject = documentChange.document.getDate(Constants.KEY_TIMESTAMP)!!
+                        )
+                        recentConversations.add(recentConversation)
+                    }
+                } else if (documentChange.type == DocumentChange.Type.MODIFIED){
+                    // update the date object of the corresponding recent conversation
+                    for (i in 0 until recentConversations.size){
+                        val senderIdDocument = documentChange.document.getString(Constants.KEY_SENDER_ID)
+                        val receiverId = documentChange.document.getString(Constants.KEY_RECEIVER_ID)
+                        if (recentConversations[i].senderId == senderIdDocument && recentConversations[i].receiverId == receiverId){
+                            recentConversations[i].dateObject = documentChange.document.getDate(Constants.KEY_TIMESTAMP)!!
+                            break
+                        }
+                    }
+                }
+            }
+
+            // Call the listener with the updated recent conversations list
+            listener(recentConversations)
+        }
+
+    }
