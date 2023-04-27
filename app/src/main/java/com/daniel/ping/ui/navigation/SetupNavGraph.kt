@@ -21,7 +21,7 @@ fun SetupNavGraph(
 ) {
     NavHost(navController = navController, startDestination = ScreenRoutes.Home.route, modifier = modifier){
         composable(route = ScreenRoutes.Home.route) {
-            HomeScreen(navController)
+            HomeScreen()
         }
         composable(route = ScreenRoutes.NetworkUsers.route) {
             NetworkUsersScreen(navController)
