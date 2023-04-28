@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -54,112 +55,119 @@ fun NetworkUsersScreen(
     // Remembers the state of the TextField
     val textState = remember { mutableStateOf(TextFieldValue("")) }
 
-    ConstraintLayout(modifier = Modifier.fillMaxSize()) {
+    Scaffold { padding ->
+        ConstraintLayout(
+            modifier = Modifier
+                .padding(padding)
+                .fillMaxSize())
+        {
 
-        val (backScreen, titleScreen, searchInput, lazyUsers) = createRefs()
+            val (backScreen, titleScreen, searchInput, lazyUsers) = createRefs()
 
-        // Retrieves the text value of the search TextField
-        val searchedText = textState.value.text
+            // Retrieves the text value of the search TextField
+            val searchedText = textState.value.text
 
-        IconButton(
-            onClick = {
-                navController.navigate(ScreenRoutes.Home.route) {
-                    popUpTo(ScreenRoutes.Home.route) {
-                        inclusive = true
+            IconButton(
+                onClick = {
+                    navController.navigate(ScreenRoutes.Home.route) {
+                        popUpTo(ScreenRoutes.Home.route) {
+                            inclusive = true
+                        }
                     }
-                }
-            },
-            modifier = Modifier
-                .size(23.dp)
-                .constrainAs(backScreen) {
-                    top.linkTo(parent.top, margin = 10.dp)
-                    start.linkTo(parent.start, margin = 10.dp)
                 },
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_back),
-                contentDescription = "Back Screen",
-                tint = White
-            )
-        }
-
-        Text(
-            text = stringResource(id = R.string.network),
-            color = White,
-            fontFamily = FontFamily(Font(R.font.roboto)),
-            fontSize = 16.sp,
-            modifier = Modifier
-                .constrainAs(titleScreen) {
-                    top.linkTo(parent.top, margin = 10.dp)
-                    start.linkTo(backScreen.end, margin = 5.dp)
-                }
-        )
-
-        MaterialSearchComponent(
-            state = textState,
-            modifier = Modifier
-                .heightIn(45.dp)
-                .constrainAs(searchInput) {
-                    width = Dimension.fillToConstraints
-                    top.linkTo(backScreen.bottom, margin = 13.dp)
-                    start.linkTo(parent.start, margin = 10.dp)
-                    end.linkTo(parent.end, margin = 10.dp)
-                }
-        )
-
-        val contentModifier = Modifier
-            .padding(top = 10.dp)
-            .constrainAs(lazyUsers) {
-                // Set constraints for the LazyColumn using ConstrainLayout
-                width = Dimension.fillToConstraints
-                height = Dimension.fillToConstraints
-                top.linkTo(searchInput.bottom)
-                bottom.linkTo(parent.bottom)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-            }
-
-        // Show a progress indicator if data is currently being loaded
-        AnimatedVisibility(visible = state.isLoading, modifier = contentModifier) {
-            Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentSize(Alignment.Center)
+                    .size(23.dp)
+                    .constrainAs(backScreen) {
+                        top.linkTo(parent.top, margin = 10.dp)
+                        start.linkTo(parent.start, margin = 10.dp)
+                    },
             ) {
-                CircularProgressIndicator(
-                    color = UltramarineBlue,
-                    modifier = Modifier.size(25.dp),
-                    strokeWidth = 3.dp
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_back),
+                    contentDescription = "Back Screen",
+                    tint = White
                 )
             }
-        }
 
-        // Show a list of users when data has been loaded
-        AnimatedVisibility(visible = !state.isLoading, modifier = contentModifier) {
-            LazyColumn {
+            Text(
+                text = stringResource(id = R.string.network),
+                color = White,
+                fontFamily = FontFamily(Font(R.font.roboto)),
+                fontSize = 16.sp,
+                modifier = Modifier
+                    .constrainAs(titleScreen) {
+                        top.linkTo(parent.top, margin = 10.dp)
+                        start.linkTo(backScreen.end, margin = 5.dp)
+                    }
+            )
 
-                /**
-                 * Filters the list of users based on the current value of the searched text field
-                 * Only users whose names contain the searched text (case-insensitive) will be displayed in the LazyColumn
-                 */
-                items(items = state.allUsers.filter {
-                    it.name.contains(
-                        searchedText,
-                        ignoreCase = true
+            MaterialSearchComponent(
+                state = textState,
+                modifier = Modifier
+                    .heightIn(45.dp)
+                    .constrainAs(searchInput) {
+                        width = Dimension.fillToConstraints
+                        top.linkTo(backScreen.bottom, margin = 13.dp)
+                        start.linkTo(parent.start, margin = 10.dp)
+                        end.linkTo(parent.end, margin = 10.dp)
+                    }
+            )
+
+            val contentModifier = Modifier
+                .padding(top = 10.dp)
+                .constrainAs(lazyUsers) {
+                    // Set constraints for the LazyColumn using ConstrainLayout
+                    width = Dimension.fillToConstraints
+                    height = Dimension.fillToConstraints
+                    top.linkTo(searchInput.bottom)
+                    bottom.linkTo(parent.bottom)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                }
+
+            // Show a progress indicator if data is currently being loaded
+            AnimatedVisibility(visible = state.isLoading, modifier = contentModifier) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentSize(Alignment.Center)
+                ) {
+                    CircularProgressIndicator(
+                        color = UltramarineBlue,
+                        modifier = Modifier.size(25.dp),
+                        strokeWidth = 3.dp
                     )
-                }) { user ->
-                    // Use the UserItem composable to display information about each user
-                    UserItem(
-                        profileImage = ImageConverter.decodeFromString(user.profileImage),
-                        username = user.name,
-                        description = user.description
-                    ) {
-                        // Navigates to the Chat screen with the specified user details as arguments
-                        navController.navigateExt(ScreenRoutes.Chat.route, "userDetails" to user)
+                }
+            }
+
+            // Show a list of users when data has been loaded
+            AnimatedVisibility(visible = !state.isLoading, modifier = contentModifier) {
+                LazyColumn {
+
+                    /**
+                     * Filters the list of users based on the current value of the searched text field
+                     * Only users whose names contain the searched text (case-insensitive) will be displayed in the LazyColumn
+                     */
+                    items(items = state.allUsers.filter {
+                        it.name.contains(
+                            searchedText,
+                            ignoreCase = true
+                        )
+                    }) { user ->
+                        // Use the UserItem composable to display information about each user
+                        UserItem(
+                            profileImage = ImageConverter.decodeFromString(user.profileImage),
+                            username = user.name,
+                            description = user.description
+                        ) {
+                            // Navigates to the Chat screen with the specified user details as arguments
+                            navController.navigateExt(ScreenRoutes.Chat.route, "userDetails" to user)
+                        }
                     }
                 }
             }
-        }
 
+        }
     }
+
 }

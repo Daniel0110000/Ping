@@ -100,7 +100,7 @@ fun MainScreen(
             .background(RangoonGreen)
     ) {
 
-        val (leftContainer, screensContainer) = createRefs()
+        val (leftContainer, screensContainer, noInternetAccessLayout) = createRefs()
 
         Card(
             modifier = Modifier

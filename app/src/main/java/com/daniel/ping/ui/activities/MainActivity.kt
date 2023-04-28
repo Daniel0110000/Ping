@@ -32,6 +32,7 @@ class MainActivity : BaseActivity() {
 
     }
 
+
     /**
      * Closes the notification with the given ID, if it exists
      */

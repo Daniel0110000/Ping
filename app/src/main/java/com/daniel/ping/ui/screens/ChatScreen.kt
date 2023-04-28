@@ -22,6 +22,7 @@ import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
@@ -131,206 +132,211 @@ fun ChatScreen(
         viewModel.listenerMessages()
     }
 
-    ConstraintLayout(
-        modifier = Modifier.fillMaxSize()
-    ) {
-
-        val (backScreen, profileImage, username, onlineIndicator, containerDescription,lazyMessages, inputMessage, sendMessage) = createRefs()
-
-        var message by remember { mutableStateOf("") }
-        val isOnline by viewModel.isOnline.observeAsState()
-        val isLoading by viewModel.isLoading.observeAsState()
-
-        IconButton(
-            onClick = { navController.popBackStack() },
+    Scaffold { paddingValues ->
+        ConstraintLayout(
             modifier = Modifier
-                .size(22.dp)
-                .constrainAs(backScreen) {
-                    start.linkTo(parent.start, margin = 10.dp)
-                    top.linkTo(profileImage.top)
-                    bottom.linkTo(profileImage.bottom)
-                }
+                .fillMaxSize()
+                .padding(paddingValues)
         ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_back),
-                contentDescription = "Back Screen",
-                tint = White
-            )
-        }
 
-        Image(
-            bitmap = ImageConverter.decodeFromString(userDetails.profileImage).asImageBitmap(),
-            contentDescription = userDetails.name,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .size(35.dp)
-                .clip(CircleShape)
-                .constrainAs(profileImage) {
-                    top.linkTo(parent.top, margin = 10.dp)
-                    start.linkTo(backScreen.end, margin = 5.dp)
-                }
-        )
+            val (backScreen, profileImage, username, onlineIndicator, containerDescription,lazyMessages, inputMessage, sendMessage) = createRefs()
 
-        Text(
-            text = userDetails.name,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Bold,
-            fontFamily = FontFamily(Font(R.font.roboto)),
-            maxLines = 1,
-            color = White,
-            modifier = Modifier
-                .constrainAs(username) {
-                    width = Dimension.fillToConstraints
-                    top.linkTo(profileImage.top)
-                    bottom.linkTo(profileImage.bottom)
-                    start.linkTo(profileImage.end, margin = 6.dp)
-                    end.linkTo(onlineIndicator.start, margin = 5.dp)
-                }
-        )
+            var message by remember { mutableStateOf("") }
+            val isOnline by viewModel.isOnline.observeAsState()
+            val isLoading by viewModel.isLoading.observeAsState()
 
-        // Design to display if the user is online
-        AnimatedVisibility(
-            visible = isOnline!!,
-            modifier = Modifier
-                .constrainAs(onlineIndicator) {
-                    top.linkTo(parent.top, margin = 15.dp)
-                    end.linkTo(parent.end, margin = 15.dp)
-                }
-        ) {
-            Box(modifier = Modifier
-                .clip(CircleShape)
-                .size(10.dp)
-                .background(LimeGreen)
-            )
-        }
-
-        // Modifier to position the lazy column that displays the chat messages
-        val contentModifier = Modifier
-            .constrainAs(lazyMessages) {
-                width = Dimension.fillToConstraints
-                height = Dimension.fillToConstraints
-                top.linkTo(profileImage.bottom, margin = 15.dp)
-                bottom.linkTo(inputMessage.top, margin = 10.dp)
-                start.linkTo(parent.start, margin = 5.dp)
-                end.linkTo(parent.end, margin = 5.dp)
-            }
-
-        // Displays a loading spinner while the chat messages are being retrieved
-        // Once the messages are loaded, displays the LazyColumn with the messages
-        AnimatedVisibility(visible = isLoading!!, modifier = contentModifier) {
-            Box(
+            IconButton(
+                onClick = { navController.popBackStack() },
                 modifier = Modifier
-                    .fillMaxSize()
-                    .wrapContentSize(Alignment.Center)
+                    .size(22.dp)
+                    .constrainAs(backScreen) {
+                        start.linkTo(parent.start, margin = 10.dp)
+                        top.linkTo(profileImage.top)
+                        bottom.linkTo(profileImage.bottom)
+                    }
             ) {
-                CircularProgressIndicator(
-                    color = UltramarineBlue,
-                    modifier = Modifier.size(25.dp),
-                    strokeWidth = 3.dp
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_back),
+                    contentDescription = "Back Screen",
+                    tint = White
                 )
             }
-        }
 
-        AnimatedVisibility(visible = !isLoading!!, modifier = contentModifier) {
-            LazyColumn(state = lazyListState) {
-                items(chats) { message ->
-                    if (message.senderId == viewModel.userId) {
-                        SentMessageItem(
-                            message = message.message,
-                            date = message.dateTime
-                        )
-                    } else {
-                        ReceivedMessageItem(
-                            profileImage = ImageConverter.decodeFromString(userDetails.profileImage),
-                            message = message.message,
-                            date = message.dateTime
-                        )
+            Image(
+                bitmap = ImageConverter.decodeFromString(userDetails.profileImage).asImageBitmap(),
+                contentDescription = userDetails.name,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(35.dp)
+                    .clip(CircleShape)
+                    .constrainAs(profileImage) {
+                        top.linkTo(parent.top, margin = 10.dp)
+                        start.linkTo(backScreen.end, margin = 5.dp)
+                    }
+            )
+
+            Text(
+                text = userDetails.name,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = FontFamily(Font(R.font.roboto)),
+                maxLines = 1,
+                color = White,
+                modifier = Modifier
+                    .constrainAs(username) {
+                        width = Dimension.fillToConstraints
+                        top.linkTo(profileImage.top)
+                        bottom.linkTo(profileImage.bottom)
+                        start.linkTo(profileImage.end, margin = 6.dp)
+                        end.linkTo(onlineIndicator.start, margin = 5.dp)
+                    }
+            )
+
+            // Design to display if the user is online
+            AnimatedVisibility(
+                visible = isOnline!!,
+                modifier = Modifier
+                    .constrainAs(onlineIndicator) {
+                        top.linkTo(parent.top, margin = 15.dp)
+                        end.linkTo(parent.end, margin = 15.dp)
+                    }
+            ) {
+                Box(modifier = Modifier
+                    .clip(CircleShape)
+                    .size(10.dp)
+                    .background(LimeGreen)
+                )
+            }
+
+            // Modifier to position the lazy column that displays the chat messages
+            val contentModifier = Modifier
+                .constrainAs(lazyMessages) {
+                    width = Dimension.fillToConstraints
+                    height = Dimension.fillToConstraints
+                    top.linkTo(profileImage.bottom, margin = 15.dp)
+                    bottom.linkTo(inputMessage.top, margin = 10.dp)
+                    start.linkTo(parent.start, margin = 5.dp)
+                    end.linkTo(parent.end, margin = 5.dp)
+                }
+
+            // Displays a loading spinner while the chat messages are being retrieved
+            // Once the messages are loaded, displays the LazyColumn with the messages
+            AnimatedVisibility(visible = isLoading!!, modifier = contentModifier) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .wrapContentSize(Alignment.Center)
+                ) {
+                    CircularProgressIndicator(
+                        color = UltramarineBlue,
+                        modifier = Modifier.size(25.dp),
+                        strokeWidth = 3.dp
+                    )
+                }
+            }
+
+            AnimatedVisibility(visible = !isLoading!!, modifier = contentModifier) {
+                LazyColumn(state = lazyListState) {
+                    items(chats) { message ->
+                        if (message.senderId == viewModel.userId) {
+                            SentMessageItem(
+                                message = message.message,
+                                date = message.dateTime
+                            )
+                        } else {
+                            ReceivedMessageItem(
+                                profileImage = ImageConverter.decodeFromString(userDetails.profileImage),
+                                message = message.message,
+                                date = message.dateTime
+                            )
+                        }
                     }
                 }
             }
-        }
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(40.dp)
-                .background(OnyxTransparent)
-                .constrainAs(containerDescription) {
-                    top.linkTo(profileImage.bottom, margin = 10.dp)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                },
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = userDetails.description,
-                textAlign = TextAlign.Center,
-                color = White,
-                fontSize = 13.sp,
-                maxLines = 2,
-                fontFamily = FontFamily(Font(R.font.roboto)),
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(5.dp)
-            )
-        }
-
-        TextField(
-            value = message,
-            onValueChange = { v -> message = v },
-            textStyle = TextStyle(color = White, fontSize = 11.sp),
-            modifier = Modifier
-                .heightIn(45.dp)
-                .constrainAs(inputMessage) {
-                    width = Dimension.fillToConstraints
-                    bottom.linkTo(parent.bottom, margin = 10.dp)
-                    start.linkTo(parent.start, margin = 10.dp)
-                    end.linkTo(sendMessage.start, margin = 10.dp)
-                },
-            placeholder = {
+                    .height(40.dp)
+                    .background(OnyxTransparent)
+                    .constrainAs(containerDescription) {
+                        top.linkTo(profileImage.bottom, margin = 10.dp)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    },
+                contentAlignment = Alignment.Center
+            ) {
                 Text(
-                    text = stringResource(id = R.string.message),
-                    color = SilverFoil,
-                    fontSize = 11.sp
+                    text = userDetails.description,
+                    textAlign = TextAlign.Center,
+                    color = White,
+                    fontSize = 13.sp,
+                    maxLines = 2,
+                    fontFamily = FontFamily(Font(R.font.roboto)),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(5.dp)
                 )
-            },
-            maxLines = 5,
-            visualTransformation = VisualTransformation.None,
-            keyboardOptions = KeyboardOptions.Default.copy(
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Done
-            ),
-            shape = RoundedCornerShape(15.dp),
-            colors = TextFieldDefaults.textFieldColors(
-                backgroundColor = Onyx,
-                cursorColor = UltramarineBlue,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent
-            )
-        )
+            }
 
-        Card(
-            modifier = Modifier
-                .size(45.dp)
-                .clickable {
-                    viewModel.setMessageText(message)
-                    viewModel.sendMessage()
-                    message = ""
-                }
-                .constrainAs(sendMessage) {
-                    bottom.linkTo(parent.bottom, margin = 10.dp)
-                    end.linkTo(parent.end, margin = 10.dp)
+            TextField(
+                value = message,
+                onValueChange = { v -> message = v },
+                textStyle = TextStyle(color = White, fontSize = 11.sp),
+                modifier = Modifier
+                    .heightIn(45.dp)
+                    .constrainAs(inputMessage) {
+                        width = Dimension.fillToConstraints
+                        bottom.linkTo(parent.bottom, margin = 10.dp)
+                        start.linkTo(parent.start, margin = 10.dp)
+                        end.linkTo(sendMessage.start, margin = 10.dp)
+                    },
+                placeholder = {
+                    Text(
+                        text = stringResource(id = R.string.message),
+                        color = SilverFoil,
+                        fontSize = 11.sp
+                    )
                 },
-            shape = RoundedCornerShape(10.dp),
-            backgroundColor = Onyx,
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_send),
-                contentDescription = "Send message",
-                tint = UltramarineBlue,
-                modifier = Modifier.scale(0.6f)
+                maxLines = 5,
+                visualTransformation = VisualTransformation.None,
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Done
+                ),
+                shape = RoundedCornerShape(15.dp),
+                colors = TextFieldDefaults.textFieldColors(
+                    backgroundColor = Onyx,
+                    cursorColor = UltramarineBlue,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent
+                )
             )
-        }
 
+            Card(
+                modifier = Modifier
+                    .size(45.dp)
+                    .clickable {
+                        viewModel.setMessageText(message)
+                        viewModel.sendMessage()
+                        message = ""
+                    }
+                    .constrainAs(sendMessage) {
+                        bottom.linkTo(parent.bottom, margin = 10.dp)
+                        end.linkTo(parent.end, margin = 10.dp)
+                    },
+                shape = RoundedCornerShape(10.dp),
+                backgroundColor = Onyx,
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_send),
+                    contentDescription = "Send message",
+                    tint = UltramarineBlue,
+                    modifier = Modifier.scale(0.6f)
+                )
+            }
+
+        }
     }
+
 }

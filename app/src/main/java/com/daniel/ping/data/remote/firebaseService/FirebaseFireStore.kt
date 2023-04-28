@@ -314,8 +314,8 @@ private fun eventListenerRecentConversation(senderId: String, listener: (ArrayLi
                         recentConversations.add(recentConversation)
                     } else {
                         val recentConversation = RecentConversation(
-                            senderId = senderIdDocument.toString(),
-                            receiverId = receiverId.toString(),
+                            senderId = receiverId.toString(),
+                            receiverId = senderIdDocument.toString(),
                             profileImage = documentChange.document.getString(Constants.KEY_SENDER_IMAGE).toString(),
                             name = documentChange.document.getString(Constants.KEY_SENDER_NAME).toString(),
                             description = documentChange.document.getString(Constants.KEY_SENDER_DESCRIPTION).toString(),

@@ -2,6 +2,7 @@
 <resources>
 
     <style name="Theme.Ping" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/rangoon_green</item>
         <item name="android:statusBarColor">@color/rangoon_green</item>
     </style>
 </resources>

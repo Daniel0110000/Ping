@@ -83,7 +83,7 @@ class NetworkUsersViewModel @Inject constructor(
         }
     }
 
-    fun setMessage(value: String){
+    private fun setMessage(value: String){
         viewModelScope.launch {
             _state.update { it.copy(
                 message = value
