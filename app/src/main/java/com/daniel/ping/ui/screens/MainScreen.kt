@@ -56,6 +56,7 @@ import com.daniel.ping.R
 import com.daniel.ping.domain.models.RecentConversation
 import com.daniel.ping.domain.models.User
 import com.daniel.ping.domain.utilities.ImageConverter
+import com.daniel.ping.ui.components.NetworkStateReceiverComponent
 import com.daniel.ping.ui.components.lazyComponents.RecentMessageItem
 import com.daniel.ping.ui.navigation.ScreenRoutes
 import com.daniel.ping.ui.navigation.SetupNavGraph
@@ -110,7 +111,7 @@ fun MainScreen(
             .background(RangoonGreen)
     ) {
 
-        val (openLeftContainer, leftContainer, screensContainer) = createRefs()
+        val (openLeftContainer, leftContainer, screensContainer, noInternetAccessLayout) = createRefs()
 
         var showLeftContainer by remember { mutableStateOf(true) }
 
@@ -149,7 +150,7 @@ fun MainScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.ArrowBack,
-                            contentDescription = "",
+                            contentDescription = "Close left container",
                             tint = White,
                             modifier = Modifier.scale(0.7f)
                         )
@@ -297,12 +298,22 @@ fun MainScreen(
             ) {
                 Icon(
                     imageVector = Icons.Rounded.ArrowForward,
-                    contentDescription = "",
+                    contentDescription = "Open left container",
                     tint = White,
                     modifier = Modifier.scale(0.7f)
                 )
             }
         }
+
+        NetworkStateReceiverComponent(
+            modifier = Modifier
+                .constrainAs(noInternetAccessLayout){
+                    width = Dimension.fillToConstraints
+                    bottom.linkTo(parent.bottom, margin = 10.dp)
+                    start.linkTo(parent.start, margin = 10.dp)
+                    end.linkTo(parent.end, margin = 10.dp)
+                }
+        )
 
     }
 }
