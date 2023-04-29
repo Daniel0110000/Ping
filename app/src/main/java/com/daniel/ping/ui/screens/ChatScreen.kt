@@ -5,6 +5,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -139,7 +141,7 @@ fun ChatScreen(
                 .padding(paddingValues)
         ) {
 
-            val (backScreen, profileImage, username, onlineIndicator, containerDescription,lazyMessages, inputMessage, sendMessage) = createRefs()
+            val (backScreen, profileImage, username, onlineIndicator, containerDescription,lazyMessages, inputMessage, sendMessage, userDescriptionContainer) = createRefs()
 
             var message by remember { mutableStateOf("") }
             val isOnline by viewModel.isOnline.observeAsState()
@@ -235,7 +237,7 @@ fun ChatScreen(
                 }
             }
 
-            AnimatedVisibility(visible = !isLoading!!, modifier = contentModifier) {
+            AnimatedVisibility(visible = !isLoading!! && chats.isNotEmpty(), modifier = contentModifier) {
                 LazyColumn(state = lazyListState) {
                     items(chats) { message ->
                         if (message.senderId == viewModel.userId) {
@@ -277,6 +279,50 @@ fun ChatScreen(
                         .fillMaxWidth()
                         .padding(5.dp)
                 )
+            }
+
+            AnimatedVisibility(
+                visible = chats.isEmpty(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .constrainAs(userDescriptionContainer) {
+                        top.linkTo(parent.top)
+                        bottom.linkTo(parent.bottom)
+                        start.linkTo(parent.start, margin = 10.dp)
+                        end.linkTo(parent.end, margin = 10.dp)
+                    },
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Image(
+                        bitmap = ImageConverter.decodeFromString(userDetails.profileImage).asImageBitmap(),
+                        contentDescription = userDetails.name,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .size(95.dp)
+                            .clip(CircleShape)
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Text(
+                        text = userDetails.name,
+                        color = White,
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = FontFamily(Font(R.font.roboto)),
+                        textAlign = TextAlign.Center,
+                        maxLines = 1
+                    )
+
+                    Text(
+                        text = userDetails.description,
+                        color = SilverFoil,
+                        fontSize = 11.sp,
+                        fontFamily = FontFamily(Font(R.font.roboto)),
+                        textAlign = TextAlign.Center,
+                        maxLines = 3
+                    )
+                }
             }
 
             TextField(
