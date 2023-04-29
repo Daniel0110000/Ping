@@ -1,7 +1,11 @@
 package com.daniel.ping.ui.screens
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,15 +22,21 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.ArrowForward
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -100,9 +110,14 @@ fun MainScreen(
             .background(RangoonGreen)
     ) {
 
-        val (leftContainer, screensContainer, noInternetAccessLayout) = createRefs()
+        val (openLeftContainer, leftContainer, screensContainer) = createRefs()
 
-        Card(
+        var showLeftContainer by remember { mutableStateOf(true) }
+
+        AnimatedVisibility(
+            visible = showLeftContainer,
+            enter = slideInHorizontally(initialOffsetX = { -it }),
+            exit = slideOutHorizontally(targetOffsetX = { -it }),
             modifier = Modifier
                 .width(120.dp)
                 .fillMaxHeight()
@@ -110,120 +125,143 @@ fun MainScreen(
                     top.linkTo(parent.top)
                     start.linkTo(parent.start)
                     bottom.linkTo(parent.bottom)
-                },
-            backgroundColor = Onyx,
-            shape = RoundedCornerShape(topEnd = 20.dp, bottomEnd = 20.dp)
+                }
         ) {
-            ConstraintLayout(modifier = Modifier.fillMaxSize()) {
+            Card(
+                backgroundColor = Onyx,
+                shape = RoundedCornerShape(topEnd = 20.dp, bottomEnd = 20.dp)
+            ) {
+                ConstraintLayout(modifier = Modifier.fillMaxSize()) {
 
-                val (profileImage, myName, fabNewConversation, recentMessagesTitle, recentMessagesDivider, recentMessages) = createRefs()
+                    val (closeLeftContainer, profileImage, myName, fabNewConversation, recentMessagesTitle, recentMessagesDivider, recentMessages) = createRefs()
 
-                state.value.profileImage?.let {
-                    Image(
-                        bitmap = it.asImageBitmap(),
-                        contentDescription = state.value.name,
+                    Card(
                         modifier = Modifier
-                            .size(45.dp)
-                            .clip(CircleShape)
-                            .constrainAs(profileImage) {
-                                top.linkTo(parent.top, margin = 15.dp)
+                            .size(23.dp)
+                            .clickable { showLeftContainer = false }
+                            .constrainAs(closeLeftContainer) {
+                                top.linkTo(parent.top, margin = 10.dp)
+                                end.linkTo(parent.end, margin = 10.dp)
+                            },
+                        backgroundColor = RangoonGreen,
+                        elevation = 10.dp,
+                        shape = RoundedCornerShape(5.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Rounded.ArrowBack,
+                            contentDescription = "",
+                            tint = White,
+                            modifier = Modifier.scale(0.7f)
+                        )
+                    }
+
+                    state.value.profileImage?.let {
+                        Image(
+                            bitmap = it.asImageBitmap(),
+                            contentDescription = state.value.name,
+                            modifier = Modifier
+                                .size(45.dp)
+                                .clip(CircleShape)
+                                .constrainAs(profileImage) {
+                                    top.linkTo(parent.top, margin = 15.dp)
+                                    start.linkTo(parent.start)
+                                    end.linkTo(parent.end)
+                                },
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+
+                    Text(
+                        text = state.value.name,
+                        fontFamily = FontFamily(Font(R.font.roboto)),
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 1,
+                        textAlign = TextAlign.Center,
+                        color = White,
+                        modifier = Modifier
+                            .constrainAs(myName){
+                                width = Dimension.fillToConstraints
+                                top.linkTo(profileImage.bottom, margin = 5.dp)
+                                start.linkTo(parent.start, margin = 2.dp)
+                                end.linkTo(parent.end, margin = 2.dp)
+                            }
+
+                    )
+
+                    Text(
+                        text = stringResource(id = R.string.message),
+                        fontSize = 14.sp,
+                        color = White,
+                        fontFamily = FontFamily(Font(R.font.roboto)),
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier
+                            .constrainAs(recentMessagesTitle){
+                                top.linkTo(myName.bottom, margin = 20.dp)
+                                start.linkTo(parent.start, margin = 5.dp)
+                            }
+                    )
+
+                    Box(
+                        modifier = Modifier
+                            .height(2.dp)
+                            .background(RangoonGreen)
+                            .constrainAs(recentMessagesDivider) {
+                                width = Dimension.fillToConstraints
+                                start.linkTo(parent.start, margin = 5.dp)
+                                end.linkTo(parent.end, margin = 5.dp)
+                                top.linkTo(recentMessagesTitle.bottom, margin = 3.dp)
+                            }
+                    )
+
+                    LazyColumn(
+                        modifier = Modifier
+                            .constrainAs(recentMessages){
+                                height = Dimension.fillToConstraints
+                                top.linkTo(recentMessagesDivider.bottom)
+                                bottom.linkTo(parent.bottom)
                                 start.linkTo(parent.start)
                                 end.linkTo(parent.end)
                             },
-                        contentScale = ContentScale.Crop
-                    )
-                }
+                    ){
+                        items(recentConversations){ conversation ->
+                            RecentMessageItem(image = ImageConverter.decodeFromString(conversation.profileImage)){
+                                val userDetails = User(
+                                    id = conversation.receiverId,
+                                    profileImage = conversation.profileImage,
+                                    name = conversation.name,
+                                    description = conversation.description,
+                                    token = conversation.token
+                                )
 
-                Text(
-                    text = state.value.name,
-                    fontFamily = FontFamily(Font(R.font.roboto)),
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Bold,
-                    maxLines = 1,
-                    textAlign = TextAlign.Center,
-                    color = White,
-                    modifier = Modifier
-                        .constrainAs(myName){
-                            width = Dimension.fillToConstraints
-                            top.linkTo(profileImage.bottom, margin = 5.dp)
-                            start.linkTo(parent.start, margin = 2.dp)
-                            end.linkTo(parent.end, margin = 2.dp)
-                        }
+                                navController.navigateExt(ScreenRoutes.Chat.route, "userDetails" to userDetails)
 
-                )
-
-                Text(
-                    text = stringResource(id = R.string.message),
-                    fontSize = 14.sp,
-                    color = White,
-                    fontFamily = FontFamily(Font(R.font.roboto)),
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .constrainAs(recentMessagesTitle){
-                            top.linkTo(myName.bottom, margin = 20.dp)
-                            start.linkTo(parent.start, margin = 5.dp)
-                        }
-                )
-
-                Box(
-                    modifier = Modifier
-                        .height(2.dp)
-                        .background(RangoonGreen)
-                        .constrainAs(recentMessagesDivider) {
-                            width = Dimension.fillToConstraints
-                            start.linkTo(parent.start, margin = 5.dp)
-                            end.linkTo(parent.end, margin = 5.dp)
-                            top.linkTo(recentMessagesTitle.bottom, margin = 3.dp)
-                        }
-                )
-
-                LazyColumn(
-                    modifier = Modifier
-                        .constrainAs(recentMessages){
-                            height = Dimension.fillToConstraints
-                            top.linkTo(recentMessagesDivider.bottom)
-                            bottom.linkTo(parent.bottom)
-                            start.linkTo(parent.start)
-                            end.linkTo(parent.end)
-                        },
-                ){
-                    items(recentConversations){ conversation ->
-                        RecentMessageItem(image = ImageConverter.decodeFromString(conversation.profileImage)){
-                            val userDetails = User(
-                                id = conversation.receiverId,
-                                profileImage = conversation.profileImage,
-                                name = conversation.name,
-                                description = conversation.description,
-                                token = conversation.token
-                            )
-
-                            navController.navigateExt(ScreenRoutes.Chat.route, "userDetails" to userDetails)
-
+                            }
                         }
                     }
-                }
 
-                FloatingActionButton(
-                    onClick = {
-                         navController.navigate(route = ScreenRoutes.NetworkUsers.route)
-                    },
-                    backgroundColor = UltramarineBlue,
-                    shape = RoundedCornerShape(10.dp),
-                    modifier = Modifier
-                        .size(40.dp)
-                        .constrainAs(fabNewConversation) {
-                            start.linkTo(parent.start)
-                            end.linkTo(parent.end)
-                            bottom.linkTo(parent.bottom, margin = 20.dp)
-                        }
-                ) {
-                    Icon(
-                        imageVector = Icons.Rounded.Add,
-                        contentDescription = "New conversation",
-                        tint = White
-                    )
-                }
+                    FloatingActionButton(
+                        onClick = {
+                            navController.navigate(route = ScreenRoutes.NetworkUsers.route)
+                        },
+                        backgroundColor = UltramarineBlue,
+                        shape = RoundedCornerShape(10.dp),
+                        modifier = Modifier
+                            .size(40.dp)
+                            .constrainAs(fabNewConversation) {
+                                start.linkTo(parent.start)
+                                end.linkTo(parent.end)
+                                bottom.linkTo(parent.bottom, margin = 20.dp)
+                            }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Rounded.Add,
+                            contentDescription = "New conversation",
+                            tint = White
+                        )
+                    }
 
+                }
             }
         }
 
@@ -239,6 +277,32 @@ fun MainScreen(
                     end.linkTo(parent.end)
                 }
         )
+
+        AnimatedVisibility(
+            visible = !showLeftContainer,
+            modifier = Modifier
+                .constrainAs(openLeftContainer){
+                    top.linkTo(parent.top, margin = 10.dp)
+                    bottom.linkTo(parent.bottom, margin = 10.dp)
+                    start.linkTo(parent.start, margin = 10.dp)
+                }
+        ) {
+            Card(
+                modifier = Modifier
+                    .clickable { showLeftContainer = true }
+                    .size(28.dp),
+                backgroundColor = Onyx,
+                shape = RoundedCornerShape(5.dp),
+                elevation = 10.dp
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.ArrowForward,
+                    contentDescription = "",
+                    tint = White,
+                    modifier = Modifier.scale(0.7f)
+                )
+            }
+        }
 
     }
 }
