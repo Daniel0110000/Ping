@@ -7,8 +7,10 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -34,12 +36,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -63,6 +67,7 @@ import com.daniel.ping.ui.navigation.SetupNavGraph
 import com.daniel.ping.ui.navigation.navigateExt
 import com.daniel.ping.ui.theme.Onyx
 import com.daniel.ping.ui.theme.RangoonGreen
+import com.daniel.ping.ui.theme.SilverFoil
 import com.daniel.ping.ui.theme.UltramarineBlue
 import com.daniel.ping.ui.theme.White
 import com.daniel.ping.ui.viewModels.MainViewModel
@@ -215,7 +220,8 @@ fun MainScreen(
                             }
                     )
 
-                    LazyColumn(
+                    AnimatedVisibility(
+                        visible = recentConversations.isNotEmpty(),
                         modifier = Modifier
                             .constrainAs(recentMessages){
                                 height = Dimension.fillToConstraints
@@ -223,21 +229,55 @@ fun MainScreen(
                                 bottom.linkTo(parent.bottom)
                                 start.linkTo(parent.start)
                                 end.linkTo(parent.end)
-                            },
-                    ){
-                        items(recentConversations){ conversation ->
-                            RecentMessageItem(image = ImageConverter.decodeFromString(conversation.profileImage)){
-                                val userDetails = User(
-                                    id = conversation.receiverId,
-                                    profileImage = conversation.profileImage,
-                                    name = conversation.name,
-                                    description = conversation.description,
-                                    token = conversation.token
-                                )
-
-                                navController.navigateExt(ScreenRoutes.Chat.route, "userDetails" to userDetails)
-
                             }
+                    ) {
+                        LazyColumn(modifier = Modifier.fillMaxHeight()){
+                            items(recentConversations){ conversation ->
+                                RecentMessageItem(image = ImageConverter.decodeFromString(conversation.profileImage)){
+                                    val userDetails = User(
+                                        id = conversation.receiverId,
+                                        profileImage = conversation.profileImage,
+                                        name = conversation.name,
+                                        description = conversation.description,
+                                        token = conversation.token
+                                    )
+
+                                    navController.navigateExt(ScreenRoutes.Chat.route, "userDetails" to userDetails)
+
+                                }
+                            }
+                        }
+                    }
+
+                    AnimatedVisibility(
+                        visible = recentConversations.isEmpty(),
+                        modifier = Modifier
+                            .constrainAs(recentMessages) {
+                                width = Dimension.fillToConstraints
+                                top.linkTo(recentMessagesDivider.bottom)
+                                bottom.linkTo(fabNewConversation.top)
+                                start.linkTo(parent.start)
+                                end.linkTo(parent.end)
+                            }
+                    ) {
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_not_recent_conversations),
+                                contentDescription = stringResource(id = R.string.youHaveNoRecentMessages),
+                                modifier = Modifier.size(60.dp)
+                            )
+
+                            Text(
+                                text = stringResource(id = R.string.youHaveNoRecentMessages),
+                                color = SilverFoil,
+                                fontSize = 11.sp,
+                                fontFamily = FontFamily(Font(R.font.roboto)),
+                                textAlign = TextAlign.Center
+                            )
+
                         }
                     }
 

@@ -40,6 +40,7 @@
     <!-- Main Screen -->
     <string name="messages">Mensajes</string>
     <string name="app_description">Envía y recibe mensajes de tus amigos y familiares de manera fácil y rápida.</string>
+    <string name="youHaveNoRecentMessages">No tienes mensajes recientes</string>
     <string name="youDontHaveInternetAccess">No tienes acceso a internet</string>
 
 </resources>
