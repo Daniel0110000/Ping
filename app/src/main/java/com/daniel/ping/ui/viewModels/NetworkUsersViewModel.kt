@@ -49,7 +49,7 @@ class NetworkUsersViewModel @Inject constructor(
      * Private function that retrieves all users from the data repository and updates the state of the ViewModel.
      */
     private fun getAllUsers(){
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.Default) {
 
             setIsLoading(true)
 
@@ -68,6 +68,7 @@ class NetworkUsersViewModel @Inject constructor(
     }
 
     private fun setAllUsers(users: ArrayList<User>){
+        state.value.allUsers.clear()
         viewModelScope.launch {
             _state.update { it.copy(
                 allUsers = users

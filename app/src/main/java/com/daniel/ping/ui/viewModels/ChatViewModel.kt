@@ -162,14 +162,14 @@ class ChatViewModel @Inject constructor(
      * Checks for a conversation between two users using the chatRepository
      * If a conversation already exists, sets the conversationId to the existing conversationId
      * @param senderId The id of the sender user
-     * @param receiverId The id of the reciever user
+     * @param receiverId The id of the receiver user
      */
     private fun checkForConversationRemotely(senderId: String, receiverId: String){
         viewModelScope.launch(Dispatchers.IO) {
             val onCompleteListener = chatRepository.checkForConversation(senderId, receiverId)
             onCompleteListener.handleResult(
                 onSuccess = { query -> query.addOnCompleteListener(conversationOnCompleteListener) },
-                onError = { e -> Log.d(" [ChatViewModel] ", "${e.message}") }
+                onError = { e -> Log.d(" [ ChatViewModel ] ", "${e.message}") }
             )
         }
     }
@@ -194,7 +194,7 @@ class ChatViewModel @Inject constructor(
             val idResult = chatRepository.addConversations(conversation)
             idResult.handleResult(
                 onSuccess = { result -> conversationId = result },
-                onError = { e -> Log.d(" [ChatViewModel] ", e.message.toString()) }
+                onError = { e -> Log.d(" [ ChatViewModel ] ", e.message.toString()) }
             )
         }
     }
