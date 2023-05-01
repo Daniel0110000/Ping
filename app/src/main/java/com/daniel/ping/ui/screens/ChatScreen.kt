@@ -108,7 +108,7 @@ fun ChatScreen(
         val observer = Observer<List<Chat>> { messages ->
             if (messages.isNotEmpty()) {
                 chats.addAll(messages)
-                chats.sortWith { obj1, obj2 -> obj1.dateObject.compareTo(obj2.dateObject) }
+                // chats.sortWith { obj1, obj2 -> obj1.dateObject.compareTo(obj2.dateObject) }
 
                 // Scroll to the last message
                 scope.launch {
@@ -239,6 +239,11 @@ fun ChatScreen(
 
             AnimatedVisibility(visible = !isLoading!! && chats.isNotEmpty(), modifier = contentModifier) {
                 LazyColumn(state = lazyListState) {
+
+                    // chats.sortWith { obj1, obj2 -> obj1.dateObject.compareTo(obj2.dateObject) }
+                    chats.sortWith { chat1, chat2 -> chat1.dateObject.compareTo(chat2.dateObject) }
+
+                    // chats.sortBy { it.dateObject }
                     items(chats) { message ->
                         if (message.senderId == viewModel.userId) {
                             SentMessageItem(

@@ -15,6 +15,7 @@ import com.daniel.ping.domain.utilities.Constants
 import com.daniel.ping.domain.utilities.handleResult
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.QuerySnapshot
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -75,7 +76,8 @@ class ChatViewModel @Inject constructor(
                 message[Constants.KEY_SENDER_ID] = auth.getString(Constants.KEY_USER_ID)
                 message[Constants.KEY_RECEIVER_ID] = receiverUser.value?.id.toString()
                 message[Constants.KEY_MESSAGE] = messageText.value.toString()
-                message[Constants.KEY_TIMESTAMP] = Date()
+                message[Constants.KEY_TIMESTAMP] = FieldValue.serverTimestamp()
+                message[Constants.KEY_DATE_TIME] = Date()
                 chatRepository.sendMessage(message)
                 // If the user is not online, a notification is sent
                 if(!isOnline.value!!)

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Ping</string>
+
+    <!-- Sign In & Sign Up -->
+    <string name="sign_in">Sign In</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="invalidEmailErrorMessage">Invalid email address. Please enter a valid email address (e.g. example@gmail.com).</string>
+    <string name="passwordTooShortErrorMessage">Password too short. Please enter a password with at least 8 characters.</string>
+    <string name="emptyFieldsErrorMessage">Incomplete fields. Please review and complete the required fields.</string>
+    <string name="successful">Successful</string>
+    <string name="errorMessage">An unexpected error has occurred. Please check your internet connection and try again.</string>
+
+    <!-- Sign In -->
+    <string name="sign_in_description">We are happy to have you back</string>
+    <string name="youDoNotHaveAnAccount">Don`t have an account?</string>
+
+    <!-- Sign Up -->
+    <string name="sign_up_description">We are excited to have you as part of our community</string>
+    <string name="doYouAlreadyHaveAnAccount">Do you already have an account?</string>
+
+    <!-- Profile Setup -->
+    <string name="name">Name</string>
+    <string name="description">Description</string>
+    <string name="finish">Finish</string>
+
+    <!-- Red Screen -->
+    <string name="search">Search</string>
+    <string name="network">Network</string>
+
+    <!-- Chat Screen -->
+    <string name="message">Message</string>
+
+    <!-- Main Screen -->
+    <string name="messages">Messages</string>
+    <string name="app_description">Send and receive messages from your friends and family easily and quickly.</string>
+    <string name="youHaveNoRecentMessages">You have no recent messages</string>
+    <string name="youDontHaveInternetAccess">You don`t have access to the internet</string>
+
+</resources>

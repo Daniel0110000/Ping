@@ -196,7 +196,7 @@ fun MainScreen(
                     )
 
                     Text(
-                        text = stringResource(id = R.string.message),
+                        text = stringResource(id = R.string.messages),
                         fontSize = 14.sp,
                         color = White,
                         fontFamily = FontFamily(Font(R.font.roboto)),

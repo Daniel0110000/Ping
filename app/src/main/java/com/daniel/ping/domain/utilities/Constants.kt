@@ -14,6 +14,7 @@ object Constants {
     const val KEY_FCM_TOKEN = "fcmToken"
     const val KEY_COLLECTION_CHAT = "chats"
     const val KEY_TIMESTAMP = "timestamp"
+    const val KEY_DATE_TIME = "dateTime"
     const val KEY_SENDER_ID = "senderId"
     const val KEY_RECEIVER_ID = "receiverId"
     const val KEY_COLLECTION_CONVERSATIONS = "recent_conversations"

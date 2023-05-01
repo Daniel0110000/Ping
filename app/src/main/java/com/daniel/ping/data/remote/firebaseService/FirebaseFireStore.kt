@@ -7,6 +7,7 @@ import com.daniel.ping.domain.utilities.Constants
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QueryDocumentSnapshot
@@ -180,32 +181,24 @@ private fun eventListener(callback: (ArrayList<Chat>) -> Unit): EventListener<Qu
         // Check for errors
         if (error != null) return@EventListener
 
-        // Loop through the document changes in the snapshot
-        if (value != null) {
-            for (documentChange: DocumentChange in value.documentChanges) {
-                // Only add new messages (not modifier or removed messages)
-                if (documentChange.type == DocumentChange.Type.ADDED) {
-                    // Create a new Chat object from the FireStore document data
-                    val message = Chat(
-                        senderId = documentChange.document.getString(Constants.KEY_SENDER_ID)
-                            .toString(),
-                        receiverId = documentChange.document.getString(Constants.KEY_RECEIVER_ID)
-                            .toString(),
-                        message = documentChange.document.getString(Constants.KEY_MESSAGE)
-                            .toString(),
-                        dateTime = getReadableDateTime(documentChange.document.getDate(Constants.KEY_TIMESTAMP)!!),
-                        dateObject = documentChange.document.getDate(Constants.KEY_TIMESTAMP)!!
-                    )
-                    messages.add(message)
-                }
-            }
-
-            // Call the callback function with the ArrayList of Chat objects
-            callback(messages)
-
+        value?.documentChanges?.forEach { documentChange ->
+            if(documentChange.type == DocumentChange.Type.ADDED)
+                messages.add(documentChange.document.toChat())
         }
 
+        // Call the callback function with the ArrayList of Chat objects
+        callback(messages)
+
     }
+
+// Converts a Firebase FireStore DocumentSnapshot object to a custom Chat object
+private fun DocumentSnapshot.toChat(): Chat = Chat(
+    senderId = getString(Constants.KEY_SENDER_ID).toString(),
+    receiverId = getString(Constants.KEY_RECEIVER_ID).toString(),
+    message = getString(Constants.KEY_MESSAGE).toString(),
+    dateTime = getReadableDateTime(getDate(Constants.KEY_DATE_TIME)!!),
+    dateObject = getTimestamp(Constants.KEY_TIMESTAMP)?.toDate() ?: Date()
+)
 
 /**
  * Return a formatted date string for give Date object

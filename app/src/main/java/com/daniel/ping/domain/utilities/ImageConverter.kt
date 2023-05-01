@@ -25,11 +25,8 @@ class ImageConverter {
         // It creates a scaled-down version of the Bitmap for display purposes
         // The scaled Bitmap is then compressed and encoded as a Base64 String which is returned by the function
         fun encodedImage(bitmap: Bitmap): String{
-            val previewWith = 100
-            val previewHeight = bitmap.height * previewWith / bitmap.width
-            val previewBitmap = Bitmap.createScaledBitmap(bitmap, previewWith, previewHeight, false)
             val byteArrayOutputStream = ByteArrayOutputStream()
-            previewBitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream)
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream)
             val bytes = byteArrayOutputStream.toByteArray()
             return Base64.encodeToString(bytes, Base64.DEFAULT)
         }

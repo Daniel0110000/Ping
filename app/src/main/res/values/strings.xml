@@ -2,9 +2,9 @@
     <string name="app_name">Ping</string>
 
     <!-- Facebook -->
-    <string name="facebook_app_id">798623694527691</string>
-    <string name="fb_login_protocol_scheme">fb798623694527691</string>
-    <string name="facebook_client_token">56789</string>
+    <string name="facebook_app_id" translatable="false">798623694527691</string>
+    <string name="fb_login_protocol_scheme" translatable="false">fb798623694527691</string>
+    <string name="facebook_client_token" translatable="false">56789</string>
 
     <!-- Sign In & Sign Up -->
     <string name="sign_in">Iniciar Sesión</string>
