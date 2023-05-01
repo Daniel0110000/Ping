@@ -220,18 +220,18 @@ fun MainScreen(
                             }
                     )
 
-                    AnimatedVisibility(
-                        visible = recentConversations.isNotEmpty(),
-                        modifier = Modifier
-                            .constrainAs(recentMessages){
-                                height = Dimension.fillToConstraints
-                                top.linkTo(recentMessagesDivider.bottom)
-                                bottom.linkTo(parent.bottom)
-                                start.linkTo(parent.start)
-                                end.linkTo(parent.end)
-                            }
-                    ) {
-                        LazyColumn(modifier = Modifier.fillMaxHeight()){
+                    if(recentConversations.isNotEmpty()){
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .constrainAs(recentMessages){
+                                    height = Dimension.fillToConstraints
+                                    top.linkTo(recentMessagesDivider.bottom)
+                                    bottom.linkTo(parent.bottom)
+                                    start.linkTo(parent.start)
+                                    end.linkTo(parent.end)
+                                }
+                        ){
                             items(recentConversations){ conversation ->
                                 RecentMessageItem(image = ImageConverter.decodeFromString(conversation.profileImage)){
                                     val userDetails = User(
@@ -247,21 +247,17 @@ fun MainScreen(
                                 }
                             }
                         }
-                    }
-
-                    AnimatedVisibility(
-                        visible = recentConversations.isEmpty(),
-                        modifier = Modifier
-                            .constrainAs(recentMessages) {
-                                width = Dimension.fillToConstraints
-                                top.linkTo(recentMessagesDivider.bottom)
-                                bottom.linkTo(fabNewConversation.top)
-                                start.linkTo(parent.start)
-                                end.linkTo(parent.end)
-                            }
-                    ) {
+                    } else {
                         Column(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .constrainAs(recentMessages) {
+                                    width = Dimension.fillToConstraints
+                                    top.linkTo(recentMessagesDivider.bottom)
+                                    bottom.linkTo(fabNewConversation.top)
+                                    start.linkTo(parent.start)
+                                    end.linkTo(parent.end)
+                                },
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Image(

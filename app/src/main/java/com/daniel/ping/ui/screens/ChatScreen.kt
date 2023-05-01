@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -108,7 +107,6 @@ fun ChatScreen(
         val observer = Observer<List<Chat>> { messages ->
             if (messages.isNotEmpty()) {
                 chats.addAll(messages)
-                // chats.sortWith { obj1, obj2 -> obj1.dateObject.compareTo(obj2.dateObject) }
 
                 // Scroll to the last message
                 scope.launch {
@@ -128,7 +126,7 @@ fun ChatScreen(
     }
 
     // Set the receiver user details and listen to messages
-    LaunchedEffect(true) {
+    LaunchedEffect(Unit) {
         viewModel.setReceiverUser(userDetails)
         viewModel.availabilityUser()
         viewModel.listenerMessages()
@@ -141,7 +139,7 @@ fun ChatScreen(
                 .padding(paddingValues)
         ) {
 
-            val (backScreen, profileImage, username, onlineIndicator, containerDescription,lazyMessages, inputMessage, sendMessage, userDescriptionContainer) = createRefs()
+            val (backScreen, profileImage, username, onlineIndicator, containerDescription,lazyMessages, inputMessage, sendMessage) = createRefs()
 
             var message by remember { mutableStateOf("") }
             val isOnline by viewModel.isOnline.observeAsState()
@@ -210,9 +208,8 @@ fun ChatScreen(
                 )
             }
 
-            // Modifier to position the lazy column that displays the chat messages
-            val contentModifier = Modifier
-                .constrainAs(lazyMessages) {
+            Box(
+                modifier = Modifier.constrainAs(lazyMessages){
                     width = Dimension.fillToConstraints
                     height = Dimension.fillToConstraints
                     top.linkTo(profileImage.bottom, margin = 15.dp)
@@ -220,41 +217,69 @@ fun ChatScreen(
                     start.linkTo(parent.start, margin = 5.dp)
                     end.linkTo(parent.end, margin = 5.dp)
                 }
-
-            // Displays a loading spinner while the chat messages are being retrieved
-            // Once the messages are loaded, displays the LazyColumn with the messages
-            AnimatedVisibility(visible = isLoading!!, modifier = contentModifier) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .wrapContentSize(Alignment.Center)
-                ) {
+            ){
+                if (isLoading == true) {
                     CircularProgressIndicator(
                         color = UltramarineBlue,
-                        modifier = Modifier.size(25.dp),
-                        strokeWidth = 3.dp
+                        modifier = Modifier
+                            .size(25.dp)
+                            .align(Alignment.Center),
+                        strokeWidth = 3.dp,
                     )
-                }
-            }
+                } else {
+                    if (chats.isNotEmpty()){
+                        LazyColumn(state = lazyListState) {
 
-            AnimatedVisibility(visible = !isLoading!! && chats.isNotEmpty(), modifier = contentModifier) {
-                LazyColumn(state = lazyListState) {
+                            chats.sortWith { obj1, obj2 -> obj1.dateObject.compareTo(obj2.dateObject) }
 
-                    // chats.sortWith { obj1, obj2 -> obj1.dateObject.compareTo(obj2.dateObject) }
-                    chats.sortWith { chat1, chat2 -> chat1.dateObject.compareTo(chat2.dateObject) }
-
-                    // chats.sortBy { it.dateObject }
-                    items(chats) { message ->
-                        if (message.senderId == viewModel.userId) {
-                            SentMessageItem(
-                                message = message.message,
-                                date = message.dateTime
+                            items(chats) { message ->
+                                if (message.senderId == viewModel.userId) {
+                                    SentMessageItem(
+                                        message = message.message,
+                                        date = message.dateTime
+                                    )
+                                } else {
+                                    ReceivedMessageItem(
+                                        profileImage = ImageConverter.decodeFromString(userDetails.profileImage),
+                                        message = message.message,
+                                        date = message.dateTime
+                                    )
+                                }
+                            }
+                        }
+                    } else {
+                        Column(
+                            modifier = Modifier.align(Alignment.Center),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Image(
+                                bitmap = ImageConverter.decodeFromString(userDetails.profileImage).asImageBitmap(),
+                                contentDescription = userDetails.name,
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier
+                                    .size(95.dp)
+                                    .clip(CircleShape)
                             )
-                        } else {
-                            ReceivedMessageItem(
-                                profileImage = ImageConverter.decodeFromString(userDetails.profileImage),
-                                message = message.message,
-                                date = message.dateTime
+
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            Text(
+                                text = userDetails.name,
+                                color = White,
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.Bold,
+                                fontFamily = FontFamily(Font(R.font.roboto)),
+                                textAlign = TextAlign.Center,
+                                maxLines = 1
+                            )
+
+                            Text(
+                                text = userDetails.description,
+                                color = SilverFoil,
+                                fontSize = 11.sp,
+                                fontFamily = FontFamily(Font(R.font.roboto)),
+                                textAlign = TextAlign.Center,
+                                maxLines = 3
                             )
                         }
                     }
@@ -284,50 +309,6 @@ fun ChatScreen(
                         .fillMaxWidth()
                         .padding(5.dp)
                 )
-            }
-
-            AnimatedVisibility(
-                visible = chats.isEmpty(),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .constrainAs(userDescriptionContainer) {
-                        top.linkTo(parent.top)
-                        bottom.linkTo(parent.bottom)
-                        start.linkTo(parent.start, margin = 10.dp)
-                        end.linkTo(parent.end, margin = 10.dp)
-                    },
-            ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Image(
-                        bitmap = ImageConverter.decodeFromString(userDetails.profileImage).asImageBitmap(),
-                        contentDescription = userDetails.name,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .size(95.dp)
-                            .clip(CircleShape)
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    Text(
-                        text = userDetails.name,
-                        color = White,
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = FontFamily(Font(R.font.roboto)),
-                        textAlign = TextAlign.Center,
-                        maxLines = 1
-                    )
-
-                    Text(
-                        text = userDetails.description,
-                        color = SilverFoil,
-                        fontSize = 11.sp,
-                        fontFamily = FontFamily(Font(R.font.roboto)),
-                        textAlign = TextAlign.Center,
-                        maxLines = 3
-                    )
-                }
             }
 
             TextField(
@@ -389,5 +370,4 @@ fun ChatScreen(
 
         }
     }
-
 }
