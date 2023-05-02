@@ -28,11 +28,15 @@ Ping utiliza diferentes tecnologías y herramientas, incluyendo:
 
 ## Capturas de pantalla
 <p align="center">
-  <img src="https://github.com/Daniel0110000/Ping/blob/master/screenshots/screenshot1.png" width="300"/>  <img src="https://github.com/Daniel0110000/Ping/blob/master/screenshots/screenshot2.png" width="300"/>  <img src="https://github.com/Daniel0110000/Ping/blob/master/screenshots/screenshot3.png" width="300"/>
+  <img src="https://github.com/Daniel0110000/Ping/blob/master/screenshots/screenshot1.png" width="300"/>  <img src="https://github.com/Daniel0110000/Ping/blob/master/screenshots/screenshot2.png" width="300"/>
 </p>
 
 <p align="center">
-  <img src="https://github.com/Daniel0110000/Ping/blob/master/screenshots/screenshot4.png" width="300"/>  <img src="https://github.com/Daniel0110000/Ping/blob/master/screenshots/screenshot5.png" width="300"/>  <img src="https://github.com/Daniel0110000/Ping/blob/master/screenshots/screenshot6.png" width="300"/>
+  <img src="https://github.com/Daniel0110000/Ping/blob/master/screenshots/screenshot3.png" width="300"/>  <img src="https://github.com/Daniel0110000/Ping/blob/master/screenshots/screenshot4.png" width="300"/>
+</p>
+
+<p align="center">
+  <img src="https://github.com/Daniel0110000/Ping/blob/master/screenshots/screenshot5.png" width="300"/>  <img src="https://github.com/Daniel0110000/Ping/blob/master/screenshots/screenshot6.png" width="300"/>
 </p>
 
 <p align="center">
