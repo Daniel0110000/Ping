@@ -98,9 +98,9 @@ class ProfileSetupViewModel @Inject constructor(
     }
 
     // Validates the user's input fields
-    private fun areFieldsValid(): Boolean{
-        return state.value.name.isNotEmpty()
-                && state.value.description.isNotEmpty()
+    private fun areFieldsValid(): Boolean {
+        return state.value.name.isNotEmpty() && state.value.name.contains(Regex("[a-zA-Z]"))
+                && state.value.description.isNotEmpty() && state.value.description.contains(Regex("[a-zA-Z]"))
                 && state.value.profileImage != null
     }
 
