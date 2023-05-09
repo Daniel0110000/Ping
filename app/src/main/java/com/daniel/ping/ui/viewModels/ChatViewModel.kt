@@ -1,5 +1,6 @@
 package com.daniel.ping.ui.viewModels
 
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -48,8 +49,13 @@ class ChatViewModel @Inject constructor(
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
 
+    private val _isLoadingImage = MutableLiveData<Boolean>()
+    val isLoadingImage: LiveData<Boolean> = _isLoadingImage
+
     private val _isOnLine = MutableLiveData(false)
     val isOnline: LiveData<Boolean> = _isOnLine
+
+    private val messageImage = MutableLiveData<Uri?>()
 
     private val messageText = MutableLiveData<String>()
 
@@ -70,15 +76,12 @@ class ChatViewModel @Inject constructor(
      * Sends a message to the user the current user is chatting with
      */
     fun sendMessage() {
-        if (messageText.value?.isNotEmpty() == true) {
+        if (messageText.value?.isNotEmpty() == true || messageImage.value != null) {
             viewModelScope.launch(Dispatchers.IO) {
-                val message: HashMap<String, Any> = hashMapOf()
-                message[Constants.KEY_SENDER_ID] = auth.getString(Constants.KEY_USER_ID)
-                message[Constants.KEY_RECEIVER_ID] = receiverUser.value?.id.toString()
-                message[Constants.KEY_MESSAGE] = messageText.value.toString()
-                message[Constants.KEY_TIMESTAMP] = FieldValue.serverTimestamp()
-                message[Constants.KEY_DATE_TIME] = Date()
-                chatRepository.sendMessage(message)
+                setLoadingImage(true)
+                chatRepository.sendMessage(createMessage(), messageImage.value)
+                setLoadingImage(false)
+
                 // If the user is not online, a notification is sent
                 if(!isOnline.value!!)
                     sendNotification(auth.getString(Constants.KEY_NAME), messageText.value.toString())
@@ -102,9 +105,25 @@ class ChatViewModel @Inject constructor(
                     conversation[Constants.KEY_TIMESTAMP] = Date()
                     addConversation(conversation)
                 }
-
+                messageImage.postValue(null)
             }
         }
+    }
+
+    /**
+     * Create a HashMap object with the necessary fields for sending a message to the FireStore database
+     * @return A HashMap object with the following fields: "senderId", "receiverId", "message", "timestamp", and "dateTime"
+     */
+    private fun createMessage(): HashMap<String, Any> {
+        val senderId = auth.getString(Constants.KEY_USER_ID)
+        val receiverId = receiverUser.value?.id.toString()
+        return hashMapOf(
+            Constants.KEY_SENDER_ID to senderId,
+            Constants.KEY_RECEIVER_ID to receiverId,
+            Constants.KEY_MESSAGE to messageText.value.toString(),
+            Constants.KEY_TIMESTAMP to FieldValue.serverTimestamp(),
+            Constants.KEY_DATE_TIME to Date()
+        )
     }
 
     /**
@@ -197,6 +216,14 @@ class ChatViewModel @Inject constructor(
                 onError = { e -> Log.d(" [ ChatViewModel ] ", e.message.toString()) }
             )
         }
+    }
+
+    fun setMessageImage(value: Uri?) {
+        messageImage.value = value
+    }
+
+    private fun setLoadingImage(isLoading: Boolean){
+        if(messageImage.value != null) _isLoadingImage.postValue(isLoading)
     }
 
     fun setMessageText(value: String) {

@@ -125,7 +125,7 @@ fun MainScreen(
             enter = slideInHorizontally(initialOffsetX = { -it }),
             exit = slideOutHorizontally(targetOffsetX = { -it }),
             modifier = Modifier
-                .width(120.dp)
+                .width(110.dp)
                 .fillMaxHeight()
                 .constrainAs(leftContainer) {
                     top.linkTo(parent.top)

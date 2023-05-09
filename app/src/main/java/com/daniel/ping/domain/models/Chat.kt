@@ -8,7 +8,6 @@ data class Chat(
     val message: String,
     val dateTime: String,
     val dateObject: Date,
-    val conversationId: String = "",
-    val conversationName: String = "",
-    val conversationImage: String = ""
+    val messageType: String,
+    val imageUrl: String
 )

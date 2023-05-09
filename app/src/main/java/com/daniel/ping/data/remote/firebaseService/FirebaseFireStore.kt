@@ -90,7 +90,7 @@ suspend fun FirebaseFirestore.getAllUsers(currentUserId: String): ArrayList<User
     // Uses a kotlin coroutines to perform an asynchronous operations
     return suspendCoroutine { count ->
 
-        // Retrieve a snapshot of the users collection and handles the operation result in the addOnCompletedListener methis
+        // Retrieve a snapshot of the users collection and handles the operation result in the addOnCompletedListener method
         collection(Constants.KEY_COLLECTION_USERS)
             .get()
             .addOnCompleteListener { task ->
@@ -155,17 +155,12 @@ fun FirebaseFirestore.listenerMessage(
     receiverUserId: String,
     callbackL: (ArrayList<Chat>) -> Unit
 ) {
-    // Listen for messages sent by the current user to the receiver
-    collection(Constants.KEY_COLLECTION_CHAT)
-        .whereEqualTo(Constants.KEY_SENDER_ID, userId)
-        .whereEqualTo(Constants.KEY_RECEIVER_ID, receiverUserId)
-        .addSnapshotListener(eventListener(callbackL))
 
-    // Listen for messages sent by the receiver to the current user
-    collection(Constants.KEY_COLLECTION_CHAT)
-        .whereEqualTo(Constants.KEY_SENDER_ID, receiverUserId)
-        .whereEqualTo(Constants.KEY_RECEIVER_ID, userId)
-        .addSnapshotListener(eventListener(callbackL))
+   collection(Constants.KEY_COLLECTION_CHAT)
+       .whereIn(Constants.KEY_SENDER_ID, listOf(userId, receiverUserId))
+       .whereIn(Constants.KEY_RECEIVER_ID, listOf(userId, receiverUserId))
+       .addSnapshotListener(eventListener(callbackL))
+
 }
 
 /**
@@ -197,7 +192,9 @@ private fun DocumentSnapshot.toChat(): Chat = Chat(
     receiverId = getString(Constants.KEY_RECEIVER_ID).toString(),
     message = getString(Constants.KEY_MESSAGE).toString(),
     dateTime = getReadableDateTime(getDate(Constants.KEY_DATE_TIME)!!),
-    dateObject = getTimestamp(Constants.KEY_TIMESTAMP)?.toDate() ?: Date()
+    dateObject = getTimestamp(Constants.KEY_TIMESTAMP)?.toDate() ?: Date(),
+    messageType = getString(Constants.KEY_TYPE_MESSAGE).toString(),
+    imageUrl = getString(Constants.KEY_IMAGE_URL).toString()
 )
 
 /**

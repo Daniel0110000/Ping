@@ -1,5 +1,6 @@
 package com.daniel.ping.domain.repositories
 
+import android.net.Uri
 import com.daniel.ping.data.models.PushNotification
 import com.daniel.ping.domain.models.Chat
 import com.daniel.ping.domain.models.RecentConversation
@@ -9,7 +10,7 @@ import com.google.firebase.firestore.QuerySnapshot
 
 interface ChatRepository {
 
-    suspend fun sendMessage(message: HashMap<String, Any>)
+    suspend fun sendMessage(message: HashMap<String, Any>, messageImage: Uri? = null)
 
     fun listenerMessages(userId: String, receiverUserId: String, callback: (ArrayList<Chat>) -> Unit)
 

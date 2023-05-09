@@ -4,6 +4,7 @@ import com.daniel.ping.data.remote.networkService.ApiService
 import com.daniel.ping.domain.utilities.Constants
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -34,6 +35,10 @@ object DataModule {
     @Singleton
     @Provides
     fun providerFirebaseFireStore(): FirebaseFirestore = FirebaseFirestore.getInstance()
+
+    @Singleton
+    @Provides
+    fun providerFirebaseStore(): FirebaseStorage = FirebaseStorage.getInstance()
 
     /**
      * Provides an instance of the ApiService with the specified Retrofit settings

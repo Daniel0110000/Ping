@@ -1,5 +1,6 @@
 package com.daniel.ping.data.repositories
 
+import android.net.Uri
 import com.daniel.ping.data.models.PushNotification
 import com.daniel.ping.data.remote.firebaseService.addConversation
 import com.daniel.ping.data.remote.firebaseService.checkForConversationRemotely
@@ -7,29 +8,36 @@ import com.daniel.ping.data.remote.firebaseService.listenerAvailabilityOfReceive
 import com.daniel.ping.data.remote.firebaseService.listenerMessage
 import com.daniel.ping.data.remote.firebaseService.listenerRecentConversations
 import com.daniel.ping.data.remote.firebaseService.sedMessage
+import com.daniel.ping.data.remote.firebaseService.sendMessageWithImage
 import com.daniel.ping.data.remote.firebaseService.updateConversation
 import com.daniel.ping.data.remote.networkService.ApiService
 import com.daniel.ping.domain.models.Chat
 import com.daniel.ping.domain.models.RecentConversation
 import com.daniel.ping.domain.repositories.ChatRepository
 import com.daniel.ping.domain.utilities.CallHandler
+import com.daniel.ping.domain.utilities.Constants
 import com.daniel.ping.domain.utilities.Resource
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.storage.FirebaseStorage
 import javax.inject.Inject
 
 class ChatRepositoryImpl @Inject constructor(
     private val fireStore: FirebaseFirestore,
-    private val apiService: ApiService
+    private val apiService: ApiService,
+    private val store: FirebaseStorage
 ) : ChatRepository {
 
     /**
      * Sends a message to the FireStore database
-     * @param message a HashMap containing the message to be sent
+     * @param message A HashMap containing the message to be sent
+     * @param messageImage The Uri of the image to be sent with the message
      * @return Unit
      */
-    override suspend fun sendMessage(message: HashMap<String, Any>) {
+    override suspend fun sendMessage(message: HashMap<String, Any>, messageImage: Uri?) {
+        message[Constants.KEY_TYPE_MESSAGE] = if(messageImage != null) Constants.MESSAGE_TYPE_IMAGE else Constants.MESSAGE_TYPE_TEXT
+        message[Constants.KEY_IMAGE_URL] = messageImage?.let { store.sendMessageWithImage(it) } ?: ""
         fireStore.sedMessage(message)
     }
 

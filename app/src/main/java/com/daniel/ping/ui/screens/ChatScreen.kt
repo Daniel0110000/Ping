@@ -1,5 +1,8 @@
 package com.daniel.ping.ui.screens
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -27,6 +30,9 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -45,6 +51,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -67,8 +74,12 @@ import com.daniel.ping.R
 import com.daniel.ping.domain.models.Chat
 import com.daniel.ping.domain.models.User
 import com.daniel.ping.domain.utilities.ImageConverter
+import com.daniel.ping.ui.components.FilePreviewComponent
+import com.daniel.ping.ui.components.MoreOptionsComponent
 import com.daniel.ping.ui.components.lazyComponents.ReceivedMessageItem
+import com.daniel.ping.ui.components.lazyComponents.ReceivedMessageWithImageItem
 import com.daniel.ping.ui.components.lazyComponents.SentMessageItem
+import com.daniel.ping.ui.components.lazyComponents.SentMessageWithImageItem
 import com.daniel.ping.ui.theme.LimeGreen
 import com.daniel.ping.ui.theme.Onyx
 import com.daniel.ping.ui.theme.OnyxTransparent
@@ -90,6 +101,9 @@ fun ChatScreen(
     userDetails: User,
     viewModel: ChatViewModel = hiltViewModel()
 ) {
+
+    // Application context
+    val context = LocalContext.current
 
     // Maintain a list of chats
     val chats = remember { mutableStateListOf<Chat>() }
@@ -113,7 +127,7 @@ fun ChatScreen(
                     lazyListState.scrollToItem(chats.lastIndex)
                 }
 
-                if(!viewModel.hasCheckedForConversation) viewModel.checkForConversation()
+                if (!viewModel.hasCheckedForConversation) viewModel.checkForConversation()
 
             }
         }
@@ -132,6 +146,15 @@ fun ChatScreen(
         viewModel.listenerMessages()
     }
 
+    // A mutable state variable that holds the Uri of the selected image for previewing
+    var imagePreview by remember { mutableStateOf<Uri?>(null) }
+
+    // A launcher for the "GetContent" ActivityResult contract. Launches the gallery app to allow the user to select an image
+    // When the user selects an image, the URI of the image is saved in the "imagePreview" state variable
+    val galleryLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { result: Uri? ->
+            result?.let { imagePreview = result }
+    }
+
     Scaffold { paddingValues ->
         ConstraintLayout(
             modifier = Modifier
@@ -139,11 +162,15 @@ fun ChatScreen(
                 .padding(paddingValues)
         ) {
 
-            val (backScreen, profileImage, username, onlineIndicator, containerDescription,lazyMessages, inputMessage, sendMessage) = createRefs()
+            val (backScreen, profileImage, username, onlineIndicator, containerDescription,
+                lazyMessages, buttonAddFiles, inputMessage, sendMessage, moreOptionsContainer,
+                filePreviewContainer) = createRefs()
 
             var message by remember { mutableStateOf("") }
             val isOnline by viewModel.isOnline.observeAsState()
             val isLoading by viewModel.isLoading.observeAsState()
+            val isLoadingImage by viewModel.isLoadingImage.observeAsState()
+            var showMoreOptionsContainer by remember { mutableStateOf(false) }
 
             IconButton(
                 onClick = { navController.popBackStack() },
@@ -201,15 +228,16 @@ fun ChatScreen(
                         end.linkTo(parent.end, margin = 15.dp)
                     }
             ) {
-                Box(modifier = Modifier
-                    .clip(CircleShape)
-                    .size(10.dp)
-                    .background(LimeGreen)
+                Box(
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .size(10.dp)
+                        .background(LimeGreen)
                 )
             }
 
             Box(
-                modifier = Modifier.constrainAs(lazyMessages){
+                modifier = Modifier.constrainAs(lazyMessages) {
                     width = Dimension.fillToConstraints
                     height = Dimension.fillToConstraints
                     top.linkTo(profileImage.bottom, margin = 15.dp)
@@ -217,7 +245,7 @@ fun ChatScreen(
                     start.linkTo(parent.start, margin = 5.dp)
                     end.linkTo(parent.end, margin = 5.dp)
                 }
-            ){
+            ) {
                 if (isLoading == true) {
                     CircularProgressIndicator(
                         color = UltramarineBlue,
@@ -227,24 +255,43 @@ fun ChatScreen(
                         strokeWidth = 3.dp,
                     )
                 } else {
-                    if (chats.isNotEmpty()){
+                    if (chats.isNotEmpty()) {
+                        val receivedProfileImage = ImageConverter.decodeFromString(userDetails.profileImage)
                         LazyColumn(state = lazyListState) {
 
                             chats.sortWith { obj1, obj2 -> obj1.dateObject.compareTo(obj2.dateObject) }
 
                             items(chats) { message ->
                                 if (message.senderId == viewModel.userId) {
-                                    SentMessageItem(
-                                        message = message.message,
-                                        date = message.dateTime
-                                    )
+                                    if (message.messageType == "text") {
+                                        SentMessageItem(
+                                            message = message.message,
+                                            date = message.dateTime
+                                        )
+                                    } else {
+                                        SentMessageWithImageItem(
+                                            imageUrl = message.imageUrl,
+                                            message = message.message,
+                                            date = message.dateTime
+                                        )
+                                    }
                                 } else {
-                                    ReceivedMessageItem(
-                                        profileImage = ImageConverter.decodeFromString(userDetails.profileImage),
-                                        message = message.message,
-                                        date = message.dateTime
-                                    )
+                                    if (message.messageType == "text") {
+                                        ReceivedMessageItem(
+                                            profileImage = receivedProfileImage,
+                                            message = message.message,
+                                            date = message.dateTime
+                                        )
+                                    } else {
+                                        ReceivedMessageWithImageItem(
+                                            imageUrl = message.imageUrl,
+                                            profileImage = receivedProfileImage,
+                                            message = message.message,
+                                            date = message.dateTime
+                                        )
+                                    }
                                 }
+
                             }
                         }
                     } else {
@@ -311,6 +358,50 @@ fun ChatScreen(
                 )
             }
 
+            if (showMoreOptionsContainer) {
+                MoreOptionsComponent(
+                    modifier = Modifier
+                        .constrainAs(moreOptionsContainer){
+                            start.linkTo(parent.start, margin = 10.dp)
+                            bottom.linkTo(buttonAddFiles.top, margin = 10.dp)
+                        },
+                    openGallery = { galleryLauncher.launch("image/*") },
+                )
+            }
+
+            if (imagePreview != null) {
+                showMoreOptionsContainer = false
+                FilePreviewComponent(
+                    imagePreview = ImageConverter.uriToBitmap(context, imagePreview!!),
+                    modifier = Modifier
+                        .constrainAs(filePreviewContainer){
+                            width = Dimension.fillToConstraints
+                            start.linkTo(parent.start, margin = 10.dp)
+                            end.linkTo(parent.end, margin = 10.dp)
+                            bottom.linkTo(inputMessage.top, margin = 10.dp)
+                        }
+                ) { imagePreview = null }
+            }
+
+            Card(
+                modifier = Modifier
+                    .size(45.dp)
+                    .clickable { showMoreOptionsContainer = !showMoreOptionsContainer }
+                    .constrainAs(buttonAddFiles) {
+                        bottom.linkTo(parent.bottom, margin = 10.dp)
+                        start.linkTo(parent.start, margin = 10.dp)
+                    },
+                shape = RoundedCornerShape(10.dp),
+                backgroundColor = Onyx
+            ) {
+                Icon(
+                    imageVector = if (!showMoreOptionsContainer) Icons.Rounded.Add else Icons.Rounded.Close,
+                    contentDescription = "Add file",
+                    tint = UltramarineBlue,
+                    modifier = Modifier.scale(0.5f)
+                )
+            }
+
             TextField(
                 value = message,
                 onValueChange = { v -> message = v },
@@ -320,7 +411,7 @@ fun ChatScreen(
                     .constrainAs(inputMessage) {
                         width = Dimension.fillToConstraints
                         bottom.linkTo(parent.bottom, margin = 10.dp)
-                        start.linkTo(parent.start, margin = 10.dp)
+                        start.linkTo(buttonAddFiles.end, margin = 10.dp)
                         end.linkTo(sendMessage.start, margin = 10.dp)
                     },
                 placeholder = {
@@ -345,13 +436,16 @@ fun ChatScreen(
                 )
             )
 
+
             Card(
                 modifier = Modifier
                     .size(45.dp)
                     .clickable {
                         viewModel.setMessageText(message)
+                        if (imagePreview != null) viewModel.setMessageImage(imagePreview)
                         viewModel.sendMessage()
                         message = ""
+                        imagePreview = null
                     }
                     .constrainAs(sendMessage) {
                         bottom.linkTo(parent.bottom, margin = 10.dp)
@@ -360,12 +454,20 @@ fun ChatScreen(
                 shape = RoundedCornerShape(10.dp),
                 backgroundColor = Onyx,
             ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_send),
-                    contentDescription = "Send message",
-                    tint = UltramarineBlue,
-                    modifier = Modifier.scale(0.6f)
-                )
+                if(isLoadingImage == true){
+                    CircularProgressIndicator(
+                        color = UltramarineBlue,
+                        strokeWidth = 5.dp,
+                        modifier = Modifier.scale(0.5f)
+                    )
+                } else {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_send),
+                        contentDescription = "Send message",
+                        tint = UltramarineBlue,
+                        modifier = Modifier.scale(0.5f)
+                    )
+                }
             }
 
         }
