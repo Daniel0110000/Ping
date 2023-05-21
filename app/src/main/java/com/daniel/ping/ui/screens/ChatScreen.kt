@@ -366,6 +366,7 @@ fun ChatScreen(
                             bottom.linkTo(buttonAddFiles.top, margin = 10.dp)
                         },
                     openGallery = { galleryLauncher.launch("image/*") },
+                    openFiles = { }
                 )
             }
 

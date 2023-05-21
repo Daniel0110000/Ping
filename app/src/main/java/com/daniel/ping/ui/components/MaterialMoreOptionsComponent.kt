@@ -2,6 +2,8 @@ package com.daniel.ping.ui.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
@@ -18,7 +20,8 @@ import com.daniel.ping.ui.theme.White
 @Composable
 fun MoreOptionsComponent(
     modifier: Modifier,
-    openGallery: () -> Unit
+    openGallery: () -> Unit,
+    openFiles: () -> Unit
 ) {
 
     Column(modifier = modifier) {
@@ -32,6 +35,23 @@ fun MoreOptionsComponent(
             Icon(
                 painterResource(id = R.drawable.ic_gallery),
                 contentDescription = "Open gallery",
+                tint = White,
+                modifier = Modifier.scale(0.5f)
+            )
+        }
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        Card(
+            modifier = Modifier
+                .size(45.dp)
+                .clickable { openFiles() },
+            shape = RoundedCornerShape(10.dp),
+            backgroundColor = Onyx,
+        ) {
+            Icon(
+                painterResource(id = R.drawable.ic_file),
+                contentDescription = "Open files",
                 tint = White,
                 modifier = Modifier.scale(0.5f)
             )
