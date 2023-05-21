@@ -436,7 +436,6 @@ fun ChatScreen(
                 )
             )
 
-
             Card(
                 modifier = Modifier
                     .size(45.dp)
