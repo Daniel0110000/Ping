@@ -8,6 +8,7 @@ import com.daniel.ping.data.remote.firebaseService.listenerAvailabilityOfReceive
 import com.daniel.ping.data.remote.firebaseService.listenerMessage
 import com.daniel.ping.data.remote.firebaseService.listenerRecentConversations
 import com.daniel.ping.data.remote.firebaseService.sedMessage
+import com.daniel.ping.data.remote.firebaseService.sendMessageWithFile
 import com.daniel.ping.data.remote.firebaseService.sendMessageWithImage
 import com.daniel.ping.data.remote.firebaseService.updateConversation
 import com.daniel.ping.data.remote.networkService.ApiService
@@ -33,11 +34,16 @@ class ChatRepositoryImpl @Inject constructor(
      * Sends a message to the FireStore database
      * @param message A HashMap containing the message to be sent
      * @param messageImage The Uri of the image to be sent with the message
+     * @param messageFile The uri of the file to be sent with the message
+     * @param fileName The name string for the "messageFile" param
      * @return Unit
      */
-    override suspend fun sendMessage(message: HashMap<String, Any>, messageImage: Uri?) {
-        message[Constants.KEY_TYPE_MESSAGE] = if(messageImage != null) Constants.MESSAGE_TYPE_IMAGE else Constants.MESSAGE_TYPE_TEXT
+    override suspend fun sendMessage(message: HashMap<String, Any>, messageImage: Uri?, messageFile: Uri?, fileName: String) {
+        message[Constants.KEY_TYPE_MESSAGE] = if(messageImage != null) Constants.MESSAGE_TYPE_IMAGE
+                                              else if (messageFile != null) Constants.MESSAGE_TYPE_FILE
+                                              else Constants.MESSAGE_TYPE_TEXT
         message[Constants.KEY_IMAGE_URL] = messageImage?.let { store.sendMessageWithImage(it) } ?: ""
+        message[Constants.KEY_FILE_URL] = messageFile?.let { store.sendMessageWithFile(fileName, it) } ?: ""
         fireStore.sedMessage(message)
     }
 

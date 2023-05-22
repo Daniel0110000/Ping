@@ -49,13 +49,17 @@ class ChatViewModel @Inject constructor(
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
 
-    private val _isLoadingImage = MutableLiveData<Boolean>()
-    val isLoadingImage: LiveData<Boolean> = _isLoadingImage
+    private val _isLoadingUploadFile = MutableLiveData<Boolean>()
+    val isLoadingUploadFile: LiveData<Boolean> = _isLoadingUploadFile
 
     private val _isOnLine = MutableLiveData(false)
     val isOnline: LiveData<Boolean> = _isOnLine
 
     private val messageImage = MutableLiveData<Uri?>()
+
+    private val messageFile = MutableLiveData<Uri?>()
+
+    private val fileName = MutableLiveData<String>()
 
     private val messageText = MutableLiveData<String>()
 
@@ -76,15 +80,14 @@ class ChatViewModel @Inject constructor(
      * Sends a message to the user the current user is chatting with
      */
     fun sendMessage() {
-        if (messageText.value?.isNotEmpty() == true || messageImage.value != null) {
+        if (messageText.value?.isNotEmpty() == true || messageImage.value != null || messageFile.value != null) {
             viewModelScope.launch(Dispatchers.IO) {
-                setLoadingImage(true)
-                chatRepository.sendMessage(createMessage(), messageImage.value)
-                setLoadingImage(false)
+                setLoadingUploadFile(true)
+                chatRepository.sendMessage(createMessage(), messageImage.value, messageFile.value, fileName.value.toString())
+                setLoadingUploadFile(false)
 
                 // If the user is not online, a notification is sent
-                if(!isOnline.value!!)
-                    sendNotification(auth.getString(Constants.KEY_NAME), messageText.value.toString())
+                if(!isOnline.value!!) sendNotification(auth.getString(Constants.KEY_NAME), messageText.value.toString())
 
                 // Update the conversation history
                 if(conversationId.isNotEmpty())
@@ -222,8 +225,17 @@ class ChatViewModel @Inject constructor(
         messageImage.value = value
     }
 
-    private fun setLoadingImage(isLoading: Boolean){
-        if(messageImage.value != null) _isLoadingImage.postValue(isLoading)
+    fun setMessageFile(value: Uri?){
+        messageFile.value = value
+    }
+
+    fun setFileName(value: String){
+        fileName.value = value
+    }
+
+    private fun setLoadingUploadFile(isLoading: Boolean){
+        if(messageImage.value != null || messageFile.value != null)
+            _isLoadingUploadFile.postValue(isLoading)
     }
 
     fun setMessageText(value: String) {

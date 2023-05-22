@@ -1,5 +1,6 @@
 package com.daniel.ping.ui.screens
 
+import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -67,6 +68,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.documentfile.provider.DocumentFile
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
@@ -148,11 +150,21 @@ fun ChatScreen(
 
     // A mutable state variable that holds the Uri of the selected image for previewing
     var imagePreview by remember { mutableStateOf<Uri?>(null) }
+    var filePreview by remember { mutableStateOf<Uri?>(null) }
+    var fileName by remember { mutableStateOf("") }
 
     // A launcher for the "GetContent" ActivityResult contract. Launches the gallery app to allow the user to select an image
     // When the user selects an image, the URI of the image is saved in the "imagePreview" state variable
     val galleryLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { result: Uri? ->
             result?.let { imagePreview = result }
+    }
+
+    val fileLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()){ file: Uri? ->
+        file?.let { fileUri ->
+            filePreview = fileUri
+            val documentFile = DocumentFile.fromSingleUri(context, file)
+            documentFile?.let { document -> fileName = document.name.toString() }
+        }
     }
 
     Scaffold { paddingValues ->
@@ -169,7 +181,7 @@ fun ChatScreen(
             var message by remember { mutableStateOf("") }
             val isOnline by viewModel.isOnline.observeAsState()
             val isLoading by viewModel.isLoading.observeAsState()
-            val isLoadingImage by viewModel.isLoadingImage.observeAsState()
+            val isLoadingUploadFile by viewModel.isLoadingUploadFile.observeAsState()
             var showMoreOptionsContainer by remember { mutableStateOf(false) }
 
             IconButton(
@@ -366,7 +378,13 @@ fun ChatScreen(
                             bottom.linkTo(buttonAddFiles.top, margin = 10.dp)
                         },
                     openGallery = { galleryLauncher.launch("image/*") },
-                    openFiles = { }
+                    openFiles = {
+                        val excludedMimeTypes = arrayOf("image/*", "video/*")
+                        val intent = Intent(Intent.ACTION_GET_CONTENT)
+                        intent.type = "*/*"
+                        intent.putExtra(Intent.EXTRA_MIME_TYPES, excludedMimeTypes)
+                        fileLauncher.launch("application/*")
+                    }
                 )
             }
 
@@ -442,10 +460,17 @@ fun ChatScreen(
                     .size(45.dp)
                     .clickable {
                         viewModel.setMessageText(message)
-                        if (imagePreview != null) viewModel.setMessageImage(imagePreview)
+                        if (imagePreview != null){
+                            viewModel.setMessageImage(imagePreview)
+                            imagePreview = null
+                        }
+                        if(filePreview != null){
+                            viewModel.setMessageFile(filePreview)
+                            viewModel.setFileName(fileName)
+                            filePreview = null
+                        }
                         viewModel.sendMessage()
                         message = ""
-                        imagePreview = null
                     }
                     .constrainAs(sendMessage) {
                         bottom.linkTo(parent.bottom, margin = 10.dp)
@@ -454,7 +479,7 @@ fun ChatScreen(
                 shape = RoundedCornerShape(10.dp),
                 backgroundColor = Onyx,
             ) {
-                if(isLoadingImage == true){
+                if(isLoadingUploadFile == true){
                     CircularProgressIndicator(
                         color = UltramarineBlue,
                         strokeWidth = 5.dp,

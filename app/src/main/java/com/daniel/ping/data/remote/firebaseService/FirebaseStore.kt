@@ -19,3 +19,17 @@ suspend fun FirebaseStorage.sendMessageWithImage(image: Uri): String {
 
     return imageRef.downloadUrl.await().toString()
 }
+
+/**
+ * Sends a file to Firebase Storage and returns the download URL of the uploaded file
+ * @param fileName The name to be given to the file in Firebase Storage
+ * @param file The uri of the file to be uploaded to Firebase Storage
+ * @return The download URL of this newly uploaded file
+ */
+suspend fun FirebaseStorage.sendMessageWithFile(fileName: String, file: Uri): String{
+    val fileRef = getReference(Constants.KEY_STORAGE_FILES).child(fileName)
+
+    fileRef.putFile(file).await()
+
+    return fileRef.downloadUrl.await().toString()
+}
