@@ -77,6 +77,7 @@ import com.daniel.ping.domain.models.Chat
 import com.daniel.ping.domain.models.User
 import com.daniel.ping.domain.utilities.ImageConverter
 import com.daniel.ping.ui.components.FilePreviewComponent
+import com.daniel.ping.ui.components.ImagePreviewComponent
 import com.daniel.ping.ui.components.MoreOptionsComponent
 import com.daniel.ping.ui.components.lazyComponents.ReceivedMessageItem
 import com.daniel.ping.ui.components.lazyComponents.ReceivedMessageWithImageItem
@@ -152,6 +153,7 @@ fun ChatScreen(
     var imagePreview by remember { mutableStateOf<Uri?>(null) }
     var filePreview by remember { mutableStateOf<Uri?>(null) }
     var fileName by remember { mutableStateOf("") }
+    var fileSize by remember { mutableStateOf("") }
 
     // A launcher for the "GetContent" ActivityResult contract. Launches the gallery app to allow the user to select an image
     // When the user selects an image, the URI of the image is saved in the "imagePreview" state variable
@@ -163,7 +165,10 @@ fun ChatScreen(
         file?.let { fileUri ->
             filePreview = fileUri
             val documentFile = DocumentFile.fromSingleUri(context, file)
-            documentFile?.let { document -> fileName = document.name.toString() }
+            documentFile?.let { document ->
+                fileName = document.name.toString()
+                fileSize = (document.length() / 1024).toString()
+            }
         }
     }
 
@@ -176,7 +181,7 @@ fun ChatScreen(
 
             val (backScreen, profileImage, username, onlineIndicator, containerDescription,
                 lazyMessages, buttonAddFiles, inputMessage, sendMessage, moreOptionsContainer,
-                filePreviewContainer) = createRefs()
+                imagePreviewContainer, filePreviewContainer) = createRefs()
 
             var message by remember { mutableStateOf("") }
             val isOnline by viewModel.isOnline.observeAsState()
@@ -390,16 +395,28 @@ fun ChatScreen(
 
             if (imagePreview != null) {
                 showMoreOptionsContainer = false
-                FilePreviewComponent(
+                ImagePreviewComponent(
                     imagePreview = ImageConverter.uriToBitmap(context, imagePreview!!),
                     modifier = Modifier
-                        .constrainAs(filePreviewContainer){
+                        .constrainAs(imagePreviewContainer){
                             width = Dimension.fillToConstraints
                             start.linkTo(parent.start, margin = 10.dp)
                             end.linkTo(parent.end, margin = 10.dp)
                             bottom.linkTo(inputMessage.top, margin = 10.dp)
                         }
                 ) { imagePreview = null }
+            }
+
+            if(filePreview != null){
+                showMoreOptionsContainer = false
+                FilePreviewComponent(
+                    modifier = Modifier.constrainAs(filePreviewContainer){
+                        start.linkTo(parent.start, margin = 10.dp)
+                        bottom.linkTo(inputMessage.top, margin = 10.dp)
+                    },
+                    fileName = fileName,
+                    fileSize = fileSize
+                ) { filePreview = null }
             }
 
             Card(
@@ -460,11 +477,11 @@ fun ChatScreen(
                     .size(45.dp)
                     .clickable {
                         viewModel.setMessageText(message)
-                        if (imagePreview != null){
+                        if (imagePreview != null) {
                             viewModel.setMessageImage(imagePreview)
                             imagePreview = null
                         }
-                        if(filePreview != null){
+                        if (filePreview != null) {
                             viewModel.setMessageFile(filePreview)
                             viewModel.setFileName(fileName)
                             filePreview = null
