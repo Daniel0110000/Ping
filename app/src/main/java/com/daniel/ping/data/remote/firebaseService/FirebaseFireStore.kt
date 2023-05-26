@@ -194,7 +194,8 @@ private fun DocumentSnapshot.toChat(): Chat = Chat(
     dateTime = getReadableDateTime(getDate(Constants.KEY_DATE_TIME)!!),
     dateObject = getTimestamp(Constants.KEY_TIMESTAMP)?.toDate() ?: Date(),
     messageType = getString(Constants.KEY_TYPE_MESSAGE).toString(),
-    imageUrl = getString(Constants.KEY_IMAGE_URL).toString()
+    imageUrl = getString(Constants.KEY_IMAGE_URL).toString(),
+    fileDetails = get(Constants.KEy_FILE_DETAILS) as HashMap<String, String>
 )
 
 /**

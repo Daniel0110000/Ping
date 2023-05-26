@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -157,11 +158,16 @@ fun SentMessageWithImageItem(
 }
 
 @Composable
-fun SentMessageWithFileItem() {
+fun SentMessageWithFileItem(
+    fileNameText: String,
+    fileSizeText: String,
+    message: String = "",
+    date: String
+) {
     ConstraintLayout(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 80.dp, top = 4.dp, bottom = 4.dp, end = 4.dp)
+            .padding(start = 90.dp, top = 8.dp, bottom = 8.dp, end = 4.dp)
     ) {
 
         val (messageContainer, textDateTimeSent) = createRefs()
@@ -178,82 +184,96 @@ fun SentMessageWithFileItem() {
                     end.linkTo(parent.end)
                 }
         ){
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(55.dp)
-                    .background(
-                        Color(0xFF354DC7),
-                        RoundedCornerShape(10.dp)
-                    )
-            ){
+            Column {
+                Box(
+                    modifier = Modifier
+                        .height(57.dp)
+                        .background(
+                            Color(0xFF354DC7),
+                            RoundedCornerShape(10.dp)
+                        )
+                ){
 
-                ConstraintLayout(modifier = Modifier.fillMaxSize()) {
+                    ConstraintLayout(modifier = Modifier.fillMaxSize()) {
 
-                    val (downloadFile, fileIcon, fileName, fileSizeAndType) = createRefs()
+                        val (downloadFile, fileIcon, fileName, fileSizeAndType) = createRefs()
 
-                    Icon(
-                        painterResource(id = R.drawable.ic_download),
-                        contentDescription = "Download file",
-                        tint = White,
-                        modifier = Modifier
-                            .size(18.dp)
-                            .clickable { }
-                            .constrainAs(downloadFile) {
-                                top.linkTo(parent.top, margin = 5.dp)
-                                end.linkTo(parent.end, margin = 5.dp)
-                            }
-                    )
+                        Icon(
+                            painterResource(id = R.drawable.ic_download),
+                            contentDescription = "Download file",
+                            tint = White,
+                            modifier = Modifier
+                                .size(18.dp)
+                                .clickable { }
+                                .constrainAs(downloadFile) {
+                                    top.linkTo(parent.top, margin = 5.dp)
+                                    end.linkTo(parent.end, margin = 5.dp)
+                                }
+                        )
 
-                    Image(
-                        painterResource(id = R.drawable.ic_file),
-                        contentDescription = "FileIcon",
-                        modifier = Modifier
-                            .size(25.dp)
-                            .constrainAs(fileIcon) {
+                        Image(
+                            painterResource(id = R.drawable.ic_file),
+                            contentDescription = "FileIcon",
+                            modifier = Modifier
+                                .size(25.dp)
+                                .constrainAs(fileIcon) {
+                                    top.linkTo(parent.top)
+                                    bottom.linkTo(parent.bottom)
+                                    start.linkTo(parent.start, margin = 5.dp)
+                                }
+                        )
+
+                        Text(
+                            text = fileNameText,
+                            color = White,
+                            fontFamily = FontFamily(Font(R.font.roboto)),
+                            fontSize = 15.sp,
+                            maxLines = 2,
+                            textAlign = TextAlign.Start,
+                            modifier = Modifier.constrainAs(fileName){
+                                width = Dimension.fillToConstraints
                                 top.linkTo(parent.top)
                                 bottom.linkTo(parent.bottom)
-                                start.linkTo(parent.start, margin = 5.dp)
+                                start.linkTo(fileIcon.end, margin = 5.dp)
+                                end.linkTo(downloadFile.start, margin = 5.dp)
                             }
-                    )
+                        )
 
-                    Text(
-                        text = "android-developer.png",
-                        color = White,
-                        fontFamily = FontFamily(Font(R.font.roboto)),
-                        fontSize = 15.sp,
-                        maxLines = 2,
-                        textAlign = TextAlign.Start,
-                        modifier = Modifier.constrainAs(fileName){
-                            width = Dimension.fillToConstraints
-                            top.linkTo(parent.top)
-                            bottom.linkTo(parent.bottom)
-                            start.linkTo(fileIcon.end, margin = 5.dp)
-                            end.linkTo(downloadFile.start, margin = 5.dp)
-                        }
-                    )
+                        Text(
+                            text = "$fileSizeText KB · ${
+                                fileNameText.substringAfterLast(".", "").uppercase()
+                            }",
+                            color = SilverFoil,
+                            fontFamily = FontFamily(Font(R.font.roboto)),
+                            fontSize = 10.sp,
+                            modifier = Modifier
+                                .constrainAs(fileSizeAndType){
+                                    top.linkTo(fileName.bottom, margin = 3.dp)
+                                    bottom.linkTo(parent.bottom, margin = 6.dp)
+                                    end.linkTo(parent.end, margin = 8.dp)
+                                }
+                        )
 
-                    Text(
-                        text = "100KB · PNG",
-                        color = SilverFoil,
-                        fontFamily = FontFamily(Font(R.font.roboto)),
-                        fontSize = 10.sp,
-                        modifier = Modifier
-                            .constrainAs(fileSizeAndType){
-                                top.linkTo(fileName.bottom, margin = 3.dp)
-                                bottom.linkTo(parent.bottom, margin = 5.dp)
-                                end.linkTo(parent.end, margin = 5.dp)
-                            }
-                    )
-
+                    }
                 }
 
+                if(message.isNotEmpty()){
+                    Text(
+                        text = message,
+                        color = White,
+                        fontSize = 13.sp,
+                        fontFamily = FontFamily(Font(R.font.roboto)),
+                        modifier = Modifier
+                            .padding(3.dp)
+                            .fillMaxWidth()
+                    )
+                }
 
             }
         }
 
         Text(
-            text = "20-14-20",
+            text = date,
             color = SilverFoil,
             fontSize = 8.sp,
             modifier = Modifier

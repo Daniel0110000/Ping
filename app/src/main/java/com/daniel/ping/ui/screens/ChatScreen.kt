@@ -75,6 +75,7 @@ import androidx.navigation.NavController
 import com.daniel.ping.R
 import com.daniel.ping.domain.models.Chat
 import com.daniel.ping.domain.models.User
+import com.daniel.ping.domain.utilities.Constants
 import com.daniel.ping.domain.utilities.ImageConverter
 import com.daniel.ping.ui.components.FilePreviewComponent
 import com.daniel.ping.ui.components.ImagePreviewComponent
@@ -283,13 +284,13 @@ fun ChatScreen(
                             items(chats) { message ->
                                 if (message.senderId == viewModel.userId) {
                                     when (message.messageType) {
-                                        "text" -> {
+                                        Constants.MESSAGE_TYPE_TEXT -> {
                                             SentMessageItem(
                                                 message = message.message,
                                                 date = message.dateTime
                                             )
                                         }
-                                        "image" -> {
+                                        Constants.MESSAGE_TYPE_IMAGE -> {
                                             SentMessageWithImageItem(
                                                 imageUrl = message.imageUrl,
                                                 message = message.message,
@@ -297,19 +298,24 @@ fun ChatScreen(
                                             )
                                         }
                                         else -> {
-                                            SentMessageWithFileItem()
+                                            SentMessageWithFileItem(
+                                                fileNameText = message.fileDetails[Constants.KEY_FILE_NAME].toString(),
+                                                fileSizeText = message.fileDetails[Constants.KEY_FILE_SIZE].toString(),
+                                                message = message.message,
+                                                date = message.dateTime
+                                            )
                                         }
                                     }
                                 } else {
                                     when (message.messageType) {
-                                        "text" -> {
+                                        Constants.MESSAGE_TYPE_TEXT -> {
                                             ReceivedMessageItem(
                                                 profileImage = receivedProfileImage,
                                                 message = message.message,
                                                 date = message.dateTime
                                             )
                                         }
-                                        "image" -> {
+                                        Constants.MESSAGE_TYPE_IMAGE -> {
                                             ReceivedMessageWithImageItem(
                                                 imageUrl = message.imageUrl,
                                                 profileImage = receivedProfileImage,
@@ -318,7 +324,13 @@ fun ChatScreen(
                                             )
                                         }
                                         else -> {
-                                            ReceivedMessageWithFileItem(profileImage = receivedProfileImage)
+                                            ReceivedMessageWithFileItem(
+                                                profileImage = receivedProfileImage,
+                                                fileNameText = message.fileDetails[Constants.KEY_FILE_NAME].toString(),
+                                                fileSizeText = message.fileDetails[Constants.KEY_FILE_SIZE].toString(),
+                                                message = message.message,
+                                                date = message.dateTime
+                                            )
                                         }
                                     }
                                 }
