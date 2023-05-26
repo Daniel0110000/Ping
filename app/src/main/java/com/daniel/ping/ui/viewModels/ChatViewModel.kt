@@ -61,6 +61,8 @@ class ChatViewModel @Inject constructor(
 
     private val fileName = MutableLiveData<String>()
 
+    private val fileSize = MutableLiveData<String>()
+
     private val messageText = MutableLiveData<String>()
 
     private val receiverUser = MutableLiveData<User>()
@@ -83,7 +85,16 @@ class ChatViewModel @Inject constructor(
         if (messageText.value?.isNotEmpty() == true || messageImage.value != null || messageFile.value != null) {
             viewModelScope.launch(Dispatchers.IO) {
                 setLoadingUploadFile(true)
-                chatRepository.sendMessage(createMessage(), messageImage.value, messageFile.value, fileName.value.toString())
+                chatRepository.sendMessage(
+                    createMessage(),
+                    messageImage.value,
+                    messageFile.value,
+                    if(messageFile.value != null) hashMapOf(
+                        Constants.KEY_FILE_NAME to fileName.value.toString(),
+                        Constants.KEY_FILE_SIZE to fileSize.value.toString()
+                    ) else hashMapOf()
+                )
+
                 setLoadingUploadFile(false)
 
                 // If the user is not online, a notification is sent
@@ -108,7 +119,7 @@ class ChatViewModel @Inject constructor(
                     conversation[Constants.KEY_TIMESTAMP] = Date()
                     addConversation(conversation)
                 }
-                messageImage.postValue(null)
+                clearFields()
             }
         }
     }
@@ -221,6 +232,14 @@ class ChatViewModel @Inject constructor(
         }
     }
 
+    private fun clearFields(){
+        messageImage.postValue(null)
+        messageFile.postValue(null)
+        fileName.postValue("")
+        fileSize.postValue("")
+        messageText.postValue("")
+    }
+
     fun setMessageImage(value: Uri?) {
         messageImage.value = value
     }
@@ -229,8 +248,9 @@ class ChatViewModel @Inject constructor(
         messageFile.value = value
     }
 
-    fun setFileName(value: String){
-        fileName.value = value
+    fun setFileDetails(fileNameValue: String, fileSizeValue: String){
+        fileName.value = fileNameValue
+        fileSize.value = fileSizeValue
     }
 
     private fun setLoadingUploadFile(isLoading: Boolean){

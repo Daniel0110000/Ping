@@ -35,15 +35,18 @@ class ChatRepositoryImpl @Inject constructor(
      * @param message A HashMap containing the message to be sent
      * @param messageImage The Uri of the image to be sent with the message
      * @param messageFile The uri of the file to be sent with the message
-     * @param fileName The name string for the "messageFile" param
+     * @param fileDetails The hashMap containing details of the file
      * @return Unit
      */
-    override suspend fun sendMessage(message: HashMap<String, Any>, messageImage: Uri?, messageFile: Uri?, fileName: String) {
+    override suspend fun sendMessage(message: HashMap<String, Any>, messageImage: Uri?, messageFile: Uri?, fileDetails: HashMap<String, String>) {
         message[Constants.KEY_TYPE_MESSAGE] = if(messageImage != null) Constants.MESSAGE_TYPE_IMAGE
                                               else if (messageFile != null) Constants.MESSAGE_TYPE_FILE
                                               else Constants.MESSAGE_TYPE_TEXT
         message[Constants.KEY_IMAGE_URL] = messageImage?.let { store.sendMessageWithImage(it) } ?: ""
-        message[Constants.KEY_FILE_URL] = messageFile?.let { store.sendMessageWithFile(fileName, it) } ?: ""
+        messageFile?.let {
+            fileDetails[Constants.KEY_FILE_URL] = store.sendMessageWithFile(fileDetails[Constants.KEY_FILE_NAME].toString(), it)
+        }
+        message[Constants.KEy_FILE_DETAILS] = fileDetails
         fireStore.sedMessage(message)
     }
 

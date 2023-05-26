@@ -80,8 +80,10 @@ import com.daniel.ping.ui.components.FilePreviewComponent
 import com.daniel.ping.ui.components.ImagePreviewComponent
 import com.daniel.ping.ui.components.MoreOptionsComponent
 import com.daniel.ping.ui.components.lazyComponents.ReceivedMessageItem
+import com.daniel.ping.ui.components.lazyComponents.ReceivedMessageWithFileItem
 import com.daniel.ping.ui.components.lazyComponents.ReceivedMessageWithImageItem
 import com.daniel.ping.ui.components.lazyComponents.SentMessageItem
+import com.daniel.ping.ui.components.lazyComponents.SentMessageWithFileItem
 import com.daniel.ping.ui.components.lazyComponents.SentMessageWithImageItem
 import com.daniel.ping.ui.theme.LimeGreen
 import com.daniel.ping.ui.theme.Onyx
@@ -280,32 +282,44 @@ fun ChatScreen(
 
                             items(chats) { message ->
                                 if (message.senderId == viewModel.userId) {
-                                    if (message.messageType == "text") {
-                                        SentMessageItem(
-                                            message = message.message,
-                                            date = message.dateTime
-                                        )
-                                    } else {
-                                        SentMessageWithImageItem(
-                                            imageUrl = message.imageUrl,
-                                            message = message.message,
-                                            date = message.dateTime
-                                        )
+                                    when (message.messageType) {
+                                        "text" -> {
+                                            SentMessageItem(
+                                                message = message.message,
+                                                date = message.dateTime
+                                            )
+                                        }
+                                        "image" -> {
+                                            SentMessageWithImageItem(
+                                                imageUrl = message.imageUrl,
+                                                message = message.message,
+                                                date = message.dateTime
+                                            )
+                                        }
+                                        else -> {
+                                            SentMessageWithFileItem()
+                                        }
                                     }
                                 } else {
-                                    if (message.messageType == "text") {
-                                        ReceivedMessageItem(
-                                            profileImage = receivedProfileImage,
-                                            message = message.message,
-                                            date = message.dateTime
-                                        )
-                                    } else {
-                                        ReceivedMessageWithImageItem(
-                                            imageUrl = message.imageUrl,
-                                            profileImage = receivedProfileImage,
-                                            message = message.message,
-                                            date = message.dateTime
-                                        )
+                                    when (message.messageType) {
+                                        "text" -> {
+                                            ReceivedMessageItem(
+                                                profileImage = receivedProfileImage,
+                                                message = message.message,
+                                                date = message.dateTime
+                                            )
+                                        }
+                                        "image" -> {
+                                            ReceivedMessageWithImageItem(
+                                                imageUrl = message.imageUrl,
+                                                profileImage = receivedProfileImage,
+                                                message = message.message,
+                                                date = message.dateTime
+                                            )
+                                        }
+                                        else -> {
+                                            ReceivedMessageWithFileItem(profileImage = receivedProfileImage)
+                                        }
                                     }
                                 }
 
@@ -483,7 +497,7 @@ fun ChatScreen(
                         }
                         if (filePreview != null) {
                             viewModel.setMessageFile(filePreview)
-                            viewModel.setFileName(fileName)
+                            viewModel.setFileDetails(fileName, fileSize)
                             filePreview = null
                         }
                         viewModel.sendMessage()
