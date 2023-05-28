@@ -2,7 +2,6 @@ package com.daniel.ping.ui.components.lazyComponents
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -14,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -196,20 +194,7 @@ fun SentMessageWithFileItem(
 
                     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
 
-                        val (downloadFile, fileIcon, fileName, fileSizeAndType) = createRefs()
-
-                        Icon(
-                            painterResource(id = R.drawable.ic_download),
-                            contentDescription = "Download file",
-                            tint = White,
-                            modifier = Modifier
-                                .size(18.dp)
-                                .clickable { }
-                                .constrainAs(downloadFile) {
-                                    top.linkTo(parent.top, margin = 5.dp)
-                                    end.linkTo(parent.end, margin = 5.dp)
-                                }
-                        )
+                        val (fileIcon, fileName, fileSizeAndType) = createRefs()
 
                         Image(
                             painterResource(id = R.drawable.ic_file),
@@ -235,7 +220,7 @@ fun SentMessageWithFileItem(
                                 top.linkTo(parent.top)
                                 bottom.linkTo(parent.bottom)
                                 start.linkTo(fileIcon.end, margin = 5.dp)
-                                end.linkTo(downloadFile.start, margin = 5.dp)
+                                end.linkTo(parent.end, margin = 8.dp)
                             }
                         )
 

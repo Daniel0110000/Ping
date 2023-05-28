@@ -36,6 +36,7 @@
 
     <!-- Chat Screen -->
     <string name="message">Mensaje</string>
+    <string name="downloadMessage">Tu archivo se está descargando…</string>
 
     <!-- Main Screen -->
     <string name="messages">Mensajes</string>

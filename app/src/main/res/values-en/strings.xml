@@ -32,6 +32,7 @@
 
     <!-- Chat Screen -->
     <string name="message">Message</string>
+    <string name="downloadMessage">Your file is being downloaded…</string>
 
     <!-- Main Screen -->
     <string name="messages">Messages</string>

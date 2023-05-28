@@ -208,7 +208,8 @@ fun ReceivedMessageWithFileItem(
     fileNameText: String,
     fileSizeText: String,
     message: String = "",
-    date: String
+    date: String,
+    downloadFileListener: () -> Unit
 ) {
     ConstraintLayout(
         modifier = Modifier
@@ -269,7 +270,7 @@ fun ReceivedMessageWithFileItem(
                                 tint = White,
                                 modifier = Modifier
                                     .size(18.dp)
-                                    .clickable { }
+                                    .clickable { downloadFileListener() }
                                     .constrainAs(downloadFile) {
                                         top.linkTo(parent.top, margin = 5.dp)
                                         end.linkTo(parent.end, margin = 5.dp)
