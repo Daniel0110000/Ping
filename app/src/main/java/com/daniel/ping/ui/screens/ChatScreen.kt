@@ -1,11 +1,7 @@
 package com.daniel.ping.ui.screens
 
-import android.app.DownloadManager
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.Environment
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
@@ -81,6 +77,7 @@ import com.daniel.ping.domain.models.Chat
 import com.daniel.ping.domain.models.User
 import com.daniel.ping.domain.utilities.Constants
 import com.daniel.ping.domain.utilities.ImageConverter
+import com.daniel.ping.domain.utilities.downloadFile
 import com.daniel.ping.ui.components.FilePreviewComponent
 import com.daniel.ping.ui.components.ImagePreviewComponent
 import com.daniel.ping.ui.components.MoreOptionsComponent
@@ -335,16 +332,12 @@ fun ChatScreen(
                                                 message = message.message,
                                                 date = message.dateTime,
                                                 downloadFileListener = {
-                                                    val request = DownloadManager.Request(Uri.parse(message.fileDetails[Constants.KEY_FILE_URL].toString()))
-                                                    request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
-                                                        .setTitle(message.fileDetails[Constants.KEY_FILE_NAME].toString())
-                                                        .setDescription("${message.fileDetails[Constants.KEY_FILE_SIZE]!!.toDouble() / 1024} MB")
-                                                        .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-                                                        .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, message.fileDetails[Constants.KEY_FILE_NAME].toString())
-                                                    val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-                                                    downloadManager.enqueue(request)
-
-                                                    Toast.makeText(context, context.getString(R.string.downloadMessage), Toast.LENGTH_SHORT).show()
+                                                    downloadFile(
+                                                        urlFile = message.fileDetails[Constants.KEY_FILE_URL].toString(),
+                                                        fileName = message.fileDetails[Constants.KEY_FILE_NAME].toString(),
+                                                        fileSize = message.fileDetails[Constants.KEY_FILE_SIZE].toString(),
+                                                        context = context
+                                                    )
                                                 }
                                             )
                                         }
