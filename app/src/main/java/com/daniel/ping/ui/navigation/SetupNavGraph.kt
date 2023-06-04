@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import com.daniel.ping.ui.screens.ChatScreen
 import com.daniel.ping.ui.screens.HomeScreen
 import com.daniel.ping.ui.screens.NetworkUsersScreen
+import com.daniel.ping.ui.screens.SettingsScreen
 
 /**
  * A composable function that sets up the navigation graph and defines the routes for the app
@@ -21,13 +22,16 @@ fun SetupNavGraph(
 ) {
     NavHost(navController = navController, startDestination = ScreenRoutes.Home.route, modifier = modifier){
         composable(route = ScreenRoutes.Home.route) {
-            HomeScreen()
+            HomeScreen(navController)
         }
         composable(route = ScreenRoutes.NetworkUsers.route) {
             NetworkUsersScreen(navController)
         }
         composable(route = ScreenRoutes.Chat.route) { entry ->
             ChatScreen(navController, entry.requiredArg("userDetails"))
+        }
+        composable(route = ScreenRoutes.Settings.route){
+            SettingsScreen()
         }
     }
 }

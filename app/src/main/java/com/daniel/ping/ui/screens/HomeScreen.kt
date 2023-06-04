@@ -5,8 +5,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,12 +24,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.navigation.NavController
 import com.daniel.ping.R
+import com.daniel.ping.ui.navigation.ScreenRoutes
 import com.daniel.ping.ui.theme.SilverFoil
 import com.daniel.ping.ui.theme.White
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
+    navController: NavController
+) {
     Scaffold(
         modifier = Modifier.fillMaxSize()
     ) { paddingValues ->
@@ -35,7 +43,23 @@ fun HomeScreen() {
                 .padding(paddingValues)
         ) {
 
-            val (appDescriptionContainer) = createRefs()
+            val (appDescriptionContainer, settingsIcon) = createRefs()
+
+            IconButton(
+                onClick = { navController.navigate(ScreenRoutes.Settings.route) },
+                modifier = Modifier
+                    .size(22.dp)
+                    .constrainAs(settingsIcon){
+                        top.linkTo(parent.top, margin = 10.dp)
+                        end.linkTo(parent.end, margin = 10.dp)
+                    }
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.MoreVert,
+                    contentDescription = "Settings Icon",
+                    tint = White
+                )
+            }
 
             Column(
                 modifier = Modifier

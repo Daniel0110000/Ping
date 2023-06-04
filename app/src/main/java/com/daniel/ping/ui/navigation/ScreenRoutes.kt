@@ -11,4 +11,8 @@ sealed class ScreenRoutes(val route: String){
     object NetworkUsers: ScreenRoutes(route = "network_users_screen")
     // Object instance representing the Chat Screen
     object Chat: ScreenRoutes(route = "chat_screen")
+
+    // Object instance representing the Settings Screen
+    object Settings: ScreenRoutes(route = "settings_screen")
+
 }

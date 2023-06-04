@@ -44,4 +44,7 @@
     <string name="youHaveNoRecentMessages">No tienes mensajes recientes</string>
     <string name="youDontHaveInternetAccess">No tienes acceso a internet</string>
 
+    <!-- Settings Screen -->
+    <string name="settings">Ajustes</string>
+
 </resources>
