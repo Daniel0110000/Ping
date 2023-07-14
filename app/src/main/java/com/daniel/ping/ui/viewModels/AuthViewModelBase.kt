@@ -51,6 +51,7 @@ open class AuthViewModelBase(
     fun handleResults(task: Task<GoogleSignInAccount>, context: Context){
         // Check if the task was successful
         if(task.isSuccessful){
+            setIsLoading(true)
             // Get the signed-in account
             val account: GoogleSignInAccount? = task.result
             if(account != null){
@@ -61,7 +62,10 @@ open class AuthViewModelBase(
                     val google = authCredentialsUseCase.invoke(credential)
                     google?.apply {
                         addOnSuccessListener { authResult -> userAlreadyRegistered(authResult.user?.email.toString()) }
-                        addOnFailureListener { e -> setMessage(e.message.toString()) }
+                        addOnFailureListener { e ->
+                            setIsLoading(false)
+                            setMessage(e.message.toString())
+                        }
                     }
                 }
             } else setMessage(context.getString(R.string.errorMessage))
@@ -71,11 +75,15 @@ open class AuthViewModelBase(
     // Function to authentication with Facebook
     fun withFacebook(activity: Activity){
         viewModelScope.launch(Dispatchers.IO) {
+            setIsLoading(true)
             // Use the authentication repository to authenticate with Facebook
             val result = authenticationRepository.facebookAuth(activity, AuthCredentialsUseCase(authenticationRepository))
             result?.apply {
                 addOnSuccessListener { authResult -> userAlreadyRegistered(authResult.user?.email.toString()) }
-                addOnFailureListener { setMessage(application.getString(R.string.errorMessage)) }
+                addOnFailureListener {
+                    setIsLoading(false)
+                    setMessage(application.getString(R.string.errorMessage))
+                }
             }
         }
     }
