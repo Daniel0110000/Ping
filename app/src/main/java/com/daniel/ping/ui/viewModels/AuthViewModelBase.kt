@@ -154,7 +154,7 @@ open class AuthViewModelBase(
                 putBooleanToPrefs(Constants.KEY_IS_SIGNED_IN, true)
                 putStringToPrefs(Constants.KEY_NAME, document?.name.toString())
                 putStringToPrefs(Constants.KEY_DESCRIPTION, document?.description.toString())
-                putStringToPrefs(Constants.KEY_IMAGE, document?.profileImage.toString())
+                putStringToPrefs(Constants.KEY_PROFILE_IMAGE_URL, document?.profileImageUrl.toString())
                 setAllAuthCompleted()
             },
             onError = { e -> setMessage(e.message.toString()) }

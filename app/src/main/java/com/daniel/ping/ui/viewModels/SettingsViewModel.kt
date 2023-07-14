@@ -1,11 +1,9 @@
 package com.daniel.ping.ui.viewModels
 
-import android.graphics.Bitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniel.ping.domain.repositories.AuthenticationRepository
 import com.daniel.ping.domain.utilities.Constants
-import com.daniel.ping.domain.utilities.ImageConverter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -31,18 +29,18 @@ class SettingsViewModel @Inject constructor(
     data class SettingsState(
         val name: String = "",
         val description: String = "",
-        val profileImage: Bitmap? = null,
+        val profileImage: String = "",
     )
 
     init {
         setUserDetails(
             nameValue = auth.getString(Constants.KEY_NAME),
             descriptionValue = auth.getString(Constants.KEY_DESCRIPTION),
-            profileImageValue = ImageConverter.decodeFromString(auth.getString(Constants.KEY_IMAGE))
+            profileImageValue = auth.getString(Constants.KEY_PROFILE_IMAGE_URL)
         )
     }
 
-    private fun setUserDetails(nameValue: String, descriptionValue: String, profileImageValue: Bitmap){
+    private fun setUserDetails(nameValue: String, descriptionValue: String, profileImageValue: String){
         viewModelScope.launch {
             _state.update { it.copy(
                 name = nameValue,

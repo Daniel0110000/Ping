@@ -1,6 +1,5 @@
 package com.daniel.ping.ui.viewModels
 
-import android.graphics.Bitmap
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,7 +8,6 @@ import com.daniel.ping.domain.repositories.AuthenticationRepository
 import com.daniel.ping.domain.repositories.ChatRepository
 import com.daniel.ping.domain.repositories.UserDataRepository
 import com.daniel.ping.domain.utilities.Constants
-import com.daniel.ping.domain.utilities.ImageConverter
 import com.daniel.ping.domain.utilities.Resource
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -42,7 +40,7 @@ class MainViewModel @Inject constructor(
      */
     data class MainState(
         val name: String = "",
-        val profileImage: Bitmap? = null,
+        val profileImage: String = "",
         val message: String = ""
     )
 
@@ -51,7 +49,7 @@ class MainViewModel @Inject constructor(
         getToken()
         listenerRecentConversations()
         setName(authenticationRepository.getString(Constants.KEY_NAME))
-        setProfileImage(ImageConverter.decodeFromString(authenticationRepository.getString(Constants.KEY_IMAGE)))
+        setProfileImage(authenticationRepository.getString(Constants.KEY_PROFILE_IMAGE_URL))
     }
 
     /**
@@ -96,7 +94,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private fun setProfileImage(value: Bitmap) {
+    private fun setProfileImage(value: String) {
         viewModelScope.launch {
             _state.update {
                 it.copy(

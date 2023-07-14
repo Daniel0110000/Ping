@@ -1,6 +1,5 @@
 package com.daniel.ping.ui.screens
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,7 +22,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -35,6 +33,7 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
 import com.daniel.ping.R
 import com.daniel.ping.ui.theme.LimeGreen
 import com.daniel.ping.ui.theme.OnyxTransparent
@@ -60,22 +59,20 @@ fun SettingsScreen(
 
             val (profileImage, filterImage, backScreen, titleScreen, userDetailsContainer) = createRefs()
 
-            state.value.profileImage?.let {
-                Image(
-                    bitmap = it.asImageBitmap(),
-                    contentDescription = "Profile Image",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .height(110.dp)
-                        .clip(RoundedCornerShape(bottomEnd = 15.dp, bottomStart = 15.dp))
-                        .constrainAs(profileImage) {
-                            width = Dimension.fillToConstraints
-                            start.linkTo(parent.start)
-                            end.linkTo(parent.end)
-                            top.linkTo(parent.top)
-                        }
-                )
-            }
+            AsyncImage(
+                model = state.value.profileImage,
+                contentDescription = "Profile Image",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .height(110.dp)
+                    .clip(RoundedCornerShape(bottomEnd = 15.dp, bottomStart = 15.dp))
+                    .constrainAs(profileImage) {
+                        width = Dimension.fillToConstraints
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                        top.linkTo(parent.top)
+                    }
+            )
 
             Box(
                 modifier = Modifier

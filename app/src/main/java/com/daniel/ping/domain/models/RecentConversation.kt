@@ -5,7 +5,7 @@ import java.util.Date
 data class RecentConversation(
     val senderId: String,
     val receiverId: String,
-    val profileImage: String,
+    val profileImageUrl: String,
     val name: String,
     val description: String,
     val token: String,

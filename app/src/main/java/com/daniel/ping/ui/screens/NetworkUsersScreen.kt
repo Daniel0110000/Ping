@@ -35,7 +35,6 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.daniel.ping.R
-import com.daniel.ping.domain.utilities.ImageConverter
 import com.daniel.ping.ui.components.MaterialSearchComponent
 import com.daniel.ping.ui.components.lazyComponents.UserItem
 import com.daniel.ping.ui.navigation.ScreenRoutes
@@ -120,7 +119,7 @@ fun NetworkUsersScreen(
             LazyColumn(modifier = Modifier.weight(1f)) {
                 items(users) { user ->
                     UserItem(
-                        profileImage = ImageConverter.decodeFromString(user.profileImage),
+                        profileImageUrl = user.profileImageUrl,
                         username = user.name,
                         description = user.description
                     ) {

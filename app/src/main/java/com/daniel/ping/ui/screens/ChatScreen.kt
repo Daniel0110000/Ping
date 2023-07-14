@@ -5,7 +5,6 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -50,7 +49,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -72,6 +70,7 @@ import androidx.documentfile.provider.DocumentFile
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import com.daniel.ping.R
 import com.daniel.ping.domain.models.Chat
 import com.daniel.ping.domain.models.User
@@ -210,8 +209,8 @@ fun ChatScreen(
                 )
             }
 
-            Image(
-                bitmap = ImageConverter.decodeFromString(userDetails.profileImage).asImageBitmap(),
+            AsyncImage(
+                model = userDetails.profileImageUrl,
                 contentDescription = userDetails.name,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -277,7 +276,7 @@ fun ChatScreen(
                     )
                 } else {
                     if (chats.isNotEmpty()) {
-                        val receivedProfileImage = ImageConverter.decodeFromString(userDetails.profileImage)
+                        val receivedProfileImageUrl = userDetails.profileImageUrl
                         LazyColumn(state = lazyListState) {
 
                             chats.sortWith { obj1, obj2 -> obj1.dateObject.compareTo(obj2.dateObject) }
@@ -311,7 +310,7 @@ fun ChatScreen(
                                     when (message.messageType) {
                                         Constants.MESSAGE_TYPE_TEXT -> {
                                             ReceivedMessageItem(
-                                                profileImage = receivedProfileImage,
+                                                profileImageUrl = receivedProfileImageUrl,
                                                 message = message.message,
                                                 date = message.dateTime
                                             )
@@ -319,14 +318,14 @@ fun ChatScreen(
                                         Constants.MESSAGE_TYPE_IMAGE -> {
                                             ReceivedMessageWithImageItem(
                                                 imageUrl = message.imageUrl,
-                                                profileImage = receivedProfileImage,
+                                                profileImageUrl = receivedProfileImageUrl,
                                                 message = message.message,
                                                 date = message.dateTime
                                             )
                                         }
                                         else -> {
                                             ReceivedMessageWithFileItem(
-                                                profileImage = receivedProfileImage,
+                                                profileImageUrl = receivedProfileImageUrl,
                                                 fileNameText = message.fileDetails[Constants.KEY_FILE_NAME].toString(),
                                                 fileSizeText = message.fileDetails[Constants.KEY_FILE_SIZE].toString(),
                                                 message = message.message,
@@ -351,8 +350,8 @@ fun ChatScreen(
                             modifier = Modifier.align(Alignment.Center),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Image(
-                                bitmap = ImageConverter.decodeFromString(userDetails.profileImage).asImageBitmap(),
+                            AsyncImage(
+                                model = userDetails.profileImageUrl,
                                 contentDescription = userDetails.name,
                                 contentScale = ContentScale.Crop,
                                 modifier = Modifier

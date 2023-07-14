@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.daniel.ping.R
 import com.daniel.ping.domain.repositories.AuthenticationRepository
 import com.daniel.ping.domain.utilities.Constants
-import com.daniel.ping.domain.utilities.ImageConverter
 import com.daniel.ping.domain.utilities.Resource
 import com.google.android.gms.tasks.Task
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -54,14 +53,14 @@ class ProfileSetupViewModel @Inject constructor(
 
         setIsLoading(true)
         viewModelScope.launch(Dispatchers.IO) {
-            val bitmapImage = ImageConverter.uriToBitmap(application, state.value.profileImage!!)
+            // val bitmapImage = ImageConverter.uriToBitmap(application, state.value.profileImage!!)
             val dataResult = authenticationRepository.insertProfileDescription(
                 hashMapOf(
                     Constants.KEY_NAME to state.value.name,
-                    Constants.KEY_DESCRIPTION to state.value.description,
-                    Constants.KEY_IMAGE to ImageConverter.encodedImage(bitmapImage)
+                    Constants.KEY_DESCRIPTION to state.value.description
                 ),
-                authenticationRepository.getString(Constants.KEY_USER_ID)
+                authenticationRepository.getString(Constants.KEY_USER_ID),
+                state.value.profileImage!!
             )
             when(dataResult){
                 is Resource.Success -> handleInsertSuccess(dataResult.data!!)
@@ -77,11 +76,9 @@ class ProfileSetupViewModel @Inject constructor(
      */
     private fun handleInsertSuccess(rtl: Task<Void>){
         rtl.addOnSuccessListener {
-            val bitmapImage = ImageConverter.uriToBitmap(application, state.value.profileImage!!)
             authenticationRepository.putBooleanToPrefs(Constants.KEY_IS_PROFILE_FULLY_COMPLETED, true)
             authenticationRepository.putStringToPrefs(Constants.KEY_NAME, state.value.name)
             authenticationRepository.putStringToPrefs(Constants.KEY_DESCRIPTION, state.value.description)
-            authenticationRepository.putStringToPrefs(Constants.KEY_IMAGE, ImageConverter.encodedImage(bitmapImage))
             setCompleted(true)
             setIsLoading(false)
         }

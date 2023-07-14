@@ -40,7 +40,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
@@ -56,10 +55,10 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Observer
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
 import com.daniel.ping.R
 import com.daniel.ping.domain.models.RecentConversation
 import com.daniel.ping.domain.models.User
-import com.daniel.ping.domain.utilities.ImageConverter
 import com.daniel.ping.ui.components.NetworkStateReceiverComponent
 import com.daniel.ping.ui.components.lazyComponents.RecentMessageItem
 import com.daniel.ping.ui.navigation.ScreenRoutes
@@ -161,21 +160,19 @@ fun MainScreen(
                         )
                     }
 
-                    state.value.profileImage?.let {
-                        Image(
-                            bitmap = it.asImageBitmap(),
-                            contentDescription = state.value.name,
-                            modifier = Modifier
-                                .size(45.dp)
-                                .clip(CircleShape)
-                                .constrainAs(profileImage) {
-                                    top.linkTo(parent.top, margin = 15.dp)
-                                    start.linkTo(parent.start)
-                                    end.linkTo(parent.end)
-                                },
-                            contentScale = ContentScale.Crop
-                        )
-                    }
+                    AsyncImage(
+                        model = state.value.profileImage,
+                        contentDescription = state.value.name,
+                        modifier = Modifier
+                            .size(45.dp)
+                            .clip(CircleShape)
+                            .constrainAs(profileImage) {
+                                top.linkTo(parent.top, margin = 15.dp)
+                                start.linkTo(parent.start)
+                                end.linkTo(parent.end)
+                            },
+                        contentScale = ContentScale.Crop
+                    )
 
                     Text(
                         text = state.value.name,
@@ -224,7 +221,7 @@ fun MainScreen(
                         LazyColumn(
                             modifier = Modifier
                                 .fillMaxHeight()
-                                .constrainAs(recentMessages){
+                                .constrainAs(recentMessages) {
                                     height = Dimension.fillToConstraints
                                     top.linkTo(recentMessagesDivider.bottom)
                                     bottom.linkTo(parent.bottom)
@@ -233,10 +230,10 @@ fun MainScreen(
                                 }
                         ){
                             items(recentConversations){ conversation ->
-                                RecentMessageItem(image = ImageConverter.decodeFromString(conversation.profileImage)){
+                                RecentMessageItem(imageUrl = conversation.profileImageUrl){
                                     val userDetails = User(
                                         id = conversation.receiverId,
-                                        profileImage = conversation.profileImage,
+                                        profileImageUrl = conversation.profileImageUrl,
                                         name = conversation.name,
                                         description = conversation.description,
                                         token = conversation.token

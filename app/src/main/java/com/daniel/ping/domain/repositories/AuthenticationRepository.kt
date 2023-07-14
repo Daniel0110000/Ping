@@ -2,6 +2,7 @@ package com.daniel.ping.domain.repositories
 
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import com.daniel.ping.domain.models.User
 import com.daniel.ping.domain.useCases.AuthCredentialsUseCase
 import com.daniel.ping.domain.utilities.Resource
@@ -38,6 +39,6 @@ interface AuthenticationRepository {
 
     fun cleanPrefs()
 
-    suspend fun insertProfileDescription(description: HashMap<String, Any>, documentId: String): Resource<Task<Void>>
+    suspend fun insertProfileDescription(userInformation: HashMap<String, Any>, documentId: String, profileImage: Uri): Resource<Task<Void>>
 
 }

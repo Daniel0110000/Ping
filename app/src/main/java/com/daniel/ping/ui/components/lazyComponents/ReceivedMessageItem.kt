@@ -1,6 +1,5 @@
 package com.daniel.ping.ui.components.lazyComponents
 
-import android.graphics.Bitmap
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -22,7 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
@@ -40,7 +38,7 @@ import com.daniel.ping.ui.theme.White
 
 @Composable
 fun ReceivedMessageItem(
-    profileImage: Bitmap,
+    profileImageUrl: String,
     message: String,
     date: String
 ) {
@@ -52,8 +50,8 @@ fun ReceivedMessageItem(
 
         val (profileImageReceived, textMessageContainerReceived, textDateTimeReceived) = createRefs()
 
-        Image(
-            bitmap = profileImage.asImageBitmap(),
+        AsyncImage(
+            model = profileImageUrl,
             contentDescription = "",
             contentScale = ContentScale.Crop,
             modifier = Modifier
@@ -106,7 +104,7 @@ fun ReceivedMessageItem(
 @Composable
 fun ReceivedMessageWithImageItem(
     imageUrl: String,
-    profileImage: Bitmap,
+    profileImageUrl: String,
     message: String = "",
     date: String
 ) {
@@ -119,8 +117,8 @@ fun ReceivedMessageWithImageItem(
 
         val (profileImageReceived, messageContainerReceived, textDateTimeReceived) = createRefs()
 
-        Image(
-            bitmap = profileImage.asImageBitmap(),
+        AsyncImage(
+            model = profileImageUrl,
             contentDescription = "",
             contentScale = ContentScale.Crop,
             modifier = Modifier
@@ -204,7 +202,7 @@ fun ReceivedMessageWithImageItem(
 
 @Composable
 fun ReceivedMessageWithFileItem(
-    profileImage: Bitmap,
+    profileImageUrl: String,
     fileNameText: String,
     fileSizeText: String,
     message: String = "",
@@ -219,8 +217,8 @@ fun ReceivedMessageWithFileItem(
 
         val (profileImageReceived, messageContainerReceived, textDateTimeReceived) = createRefs()
 
-        Image(
-            bitmap = profileImage.asImageBitmap(),
+        AsyncImage(
+            model = profileImageUrl,
             contentDescription = "",
             contentScale = ContentScale.Crop,
             modifier = Modifier

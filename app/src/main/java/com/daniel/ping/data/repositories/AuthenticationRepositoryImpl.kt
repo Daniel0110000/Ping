@@ -2,11 +2,13 @@ package com.daniel.ping.data.repositories
 
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import com.daniel.ping.data.local.SharedPreferenceManager
 import com.daniel.ping.data.remote.FacebookAuthManager
 import com.daniel.ping.data.remote.firebaseService.getUserData
 import com.daniel.ping.data.remote.firebaseService.insertEmail
 import com.daniel.ping.data.remote.firebaseService.insertProfileDescription
+import com.daniel.ping.data.remote.firebaseService.saveProfileImage
 import com.daniel.ping.data.remote.firebaseService.signInWithEmailAndPasswordM
 import com.daniel.ping.data.remote.firebaseService.signUpWithEmailAndPassword
 import com.daniel.ping.data.remote.firebaseService.userAlreadyRegistered
@@ -15,6 +17,7 @@ import com.daniel.ping.domain.models.User
 import com.daniel.ping.domain.repositories.AuthenticationRepository
 import com.daniel.ping.domain.useCases.AuthCredentialsUseCase
 import com.daniel.ping.domain.utilities.CallHandler
+import com.daniel.ping.domain.utilities.Constants
 import com.daniel.ping.domain.utilities.Resource
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthCredential
@@ -22,13 +25,15 @@ import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import javax.inject.Inject
 
 class AuthenticationRepositoryImpl @Inject constructor(
     private val auth: FirebaseAuth,
     private val prefs: SharedPreferenceManager,
     private val facebookAuthManager: FacebookAuthManager,
-    private val fireStore: FirebaseFirestore
+    private val fireStore: FirebaseFirestore,
+    private val store: FirebaseStorage
 ) : AuthenticationRepository {
 
     // Function to sign up with email and password
@@ -70,9 +75,20 @@ class AuthenticationRepositoryImpl @Inject constructor(
     override fun getBooleanToPrefs(key: String): Boolean = prefs.getBoolean(key)
     override fun cleanPrefs() = prefs.clean()
 
-    // Function to insert the description of the user's profile
-    override suspend fun insertProfileDescription(description: HashMap<String, Any>, documentId: String): Resource<Task<Void>> =
-        CallHandler.callHandler { fireStore.insertProfileDescription(description, documentId) }
+    /**
+     * Inserts the user profile description into Firestore along with the profile image, and updates the profile image URL in shared preferences
+     * @param userInformation The HashMap containing the user profile information
+     * @param documentId The document ID in Firestore where the profile description will be inserted
+     * @param profileImage The Uri of the profile image to be uploaded and associated the profile description
+     * @return A Resource object wrapping the Task<Void> the represents the insertion operation
+     */
+    override suspend fun insertProfileDescription(userInformation: HashMap<String, Any>, documentId: String, profileImage: Uri): Resource<Task<Void>> =
+        CallHandler.callHandler {
+            val urlProfileImage = store.saveProfileImage(profileImage)
+            prefs.putString(Constants.KEY_PROFILE_IMAGE_URL, urlProfileImage)
+            userInformation[Constants.KEY_PROFILE_IMAGE_URL] = urlProfileImage
+            fireStore.insertProfileDescription(userInformation, documentId)
+        }
 
 
 }

@@ -1,7 +1,5 @@
 package com.daniel.ping.ui.components.lazyComponents
 
-import android.graphics.Bitmap
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,20 +12,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.daniel.ping.R
 import com.daniel.ping.ui.theme.SilverFoil
 import com.daniel.ping.ui.theme.White
 
 @Composable
 fun UserItem(
-    profileImage: Bitmap,
+    profileImageUrl: String,
     username: String,
     description: String,
     onClick: () -> Unit
@@ -39,8 +37,8 @@ fun UserItem(
             .padding(horizontal = 20.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Image(
-            bitmap = profileImage.asImageBitmap(),
+        AsyncImage(
+            model = profileImageUrl,
             contentDescription = username,
             contentScale = ContentScale.Crop,
             modifier = Modifier
