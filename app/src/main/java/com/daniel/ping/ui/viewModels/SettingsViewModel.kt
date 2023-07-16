@@ -36,7 +36,7 @@ class SettingsViewModel @Inject constructor(
         setUserDetails(
             nameValue = auth.getString(Constants.KEY_NAME),
             descriptionValue = auth.getString(Constants.KEY_DESCRIPTION),
-            profileImageValue = auth.getString(Constants.KEY_PROFILE_IMAGE_URL)
+            profileImageValue = auth.getString(Constants.KEY_PROFILE_IMAGE_PATH)
         )
     }
 

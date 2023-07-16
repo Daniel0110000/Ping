@@ -39,6 +39,8 @@ interface AuthenticationRepository {
 
     fun cleanPrefs()
 
+    fun downloadAndSaveImageToLocalStorage(imageUrl: String)
+
     suspend fun insertProfileDescription(userInformation: HashMap<String, Any>, documentId: String, profileImage: Uri): Resource<Task<Void>>
 
 }

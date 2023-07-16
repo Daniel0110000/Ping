@@ -114,4 +114,7 @@ dependencies {
     // Coil
     implementation 'io.coil-kt:coil-compose:2.2.2'
 
+    // Compressor
+    implementation 'id.zelory:compressor:3.0.1'
+
 }

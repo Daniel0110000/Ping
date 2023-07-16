@@ -163,6 +163,7 @@ open class AuthViewModelBase(
                 putStringToPrefs(Constants.KEY_NAME, document?.name.toString())
                 putStringToPrefs(Constants.KEY_DESCRIPTION, document?.description.toString())
                 putStringToPrefs(Constants.KEY_PROFILE_IMAGE_URL, document?.profileImageUrl.toString())
+                downloadAndSaveImageToLocalStorage(document?.profileImageUrl.toString())
                 setAllAuthCompleted()
             },
             onError = { e -> setMessage(e.message.toString()) }

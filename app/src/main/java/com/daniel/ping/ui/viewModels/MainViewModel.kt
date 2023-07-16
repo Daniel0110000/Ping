@@ -21,7 +21,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val userDataRepository: UserDataRepository,
-    private val authenticationRepository: AuthenticationRepository,
+    private val auth: AuthenticationRepository,
     private val chatRepository: ChatRepository
 ) : ViewModel() {
 
@@ -48,8 +48,8 @@ class MainViewModel @Inject constructor(
     init {
         getToken()
         listenerRecentConversations()
-        setName(authenticationRepository.getString(Constants.KEY_NAME))
-        setProfileImage(authenticationRepository.getString(Constants.KEY_PROFILE_IMAGE_URL))
+        setName(auth.getString(Constants.KEY_NAME))
+        setProfileImage(auth.getString(Constants.KEY_PROFILE_IMAGE_PATH))
     }
 
     /**
@@ -67,7 +67,7 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             when (val messaging = userDataRepository.updateToken(token)) {
                 is Resource.Success -> messaging.data?.let { task ->
-                    task.addOnSuccessListener { authenticationRepository.putStringToPrefs(Constants.KEY_FCM_TOKEN, token) }
+                    task.addOnSuccessListener { auth.putStringToPrefs(Constants.KEY_FCM_TOKEN, token) }
                     task.addOnFailureListener { e -> setMessage(e.message.toString()) }
                 }
 
@@ -78,7 +78,7 @@ class MainViewModel @Inject constructor(
 
     private fun listenerRecentConversations() {
         viewModelScope.launch(Dispatchers.IO) {
-            chatRepository.listerRecentConversations(authenticationRepository.getString(Constants.KEY_USER_ID)) { conversations ->
+            chatRepository.listerRecentConversations(auth.getString(Constants.KEY_USER_ID)) { conversations ->
                 recentConversations.value = conversations
             }
         }
