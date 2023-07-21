@@ -155,6 +155,7 @@ fun ChatScreen(
     // A mutable state variable that holds the Uri of the selected image for previewing
     var imagePreview by remember { mutableStateOf<Uri?>(null) }
     var filePreview by remember { mutableStateOf<Uri?>(null) }
+    var audioPreview by remember { mutableStateOf<Uri?>(null) }
     var fileName by remember { mutableStateOf("") }
     var fileSize by remember { mutableStateOf("") }
 
@@ -173,6 +174,10 @@ fun ChatScreen(
                 fileSize = (document.length() / 1024).toString()
             }
         }
+    }
+    
+    val audioLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()){ result: Uri? ->
+        result?.let { audioUri -> audioPreview = audioUri}
     }
 
     Scaffold { paddingValues ->
@@ -423,7 +428,8 @@ fun ChatScreen(
                         intent.type = "*/*"
                         intent.putExtra(Intent.EXTRA_MIME_TYPES, excludedMimeTypes)
                         fileLauncher.launch("application/*")
-                    }
+                    },
+                    openFilesForChooseMusic = { audioLauncher.launch("audio/mpeg") }
                 )
             }
 

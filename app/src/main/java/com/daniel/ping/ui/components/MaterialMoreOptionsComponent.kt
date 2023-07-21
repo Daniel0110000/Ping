@@ -21,7 +21,8 @@ import com.daniel.ping.ui.theme.White
 fun MoreOptionsComponent(
     modifier: Modifier,
     openGallery: () -> Unit,
-    openFiles: () -> Unit
+    openFiles: () -> Unit,
+    openFilesForChooseMusic: () -> Unit
 ) {
 
     Column(modifier = modifier) {
@@ -56,6 +57,24 @@ fun MoreOptionsComponent(
                 modifier = Modifier.scale(0.5f)
             )
         }
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        Card(
+            modifier = Modifier
+                .size(45.dp)
+                .clickable { openFilesForChooseMusic() },
+            shape = RoundedCornerShape(10.dp),
+            backgroundColor = Onyx,
+        ) {
+            Icon(
+                painterResource(id = R.drawable.ic_music),
+                contentDescription = "Open files",
+                tint = White,
+                modifier = Modifier.scale(0.5f)
+            )
+        }
+
     }
 
 }
