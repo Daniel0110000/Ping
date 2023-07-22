@@ -63,11 +63,11 @@ class ChatViewModel @Inject constructor(
 
     private val fileSize = MutableLiveData<String>()
 
-    private val messageAudio = MutableLiveData<Uri?>()
+    private val messageMP3 = MutableLiveData<Uri?>()
 
-    private val audioName = MutableLiveData<String>()
+    private val mp3Name = MutableLiveData<String>()
 
-    private val audioSize = MutableLiveData<String>()
+    private val mp3Size = MutableLiveData<String>()
 
     private val messageText = MutableLiveData<String>()
 
@@ -88,7 +88,7 @@ class ChatViewModel @Inject constructor(
      * Sends a message to the user the current user is chatting with
      */
     fun sendMessage() {
-        if (messageText.value?.isNotEmpty() == true || messageImage.value != null || messageFile.value != null) {
+        if (messageText.value?.isNotEmpty() == true || messageImage.value != null || messageFile.value != null || messageMP3.value != null) {
             viewModelScope.launch(Dispatchers.IO) {
                 setLoadingUploadFile(true)
                 chatRepository.sendMessage(
@@ -98,6 +98,11 @@ class ChatViewModel @Inject constructor(
                     if(messageFile.value != null) hashMapOf(
                         Constants.KEY_FILE_NAME to fileName.value.toString(),
                         Constants.KEY_FILE_SIZE to fileSize.value.toString()
+                    ) else hashMapOf(),
+                    messageMP3.value,
+                    if(messageMP3.value != null) hashMapOf(
+                        Constants.KEY_MP3_NAME to mp3Name.value.toString(),
+                        Constants.KEY_MP3_SIZE to mp3Size.value.toString()
                     ) else hashMapOf()
                 )
 
@@ -241,8 +246,11 @@ class ChatViewModel @Inject constructor(
     private fun clearFields(){
         messageImage.postValue(null)
         messageFile.postValue(null)
+        messageMP3.postValue(null)
         fileName.postValue("")
         fileSize.postValue("")
+        mp3Name.postValue("")
+        mp3Size.postValue("")
         messageText.postValue("")
     }
 
@@ -257,6 +265,15 @@ class ChatViewModel @Inject constructor(
     fun setFileDetails(fileNameValue: String, fileSizeValue: String){
         fileName.value = fileNameValue
         fileSize.value = fileSizeValue
+    }
+
+    fun setMessageMP3(value: Uri?){
+        messageMP3.value = value
+    }
+
+    fun setMP3Details(mp3NameValue: String, mp3SizeValue: String){
+        mp3Name.value = mp3NameValue
+        mp3Size.value = mp3SizeValue
     }
 
     private fun setLoadingUploadFile(isLoading: Boolean){

@@ -77,7 +77,7 @@ import com.daniel.ping.domain.models.User
 import com.daniel.ping.domain.utilities.Constants
 import com.daniel.ping.domain.utilities.ImageConverter
 import com.daniel.ping.domain.utilities.downloadFile
-import com.daniel.ping.ui.components.FileOrAudioPreviewComponent
+import com.daniel.ping.ui.components.FileOrMP3PreviewComponent
 import com.daniel.ping.ui.components.ImagePreviewComponent
 import com.daniel.ping.ui.components.MoreOptionsComponent
 import com.daniel.ping.ui.components.lazyComponents.ReceivedMessageItem
@@ -155,11 +155,11 @@ fun ChatScreen(
     // A mutable state variable that holds the Uri of the selected image for previewing
     var imagePreview by remember { mutableStateOf<Uri?>(null) }
     var filePreview by remember { mutableStateOf<Uri?>(null) }
-    var audioPreview by remember { mutableStateOf<Uri?>(null) }
+    var mp3Preview by remember { mutableStateOf<Uri?>(null) }
     var fileName by remember { mutableStateOf("") }
     var fileSize by remember { mutableStateOf("") }
-    var audioName by remember { mutableStateOf("") }
-    var audioSize by remember { mutableStateOf("") }
+    var mp3Name by remember { mutableStateOf("") }
+    var mp3Size by remember { mutableStateOf("") }
 
     // A launcher for the "GetContent" ActivityResult contract. Launches the gallery app to allow the user to select an image
     // When the user selects an image, the URI of the image is saved in the "imagePreview" state variable
@@ -178,13 +178,13 @@ fun ChatScreen(
         }
     }
     
-    val audioLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()){ result: Uri? ->
+    val mp3Launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()){ result: Uri? ->
         result?.let { audioUri ->
-            audioPreview = audioUri
+            mp3Preview = audioUri
             val documentFile = DocumentFile.fromSingleUri(context, result)
             documentFile?.let { audio ->
-                audioName = audio.name.toString()
-                audioSize = (audio.length() / 1024).toString()
+                mp3Name = audio.name.toString()
+                mp3Size = (audio.length() / 1024).toString()
             }
         }
     }
@@ -438,7 +438,7 @@ fun ChatScreen(
                         intent.putExtra(Intent.EXTRA_MIME_TYPES, excludedMimeTypes)
                         fileLauncher.launch("application/*")
                     },
-                    openFilesForChooseMusic = { audioLauncher.launch("audio/mpeg") }
+                    openFilesForChooseMusic = { mp3Launcher.launch("audio/mpeg") }
                 )
             }
 
@@ -458,27 +458,27 @@ fun ChatScreen(
 
             if(filePreview != null){
                 showMoreOptionsContainer = false
-                FileOrAudioPreviewComponent(
+                FileOrMP3PreviewComponent(
                     modifier = Modifier.constrainAs(filePreviewContainer){
                         start.linkTo(parent.start, margin = 10.dp)
                         bottom.linkTo(inputMessage.top, margin = 10.dp)
                     },
-                    FAName = fileName,
-                    FASize = fileSize
+                    FMName = fileName,
+                    FMSize = fileSize
                 ) { filePreview = null }
             }
 
-            if (audioPreview != null){
+            if (mp3Preview != null){
                 showMoreOptionsContainer = false
-                FileOrAudioPreviewComponent(
+                FileOrMP3PreviewComponent(
                     modifier = Modifier.constrainAs(filePreviewContainer){
                         start.linkTo(parent.start, margin = 10.dp)
                         bottom.linkTo(inputMessage.top, margin = 10.dp)
                     },
-                    FAName = audioName,
-                    FASize = audioSize,
-                    isAudio = true
-                ) { audioPreview = null }
+                    FMName = mp3Name,
+                    FMSize = mp3Size,
+                    isMP3 = true
+                ) { mp3Preview = null }
             }
 
             Card(
@@ -547,6 +547,11 @@ fun ChatScreen(
                             viewModel.setMessageFile(filePreview)
                             viewModel.setFileDetails(fileName, fileSize)
                             filePreview = null
+                        }
+                        if(mp3Preview != null) {
+                            viewModel.setMessageMP3(mp3Preview)
+                            viewModel.setMP3Details(mp3Name, mp3Size)
+                            mp3Preview = null
                         }
                         viewModel.sendMessage()
                         message = ""

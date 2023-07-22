@@ -11,8 +11,8 @@ import kotlinx.coroutines.tasks.await
  * @param file The uri of the file to be uploaded to Firebase Storage
  * @return The download URL of this newly uploaded file
  */
-suspend fun FirebaseStorage.sendMessageWithFile(fileName: String, file: Uri): String{
-    val fileRef = getReference(Constants.KEY_STORAGE_FILES).child(fileName)
+suspend fun FirebaseStorage.sendMessageWithFileOrMP3(fileName: String, file: Uri, isMP3: Boolean = false): String{
+    val fileRef = getReference(if (!isMP3) Constants.KEY_STORAGE_FILES else Constants.KEY_STORAGE_MP3).child(fileName)
 
     fileRef.putFile(file).await()
 

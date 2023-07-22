@@ -8,7 +8,7 @@ import com.daniel.ping.data.remote.firebaseService.listenerAvailabilityOfReceive
 import com.daniel.ping.data.remote.firebaseService.listenerMessage
 import com.daniel.ping.data.remote.firebaseService.listenerRecentConversations
 import com.daniel.ping.data.remote.firebaseService.sedMessage
-import com.daniel.ping.data.remote.firebaseService.sendMessageWithFile
+import com.daniel.ping.data.remote.firebaseService.sendMessageWithFileOrMP3
 import com.daniel.ping.data.remote.firebaseService.sendMessageWithImage
 import com.daniel.ping.data.remote.firebaseService.updateConversation
 import com.daniel.ping.data.remote.networkService.ApiService
@@ -36,17 +36,31 @@ class ChatRepositoryImpl @Inject constructor(
      * @param messageImage The Uri of the image to be sent with the message
      * @param messageFile The uri of the file to be sent with the message
      * @param fileDetails The hashMap containing details of the file
+     * @param messageMP3 The uri of the MP3 file to be sent with the message
+     * @param mp3Details The hashMap containing details of the MP3 file.
      * @return Unit
      */
-    override suspend fun sendMessage(message: HashMap<String, Any>, messageImage: Uri?, messageFile: Uri?, fileDetails: HashMap<String, String>) {
+    override suspend fun sendMessage(
+        message: HashMap<String, Any>,
+        messageImage: Uri?,
+        messageFile: Uri?,
+        fileDetails: HashMap<String, String>,
+        messageMP3: Uri?,
+        mp3Details: HashMap<String, String>
+    ) {
         message[Constants.KEY_TYPE_MESSAGE] = if(messageImage != null) Constants.MESSAGE_TYPE_IMAGE
                                               else if (messageFile != null) Constants.MESSAGE_TYPE_FILE
+                                              else if (messageMP3 != null) Constants.MESSAGE_TYPE_MP3
                                               else Constants.MESSAGE_TYPE_TEXT
         message[Constants.KEY_IMAGE_URL] = messageImage?.let { store.sendMessageWithImage(it) } ?: ""
         messageFile?.let {
-            fileDetails[Constants.KEY_FILE_URL] = store.sendMessageWithFile(fileDetails[Constants.KEY_FILE_NAME].toString(), it)
+            fileDetails[Constants.KEY_FILE_URL] = store.sendMessageWithFileOrMP3(fileDetails[Constants.KEY_FILE_NAME].toString(), it)
         }
-        message[Constants.KEy_FILE_DETAILS] = fileDetails
+        messageMP3?.let {
+            mp3Details[Constants.KEY_MP3_URL] = store.sendMessageWithFileOrMP3(mp3Details[Constants.KEY_MP3_NAME].toString(), it, true)
+        }
+        message[Constants.KEY_FILE_DETAILS] = fileDetails
+        message[Constants.KEY_MP3_DETAILS] = mp3Details
         fireStore.sedMessage(message)
     }
 

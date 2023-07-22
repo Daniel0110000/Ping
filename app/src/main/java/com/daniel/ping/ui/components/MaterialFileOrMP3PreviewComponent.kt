@@ -29,11 +29,11 @@ import com.daniel.ping.ui.theme.UltramarineBlue
 import com.daniel.ping.ui.theme.White
 
 @Composable
-fun FileOrAudioPreviewComponent(
+fun FileOrMP3PreviewComponent(
     modifier: Modifier,
-    FAName: String,
-    FASize: String,
-    isAudio: Boolean = false,
+    FMName: String,
+    FMSize: String,
+    isMP3: Boolean = false,
     close: () -> Unit
 ) {
     Card(
@@ -62,7 +62,7 @@ fun FileOrAudioPreviewComponent(
             )
 
             Image(
-                painterResource(id = if(!isAudio) R.drawable.ic_file else R.drawable.ic_music),
+                painterResource(id = if(!isMP3) R.drawable.ic_file else R.drawable.ic_music),
                 contentDescription = "File icon",
                 modifier = Modifier
                     .size(25.dp)
@@ -74,7 +74,7 @@ fun FileOrAudioPreviewComponent(
             )
 
             Text(
-                text = FAName,
+                text = FMName,
                 color = White,
                 fontFamily = FontFamily(Font(R.font.roboto)),
                 fontSize = 12.sp,
@@ -91,7 +91,7 @@ fun FileOrAudioPreviewComponent(
             )
 
             Text(
-                text = "$FASize KB",
+                text = "$FMSize KB",
                 color = SilverFoil,
                 fontFamily = FontFamily(Font(R.font.roboto)),
                 fontSize = 10.sp,
