@@ -63,6 +63,12 @@ class ChatViewModel @Inject constructor(
 
     private val fileSize = MutableLiveData<String>()
 
+    private val messageAudio = MutableLiveData<Uri?>()
+
+    private val audioName = MutableLiveData<String>()
+
+    private val audioSize = MutableLiveData<String>()
+
     private val messageText = MutableLiveData<String>()
 
     private val receiverUser = MutableLiveData<User>()

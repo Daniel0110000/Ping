@@ -77,7 +77,7 @@ import com.daniel.ping.domain.models.User
 import com.daniel.ping.domain.utilities.Constants
 import com.daniel.ping.domain.utilities.ImageConverter
 import com.daniel.ping.domain.utilities.downloadFile
-import com.daniel.ping.ui.components.FilePreviewComponent
+import com.daniel.ping.ui.components.FileOrAudioPreviewComponent
 import com.daniel.ping.ui.components.ImagePreviewComponent
 import com.daniel.ping.ui.components.MoreOptionsComponent
 import com.daniel.ping.ui.components.lazyComponents.ReceivedMessageItem
@@ -158,6 +158,8 @@ fun ChatScreen(
     var audioPreview by remember { mutableStateOf<Uri?>(null) }
     var fileName by remember { mutableStateOf("") }
     var fileSize by remember { mutableStateOf("") }
+    var audioName by remember { mutableStateOf("") }
+    var audioSize by remember { mutableStateOf("") }
 
     // A launcher for the "GetContent" ActivityResult contract. Launches the gallery app to allow the user to select an image
     // When the user selects an image, the URI of the image is saved in the "imagePreview" state variable
@@ -177,7 +179,14 @@ fun ChatScreen(
     }
     
     val audioLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()){ result: Uri? ->
-        result?.let { audioUri -> audioPreview = audioUri}
+        result?.let { audioUri ->
+            audioPreview = audioUri
+            val documentFile = DocumentFile.fromSingleUri(context, result)
+            documentFile?.let { audio ->
+                audioName = audio.name.toString()
+                audioSize = (audio.length() / 1024).toString()
+            }
+        }
     }
 
     Scaffold { paddingValues ->
@@ -449,14 +458,27 @@ fun ChatScreen(
 
             if(filePreview != null){
                 showMoreOptionsContainer = false
-                FilePreviewComponent(
+                FileOrAudioPreviewComponent(
                     modifier = Modifier.constrainAs(filePreviewContainer){
                         start.linkTo(parent.start, margin = 10.dp)
                         bottom.linkTo(inputMessage.top, margin = 10.dp)
                     },
-                    fileName = fileName,
-                    fileSize = fileSize
+                    FAName = fileName,
+                    FASize = fileSize
                 ) { filePreview = null }
+            }
+
+            if (audioPreview != null){
+                showMoreOptionsContainer = false
+                FileOrAudioPreviewComponent(
+                    modifier = Modifier.constrainAs(filePreviewContainer){
+                        start.linkTo(parent.start, margin = 10.dp)
+                        bottom.linkTo(inputMessage.top, margin = 10.dp)
+                    },
+                    FAName = audioName,
+                    FASize = audioSize,
+                    isAudio = true
+                ) { audioPreview = null }
             }
 
             Card(

@@ -10,7 +10,8 @@ import com.google.firebase.firestore.QuerySnapshot
 
 interface ChatRepository {
 
-    suspend fun sendMessage(message: HashMap<String, Any>, messageImage: Uri? = null, messageFile: Uri? = null, fileDetails: HashMap<String, String>)
+    suspend fun sendMessage(message: HashMap<String, Any>, messageImage: Uri? = null,
+                            messageFile: Uri? = null, fileDetails: HashMap<String, String>)
 
     fun listenerMessages(userId: String, receiverUserId: String, callback: (ArrayList<Chat>) -> Unit)
 
