@@ -10,5 +10,6 @@ data class Chat(
     val dateObject: Date,
     val messageType: String,
     val imageUrl: String,
-    val fileDetails: HashMap<String, String>
+    val fileDetails: HashMap<String, String>,
+    val mp3Details: HashMap<String, String>
 )

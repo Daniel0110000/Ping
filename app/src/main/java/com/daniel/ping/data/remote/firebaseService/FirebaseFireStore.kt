@@ -129,7 +129,8 @@ private fun DocumentSnapshot.toChat(): Chat = Chat(
     dateObject = getTimestamp(Constants.KEY_TIMESTAMP)?.toDate() ?: Date(),
     messageType = getString(Constants.KEY_TYPE_MESSAGE).toString(),
     imageUrl = getString(Constants.KEY_IMAGE_URL).toString(),
-    fileDetails = get(Constants.KEY_FILE_DETAILS) as HashMap<String, String>
+    fileDetails = get(Constants.KEY_FILE_DETAILS) as HashMap<String, String>,
+    mp3Details = get(Constants.KEY_MP3_DETAILS) as HashMap<String, String>
 )
 
 /**

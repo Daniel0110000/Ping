@@ -201,13 +201,14 @@ fun ReceivedMessageWithImageItem(
 }
 
 @Composable
-fun ReceivedMessageWithFileItem(
+fun ReceivedMessageWithFileOrMP3Item(
     profileImageUrl: String,
-    fileNameText: String,
-    fileSizeText: String,
+    FMNameText: String,
+    FMSizeText: String,
     message: String = "",
     date: String,
-    downloadFileListener: () -> Unit
+    isMP3: Boolean = false,
+    downloadListener: () -> Unit
 ) {
     ConstraintLayout(
         modifier = Modifier
@@ -268,7 +269,7 @@ fun ReceivedMessageWithFileItem(
                                 tint = White,
                                 modifier = Modifier
                                     .size(18.dp)
-                                    .clickable { downloadFileListener() }
+                                    .clickable { downloadListener() }
                                     .constrainAs(downloadFile) {
                                         top.linkTo(parent.top, margin = 5.dp)
                                         end.linkTo(parent.end, margin = 5.dp)
@@ -276,7 +277,7 @@ fun ReceivedMessageWithFileItem(
                             )
 
                             Image(
-                                painterResource(id = R.drawable.ic_file),
+                                painterResource(id = if(!isMP3) R.drawable.ic_file else R.drawable.ic_music),
                                 contentDescription = "FileIcon",
                                 modifier = Modifier
                                     .size(25.dp)
@@ -288,7 +289,7 @@ fun ReceivedMessageWithFileItem(
                             )
 
                             Text(
-                                text = fileNameText,
+                                text = FMNameText,
                                 color = White,
                                 fontFamily = FontFamily(Font(R.font.roboto)),
                                 fontSize = 15.sp,
@@ -304,8 +305,8 @@ fun ReceivedMessageWithFileItem(
                             )
 
                             Text(
-                                text = "$fileSizeText KB · ${
-                                    fileNameText.substringAfterLast(".", "").uppercase()
+                                text = "$FMSizeText KB · ${
+                                    FMNameText.substringAfterLast(".", "").uppercase()
                                 }",
                                 color = SilverFoil,
                                 fontFamily = FontFamily(Font(R.font.roboto)),

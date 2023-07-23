@@ -81,10 +81,10 @@ import com.daniel.ping.ui.components.FileOrMP3PreviewComponent
 import com.daniel.ping.ui.components.ImagePreviewComponent
 import com.daniel.ping.ui.components.MoreOptionsComponent
 import com.daniel.ping.ui.components.lazyComponents.ReceivedMessageItem
-import com.daniel.ping.ui.components.lazyComponents.ReceivedMessageWithFileItem
+import com.daniel.ping.ui.components.lazyComponents.ReceivedMessageWithFileOrMP3Item
 import com.daniel.ping.ui.components.lazyComponents.ReceivedMessageWithImageItem
 import com.daniel.ping.ui.components.lazyComponents.SentMessageItem
-import com.daniel.ping.ui.components.lazyComponents.SentMessageWithFileItem
+import com.daniel.ping.ui.components.lazyComponents.SentMessageWithFileOrMP3Item
 import com.daniel.ping.ui.components.lazyComponents.SentMessageWithImageItem
 import com.daniel.ping.ui.theme.LimeGreen
 import com.daniel.ping.ui.theme.Onyx
@@ -311,11 +311,20 @@ fun ChatScreen(
                                                 date = message.dateTime
                                             )
                                         }
-                                        else -> {
-                                            SentMessageWithFileItem(
-                                                fileNameText = message.fileDetails[Constants.KEY_FILE_NAME].toString(),
-                                                fileSizeText = message.fileDetails[Constants.KEY_FILE_SIZE].toString(),
+                                        Constants.MESSAGE_TYPE_FILE -> {
+                                            SentMessageWithFileOrMP3Item(
+                                                FMNameText = message.fileDetails[Constants.KEY_FILE_NAME].toString(),
+                                                FMSizeText = message.fileDetails[Constants.KEY_FILE_SIZE].toString(),
                                                 message = message.message,
+                                                date = message.dateTime
+                                            )
+                                        }
+                                        Constants.MESSAGE_TYPE_MP3 -> {
+                                            SentMessageWithFileOrMP3Item(
+                                                FMNameText = message.mp3Details[Constants.KEY_MP3_NAME].toString(),
+                                                FMSizeText = message.mp3Details[Constants.KEY_MP3_SIZE].toString(),
+                                                message = message.message,
+                                                isMp3 = true,
                                                 date = message.dateTime
                                             )
                                         }
@@ -337,20 +346,31 @@ fun ChatScreen(
                                                 date = message.dateTime
                                             )
                                         }
-                                        else -> {
-                                            ReceivedMessageWithFileItem(
+                                        Constants.MESSAGE_TYPE_FILE -> {
+                                            ReceivedMessageWithFileOrMP3Item(
                                                 profileImageUrl = receivedProfileImageUrl,
-                                                fileNameText = message.fileDetails[Constants.KEY_FILE_NAME].toString(),
-                                                fileSizeText = message.fileDetails[Constants.KEY_FILE_SIZE].toString(),
+                                                FMNameText = message.fileDetails[Constants.KEY_FILE_NAME].toString(),
+                                                FMSizeText = message.fileDetails[Constants.KEY_FILE_SIZE].toString(),
                                                 message = message.message,
                                                 date = message.dateTime,
-                                                downloadFileListener = {
+                                                downloadListener = {
                                                     downloadFile(
                                                         urlFile = message.fileDetails[Constants.KEY_FILE_URL].toString(),
                                                         fileName = message.fileDetails[Constants.KEY_FILE_NAME].toString(),
                                                         fileSize = message.fileDetails[Constants.KEY_FILE_SIZE].toString(),
                                                         context = context
                                                     )
+                                                }
+                                            )
+                                        }
+                                        Constants.MESSAGE_TYPE_MP3 -> {
+                                            ReceivedMessageWithFileOrMP3Item(
+                                                profileImageUrl = receivedProfileImageUrl,
+                                                FMNameText = message.mp3Details[Constants.KEY_MP3_NAME].toString(),
+                                                FMSizeText = message.mp3Details[Constants.KEY_MP3_SIZE].toString(),
+                                                message = message.message,
+                                                date = message.dateTime,
+                                                downloadListener = {
                                                 }
                                             )
                                         }

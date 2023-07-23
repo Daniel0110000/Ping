@@ -156,10 +156,11 @@ fun SentMessageWithImageItem(
 }
 
 @Composable
-fun SentMessageWithFileItem(
-    fileNameText: String,
-    fileSizeText: String,
+fun SentMessageWithFileOrMP3Item(
+    FMNameText: String,
+    FMSizeText: String,
     message: String = "",
+    isMp3: Boolean = false,
     date: String
 ) {
     ConstraintLayout(
@@ -197,7 +198,7 @@ fun SentMessageWithFileItem(
                         val (fileIcon, fileName, fileSizeAndType) = createRefs()
 
                         Image(
-                            painterResource(id = R.drawable.ic_file),
+                            painterResource(id = if(!isMp3) R.drawable.ic_file else R.drawable.ic_music),
                             contentDescription = "FileIcon",
                             modifier = Modifier
                                 .size(25.dp)
@@ -209,7 +210,7 @@ fun SentMessageWithFileItem(
                         )
 
                         Text(
-                            text = fileNameText,
+                            text = FMNameText,
                             color = White,
                             fontFamily = FontFamily(Font(R.font.roboto)),
                             fontSize = 15.sp,
@@ -225,8 +226,8 @@ fun SentMessageWithFileItem(
                         )
 
                         Text(
-                            text = "$fileSizeText KB · ${
-                                fileNameText.substringAfterLast(".", "").uppercase()
+                            text = "$FMSizeText KB · ${
+                                FMNameText.substringAfterLast(".", "").uppercase()
                             }",
                             color = SilverFoil,
                             fontFamily = FontFamily(Font(R.font.roboto)),
