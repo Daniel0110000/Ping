@@ -75,8 +75,8 @@ import com.daniel.ping.R
 import com.daniel.ping.domain.models.Chat
 import com.daniel.ping.domain.models.User
 import com.daniel.ping.domain.utilities.Constants
+import com.daniel.ping.domain.utilities.DownloadManager
 import com.daniel.ping.domain.utilities.ImageConverter
-import com.daniel.ping.domain.utilities.downloadFile
 import com.daniel.ping.ui.components.FileOrMP3PreviewComponent
 import com.daniel.ping.ui.components.ImagePreviewComponent
 import com.daniel.ping.ui.components.MoreOptionsComponent
@@ -354,10 +354,10 @@ fun ChatScreen(
                                                 message = message.message,
                                                 date = message.dateTime,
                                                 downloadListener = {
-                                                    downloadFile(
-                                                        urlFile = message.fileDetails[Constants.KEY_FILE_URL].toString(),
-                                                        fileName = message.fileDetails[Constants.KEY_FILE_NAME].toString(),
-                                                        fileSize = message.fileDetails[Constants.KEY_FILE_SIZE].toString(),
+                                                    DownloadManager.downloadFileOrMP3(
+                                                        urlFM = message.fileDetails[Constants.KEY_FILE_URL].toString(),
+                                                        FMName = message.fileDetails[Constants.KEY_FILE_NAME].toString(),
+                                                        FMSize = message.fileDetails[Constants.KEY_FILE_SIZE].toString(),
                                                         context = context
                                                     )
                                                 }
@@ -371,6 +371,12 @@ fun ChatScreen(
                                                 message = message.message,
                                                 date = message.dateTime,
                                                 downloadListener = {
+                                                    DownloadManager.downloadFileOrMP3(
+                                                        urlFM = message.mp3Details[Constants.KEY_MP3_URL].toString(),
+                                                        FMName = message.mp3Details[Constants.KEY_MP3_NAME].toString(),
+                                                        FMSize = message.mp3Details[Constants.KEY_MP3_SIZE].toString(),
+                                                        context = context
+                                                    )
                                                 }
                                             )
                                         }
