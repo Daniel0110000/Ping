@@ -1,5 +1,10 @@
 package com.daniel.ping.data.di
 
+import android.content.Context
+import androidx.room.Room
+import androidx.room.RoomDatabase
+import com.daniel.ping.data.local.room.RecentConversationsDao
+import com.daniel.ping.data.local.room.RecentConversationsDatabase
 import com.daniel.ping.data.remote.networkService.ApiService
 import com.daniel.ping.domain.utilities.Constants
 import com.google.firebase.auth.FirebaseAuth
@@ -8,6 +13,7 @@ import com.google.firebase.storage.FirebaseStorage
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -51,5 +57,23 @@ object DataModule {
         .addConverterFactory(GsonConverterFactory.create())
         .build()
         .create(ApiService::class.java)
+
+    /**
+     * Provides an instance of the RecentConversationsDao to be used for accessing the local Room database
+     *
+     * This function is annotated with @Singleton, indicating that the same instance of RecentConversationsDao
+     * will be provided throughout the application's lifecycle
+     *
+     * @param context The application context provided by Dagger's @ApplicationContext annotation
+     * @return An instance of RecentConversationsDao for accessing the local Room database
+     */
+    @Singleton
+    @Provides
+    fun providerRecentConversationsDao(@ApplicationContext context: Context): RecentConversationsDao =
+        Room.databaseBuilder(
+            context,
+            RecentConversationsDatabase::class.java,
+            "RecentConversationsDatabase"
+        ).allowMainThreadQueries().build().getRecentConversationsDao()
 
 }

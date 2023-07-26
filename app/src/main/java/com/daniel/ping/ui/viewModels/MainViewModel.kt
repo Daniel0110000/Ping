@@ -5,10 +5,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniel.ping.domain.models.RecentConversation
 import com.daniel.ping.domain.repositories.AuthenticationRepository
-import com.daniel.ping.domain.repositories.ChatRepository
+import com.daniel.ping.domain.repositories.RecentConversationsRepository
 import com.daniel.ping.domain.repositories.UserDataRepository
 import com.daniel.ping.domain.utilities.Constants
-import com.daniel.ping.domain.utilities.Resource
+import com.daniel.ping.domain.utilities.handleResult
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -22,7 +22,7 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val userDataRepository: UserDataRepository,
     private val auth: AuthenticationRepository,
-    private val chatRepository: ChatRepository
+    private val recentConversationsRepository: RecentConversationsRepository
 ) : ViewModel() {
 
     // The ViewModel state flow that represents the main state of the application
@@ -65,21 +65,24 @@ class MainViewModel @Inject constructor(
      */
     private fun updateToken(token: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            when (val messaging = userDataRepository.updateToken(token)) {
-                is Resource.Success -> messaging.data?.let { task ->
-                    task.addOnSuccessListener { auth.putStringToPrefs(Constants.KEY_FCM_TOKEN, token) }
-                    task.addOnFailureListener { e -> setMessage(e.message.toString()) }
-                }
-
-                is Resource.Error -> setMessage(messaging.message.toString())
-            }
+            val tokenResult = userDataRepository.updateToken(token)
+            tokenResult.handleResult(
+                onSuccess = { auth.putStringToPrefs(Constants.KEY_FCM_TOKEN, token) },
+                onError = { e -> setMessage(e.message.toString())}
+            )
         }
     }
 
+    /**
+     * Listens for updates on recent conversations for the current user and updates the LiveData with the latest data
+     *
+     * This function is executed on the IO dispatcher using viewModelScope, which means it runs on a background thread
+     * and is intended for long-running operations like network requests or database operations
+     */
     private fun listenerRecentConversations() {
         viewModelScope.launch(Dispatchers.IO) {
-            chatRepository.listerRecentConversations(auth.getString(Constants.KEY_USER_ID)) { conversations ->
-                recentConversations.value = conversations
+            recentConversationsRepository.listerRecentConversations(auth.getString(Constants.KEY_USER_ID)).collect{ recentConversationsList ->
+                recentConversations.postValue(ArrayList(recentConversationsList))
             }
         }
     }

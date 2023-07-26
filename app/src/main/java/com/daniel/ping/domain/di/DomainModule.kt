@@ -2,9 +2,11 @@ package com.daniel.ping.domain.di
 
 import com.daniel.ping.data.repositories.AuthenticationRepositoryImpl
 import com.daniel.ping.data.repositories.ChatRepositoryImpl
+import com.daniel.ping.data.repositories.RecentConversationsRepositoryImpl
 import com.daniel.ping.data.repositories.UserDataRepositoryImpl
 import com.daniel.ping.domain.repositories.AuthenticationRepository
 import com.daniel.ping.domain.repositories.ChatRepository
+import com.daniel.ping.domain.repositories.RecentConversationsRepository
 import com.daniel.ping.domain.repositories.UserDataRepository
 import dagger.Binds
 import dagger.Module
@@ -47,4 +49,9 @@ abstract class DomainModule {
     @Binds
     @Singleton
     abstract fun providerChatRepository(chatRepositoryImpl: ChatRepositoryImpl): ChatRepository
+
+    @Binds
+    @Singleton
+    abstract fun providerRecentConversationsRepository(recentConversationsRepositoryImpl: RecentConversationsRepositoryImpl): RecentConversationsRepository
+
 }

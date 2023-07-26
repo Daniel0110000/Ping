@@ -115,14 +115,4 @@ class ChatRepositoryImpl @Inject constructor(
     override suspend fun updateConversation(documentId: String) {
         fireStore.updateConversation(documentId)
     }
-
-    /**
-     * Function to listen for changes in the recent conversations collection in the FireStore database and notify the listener
-     * @param senderId Id of the user whose recent conversations will be listened to
-     * @param listener Callback function to notify when the recent conversations list is updated
-     */
-    override fun listerRecentConversations(senderId: String, listener: (ArrayList<RecentConversation>) -> Unit) {
-        fireStore.listenerRecentConversations(senderId, listener)
-    }
-
 }

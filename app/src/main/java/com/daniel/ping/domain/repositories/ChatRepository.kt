@@ -25,9 +25,4 @@ interface ChatRepository {
     suspend fun addConversations(conversation: HashMap<String, Any>): Resource<String>
 
     suspend fun updateConversation(documentId: String)
-
-    fun listerRecentConversations(senderId: String, listener: (ArrayList<RecentConversation>) -> Unit)
-
-
-
 }

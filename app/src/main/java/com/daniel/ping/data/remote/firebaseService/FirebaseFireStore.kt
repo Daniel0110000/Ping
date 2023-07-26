@@ -199,7 +199,7 @@ fun FirebaseFirestore.updateConversation(documentId: String){
  * @param senderId A String representing the ID of the sender id whose recent conversations are being listened to
  * @param listener A lambda function that takes an ArrayList of RecentConversation objects as a parameter, This function is called when changes to the conversations collection occur
  */
-fun FirebaseFirestore.listenerRecentConversations(senderId: String, listener: (ArrayList<RecentConversation>) -> Unit){
+fun FirebaseFirestore.listenerRecentConversations(senderId: String, listener: (List<RecentConversation>) -> Unit){
     collection(Constants.KEY_COLLECTION_CONVERSATIONS)
         .whereEqualTo(Constants.KEY_SENDER_ID, senderId)
         .addSnapshotListener(eventListenerRecentConversation(senderId, listener))
@@ -208,63 +208,76 @@ fun FirebaseFirestore.listenerRecentConversations(senderId: String, listener: (A
         .addSnapshotListener(eventListenerRecentConversation(senderId, listener))
 }
 
-val recentConversations: ArrayList<RecentConversation> = arrayListOf()
+private val recentConversationsMap: HashMap<String, RecentConversation> = hashMapOf()
 
 /**
- * Returns an event listener for listening to recent conversations
- * @param senderId The id of the sender user
- * @param listener a lambda function that will be called when recent conversation changes
- * @return It takes an ArrayList parameter which represents the new list of recent conversations
+ * Creates an EventListener to listen for changes in the recent conversations data for a specific senderId
+ * @param senderId The ID of the sender for whom the recent conversations are being listened
+ * @param listener A callback function that will be invoked with the updated list of RecentConversation objects
+ * @return An EventListener<QuerySnapshot> for Firestore's addSnapshotListener method
  */
-private fun eventListenerRecentConversation(senderId: String, listener: (ArrayList<RecentConversation>) -> Unit): EventListener<QuerySnapshot> =
-    EventListener<QuerySnapshot>{ value, error ->
-
+private fun eventListenerRecentConversation(senderId: String, listener: (List<RecentConversation>) -> Unit): EventListener<QuerySnapshot> =
+    EventListener<QuerySnapshot> { value, error ->
         if(error != null) return@EventListener
 
-        if(value != null){
-            for(documentChange: DocumentChange in value.documentChanges){
-                if(documentChange.type == DocumentChange.Type.ADDED){
-                    // Geta data from the document change and create a recent conversation object
+        value?.documentChanges?.forEach { documentChange ->
+            when (documentChange.type){
+                DocumentChange.Type.ADDED -> {
                     val senderIdDocument = documentChange.document.getString(Constants.KEY_SENDER_ID)
                     val receiverId = documentChange.document.getString(Constants.KEY_RECEIVER_ID)
-                    if(senderIdDocument == senderId){
-                        val recentConversation = RecentConversation(
-                            senderId = senderIdDocument.toString(),
-                            receiverId = receiverId.toString(),
-                            profileImageUrl = documentChange.document.getString(Constants.KEY_RECEIVER_IMAGE).toString(),
-                            name = documentChange.document.getString(Constants.KEY_RECEIVER_NAME).toString(),
-                            description = documentChange.document.getString(Constants.KEY_RECEIVER_DESCRIPTION).toString(),
-                            token = documentChange.document.getString(Constants.KEY_RECEIVER_FCM_TOKEN).toString(),
-                            dateObject = documentChange.document.getDate(Constants.KEY_TIMESTAMP)!!
-                        )
-                        recentConversations.add(recentConversation)
-                    } else {
-                        val recentConversation = RecentConversation(
-                            senderId = receiverId.toString(),
-                            receiverId = senderIdDocument.toString(),
-                            profileImageUrl = documentChange.document.getString(Constants.KEY_SENDER_IMAGE).toString(),
-                            name = documentChange.document.getString(Constants.KEY_SENDER_NAME).toString(),
-                            description = documentChange.document.getString(Constants.KEY_SENDER_DESCRIPTION).toString(),
-                            token = documentChange.document.getString(Constants.KEY_SENDER_FCM_TOKEN).toString(),
-                            dateObject = documentChange.document.getDate(Constants.KEY_TIMESTAMP)!!
-                        )
-                        recentConversations.add(recentConversation)
-                    }
-                } else if (documentChange.type == DocumentChange.Type.MODIFIED){
-                    // update the date object of the corresponding recent conversation
-                    for (i in 0 until recentConversations.size){
-                        val senderIdDocument = documentChange.document.getString(Constants.KEY_SENDER_ID)
-                        val receiverId = documentChange.document.getString(Constants.KEY_RECEIVER_ID)
-                        if (recentConversations[i].senderId == senderIdDocument && recentConversations[i].receiverId == receiverId){
-                            recentConversations[i].dateObject = documentChange.document.getDate(Constants.KEY_TIMESTAMP)!!
-                            break
-                        }
+
+                    val conversationId = getConversationId(senderIdDocument!!, receiverId!!)
+
+                    val conversation = RecentConversation(
+                        senderId = if(senderIdDocument == senderId) senderIdDocument else receiverId,
+                        receiverId = if(senderIdDocument == senderId) receiverId else senderIdDocument,
+                        profileImageUrl = documentChange.document.getString(
+                            if (senderIdDocument == senderId) Constants.KEY_RECEIVER_IMAGE else Constants.KEY_SENDER_IMAGE
+                        ).toString(),
+                        name = documentChange.document.getString(
+                            if (senderIdDocument == senderId) Constants.KEY_RECEIVER_NAME else Constants.KEY_SENDER_NAME
+                        ).toString(),
+                        description = documentChange.document.getString(
+                            if (senderIdDocument == senderId) Constants.KEY_RECEIVER_DESCRIPTION else Constants.KEY_SENDER_DESCRIPTION
+                        ).toString(),
+                        token = documentChange.document.getString(
+                            if (senderIdDocument == senderId) Constants.KEY_RECEIVER_FCM_TOKEN else Constants.KEY_SENDER_FCM_TOKEN
+                        ).toString(),
+                        dateObject = documentChange.document.getDate(Constants.KEY_TIMESTAMP)!!
+                    )
+                    recentConversationsMap[conversationId] = conversation
+                }
+
+                DocumentChange.Type.MODIFIED -> {
+                    val senderIdDocument = documentChange.document.getString(Constants.KEY_SENDER_ID)
+                    val receiverId = documentChange.document.getString(Constants.KEY_RECEIVER_ID)
+
+                    val conversationId = getConversationId(senderIdDocument!!, receiverId!!)
+
+                    recentConversationsMap[conversationId]?.apply {
+                        dateObject = documentChange.document.getDate(Constants.KEY_TIMESTAMP)!!
                     }
                 }
+                else -> {}
             }
-
-            // Call the listener with the updated recent conversations list
-            listener(recentConversations)
+            val sortedConversations = recentConversationsMap.values.sortedByDescending { it.dateObject }
+            listener(sortedConversations)
         }
 
     }
+
+
+/**
+ * Generates a unique conversations ID based on the senderId and receiverId
+ *
+ * The conversation ID is created by sorting the senderId and receiverId in ascending order,
+ * them combining them with an underscore ('_') separator
+ *
+ * @param senderId The ID of the sender in the conversation
+ * @param receiverId The ID of the receiver in the conversation
+ * @return A unique conversation ID generated from the senderId and receiverId
+ */
+private fun getConversationId(senderId: String, receiverId: String): String{
+    val ids = listOf(senderId, receiverId).sorted()
+    return "${ids[0]}_${ids[1]}"
+}
