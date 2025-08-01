@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">Ping</string>
+
+    <!--Auth-->
+    <string name="sign_up">Sign Up</string>
+    <string name="sign_up_description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="sign_up_question">Already have an account?</string>
+
+    <string name="sign_in">Sign In</string>
+    <string name="sign_in_description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</string>
+    <string name="sign_in_question">Don\'t have an account?</string>
+
 </resources>
