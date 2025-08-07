@@ -37,6 +37,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -68,4 +69,16 @@ dependencies {
     // Serialization
     implementation(libs.kotlinx.serialization.core)
 
+    // AppWrite
+    implementation("io.appwrite:sdk-for-android:8.2.1")
+
+    // Google Credentials
+    implementation(libs.androidx.credentials)
+    implementation (libs.googleid)
+    implementation(libs.androidx.credentials.play.services.auth)
+
+    // Koin
+    implementation(libs.koin.android)
+    implementation(libs.koin.androidx.navigation)
+    implementation(libs.koin.androidx.compose)
 }

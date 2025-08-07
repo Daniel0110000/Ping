@@ -6,10 +6,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -28,8 +24,6 @@ import dev.dr10.ping.ui.theme.AppTheme
 fun SignInScreen(
     onNavigateToSignUp: () -> Unit,
 ) {
-    var textTests by remember { mutableStateOf("") }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -51,8 +45,8 @@ fun SignInScreen(
             Spacer(Modifier.height(40.dp))
 
             TextFieldComponent(
-                value = textTests,
-                onValueChange = { textTests = it },
+                value = "",
+                onValueChange = { ""},
                 placeholder = stringResource(R.string.email),
                 isEmail = true,
                 isNext = true
@@ -61,8 +55,8 @@ fun SignInScreen(
             Spacer(Modifier.height(15.dp))
 
             TextFieldComponent(
-                value = textTests,
-                onValueChange = { textTests = it },
+                value = "",
+                onValueChange = { "" },
                 placeholder = stringResource(R.string.password),
                 isPassword = true,
                 isDone = true
@@ -70,7 +64,7 @@ fun SignInScreen(
 
             Spacer(Modifier.height(25.dp))
 
-            ButtonAuthActionComponent(label = stringResource(R.string.sign_in)) {  }
+            ButtonAuthActionComponent(label = stringResource(R.string.sign_in)) {}
 
             Spacer(Modifier.height(15.dp))
 
@@ -78,7 +72,9 @@ fun SignInScreen(
 
             Spacer(Modifier.height(15.dp))
 
-            GoogleAuthActionComponent {}
+            GoogleAuthActionComponent {
+
+            }
 
             Spacer(Modifier.height(30.dp))
 

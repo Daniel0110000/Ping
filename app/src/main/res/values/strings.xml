@@ -12,4 +12,11 @@
     <string name="sign_in_description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</string>
     <string name="sign_in_question">Don\'t have an account?</string>
 
+    <!--Errors-->
+    <string name="invalid_email">Invalid email</string>
+    <string name="empty_fields">Please fill all fields</string>
+    <string name="password_too_short">Password must be at least 8 characters long</string>
+    <string name="user_already_exists">User already exists</string>
+    <string name="unknown_error">Unknown error</string>
+
 </resources>

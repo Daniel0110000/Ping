@@ -24,7 +24,7 @@ fun ButtonAuthActionComponent(
     isLoading: Boolean = false,
     onClick: () -> Unit
 ) = Button(
-    onClick = { onClick() },
+    onClick = { if (!isLoading) onClick() },
     colors = ButtonDefaults.buttonColors().copy(
         containerColor = AppTheme.colors.complementary,
         contentColor = AppTheme.colors.text

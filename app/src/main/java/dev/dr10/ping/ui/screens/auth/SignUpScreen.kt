@@ -6,10 +6,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -23,12 +21,28 @@ import dev.dr10.ping.ui.screens.auth.components.QuestionTextComponent
 import dev.dr10.ping.ui.screens.auth.components.TopIconAppComponent
 import dev.dr10.ping.ui.screens.components.TextFieldComponent
 import dev.dr10.ping.ui.theme.AppTheme
+import dev.dr10.ping.ui.viewmodels.SignUpViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SignUpScreen(
+    viewModel: SignUpViewModel = koinViewModel(),
+    onErrorMessage: (Int) -> Unit,
     onNavigateToSignIn: () -> Unit,
+    onNavigateToSetupProfile: () -> Unit
 ) {
-    var textTests by remember { mutableStateOf("") }
+    val state = viewModel.state.collectAsState().value
+
+    LaunchedEffect(state.isSignUpSuccessful) {
+        if (state.isSignUpSuccessful) onNavigateToSetupProfile()
+    }
+
+    LaunchedEffect(state.errorMessage) {
+        state.errorMessage?.let {
+            onErrorMessage(it)
+            viewModel.clearErrorMessage()
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -51,8 +65,8 @@ fun SignUpScreen(
             Spacer(Modifier.height(40.dp))
 
             TextFieldComponent(
-                value = textTests,
-                onValueChange = { textTests = it },
+                value = state.email,
+                onValueChange = { viewModel.onEmailChanged(it) },
                 placeholder = stringResource(R.string.email),
                 isEmail = true,
                 isNext = true
@@ -61,8 +75,8 @@ fun SignUpScreen(
             Spacer(Modifier.height(15.dp))
 
             TextFieldComponent(
-                value = textTests,
-                onValueChange = { textTests = it },
+                value = state.password,
+                onValueChange = { viewModel.onPasswordChanged(it) },
                 placeholder = stringResource(R.string.password),
                 isPassword = true,
                 isDone = true
@@ -70,7 +84,10 @@ fun SignUpScreen(
 
             Spacer(Modifier.height(25.dp))
 
-            ButtonAuthActionComponent(label = stringResource(R.string.sign_up)) {  }
+            ButtonAuthActionComponent(
+                label = stringResource(R.string.sign_up),
+                isLoading = state.isSignUpLoading
+            ) { viewModel.onSignUp() }
 
             Spacer(Modifier.height(15.dp))
 
@@ -86,7 +103,10 @@ fun SignUpScreen(
 
             Spacer(Modifier.height(10.dp))
 
-            ButtonAuthActionComponent(label = stringResource(R.string.sign_in)) { onNavigateToSignIn() }
+            ButtonAuthActionComponent(
+                label = stringResource(R.string.sign_in),
+                isLoading = state.isGoogleSignInLoading
+            ) { onNavigateToSignIn() }
 
         }
 

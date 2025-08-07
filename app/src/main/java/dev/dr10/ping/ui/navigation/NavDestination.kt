@@ -9,4 +9,9 @@ sealed interface NavDestination: NavKey {
     data object SignIn: NavDestination
     @Serializable
     data object SignUp: NavDestination
+    @Serializable
+    data object SetupProfile: NavDestination
+    @Serializable
+    data object Main: NavDestination
+
 }

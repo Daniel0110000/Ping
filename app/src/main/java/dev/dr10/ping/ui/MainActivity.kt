@@ -8,11 +8,18 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import dev.dr10.ping.ui.navigation.NavHost
 import dev.dr10.ping.ui.theme.AppTheme
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,8 +30,29 @@ class MainActivity : ComponentActivity() {
             navigationBarStyle = SystemBarStyle.dark(AppTheme.colors.background.toArgb())
         )
         setContent {
+            val scope = rememberCoroutineScope()
+            val snackBarHostState = remember { SnackbarHostState() }
             splashScreen.setKeepOnScreenCondition { false }
-            Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding -> NavHost(Modifier.padding(innerPadding)) }
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                snackbarHost = {
+                    SnackbarHost(hostState = snackBarHostState) {
+                        Snackbar(
+                            snackbarData = it,
+                            containerColor = AppTheme.colors.background,
+                            contentColor = Color(0xFFFA4C48),
+                        )
+                    }
+                }
+            ) { innerPadding ->
+                NavHost(
+                    modifier = Modifier.padding(innerPadding),
+                    isLogged = true,
+                    isCompletedProfile = true
+                ) { message ->
+                    scope.launch { snackBarHostState.showSnackbar(getString(message)) }
+                }
+            }
         }
     }
 }
