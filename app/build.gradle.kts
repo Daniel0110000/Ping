@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -17,6 +19,12 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        val localProperties = Properties().apply { load(rootProject.file("local.properties").inputStream()) }
+        buildConfigField("String", "SUPABASE_URL", "\"${localProperties.getProperty("supabase.url")}\"")
+        buildConfigField("String", "SUPABASE_KEY", "\"${localProperties.getProperty("supabase.key")}\"")
+        buildConfigField("String", "SERVER_CLIENT_ID", "\"${localProperties.getProperty("server.client.id")}\"")
+
     }
 
     buildTypes {
@@ -69,8 +77,10 @@ dependencies {
     // Serialization
     implementation(libs.kotlinx.serialization.core)
 
-    // AppWrite
-    implementation("io.appwrite:sdk-for-android:8.2.1")
+    // Supabase
+    implementation(libs.postgrest.kt)
+    implementation(libs.auth.kt)
+    implementation(libs.ktor.client.android)
 
     // Google Credentials
     implementation(libs.androidx.credentials)

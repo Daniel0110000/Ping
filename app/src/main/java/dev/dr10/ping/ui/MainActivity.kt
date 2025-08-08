@@ -47,8 +47,8 @@ class MainActivity : ComponentActivity() {
             ) { innerPadding ->
                 NavHost(
                     modifier = Modifier.padding(innerPadding),
-                    isLogged = true,
-                    isCompletedProfile = true
+                    isLogged = false,
+                    isCompletedProfile = false
                 ) { message ->
                     scope.launch { snackBarHostState.showSnackbar(getString(message)) }
                 }

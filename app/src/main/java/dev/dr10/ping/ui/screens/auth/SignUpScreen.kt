@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import dev.dr10.ping.R
@@ -31,6 +32,7 @@ fun SignUpScreen(
     onNavigateToSignIn: () -> Unit,
     onNavigateToSetupProfile: () -> Unit
 ) {
+    val context = LocalContext.current
     val state = viewModel.state.collectAsState().value
 
     LaunchedEffect(state.isSignUpSuccessful) {
@@ -95,7 +97,7 @@ fun SignUpScreen(
 
             Spacer(Modifier.height(15.dp))
 
-            GoogleAuthActionComponent {  }
+            GoogleAuthActionComponent(isLoading = state.isGoogleSignInLoading) { viewModel.onGoogleSignUp(context) }
 
             Spacer(Modifier.height(30.dp))
 
@@ -103,10 +105,7 @@ fun SignUpScreen(
 
             Spacer(Modifier.height(10.dp))
 
-            ButtonAuthActionComponent(
-                label = stringResource(R.string.sign_in),
-                isLoading = state.isGoogleSignInLoading
-            ) { onNavigateToSignIn() }
+            ButtonAuthActionComponent(label = stringResource(R.string.sign_in)) { onNavigateToSignIn() }
 
         }
 

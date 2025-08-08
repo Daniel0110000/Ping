@@ -17,6 +17,8 @@
     <string name="empty_fields">Please fill all fields</string>
     <string name="password_too_short">Password must be at least 8 characters long</string>
     <string name="user_already_exists">User already exists</string>
+    <string name="user_cancelled_auth">User cancelled auth</string>
+    <string name="network_error">Network error</string>
     <string name="unknown_error">Unknown error</string>
 
 </resources>

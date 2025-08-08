@@ -1,8 +1,10 @@
 package dev.dr10.ping.ui.viewmodels
 
+import android.content.Context
 import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dev.dr10.ping.domain.usesCases.AuthWithGoogleUseCase
 import dev.dr10.ping.domain.usesCases.SignUpWithEmailAndPasswordUseCase
 import dev.dr10.ping.domain.utils.Result
 import dev.dr10.ping.domain.utils.getErrorMessageId
@@ -12,7 +14,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class SignUpViewModel(
-    private val signUpWithEmailAndPasswordUseCase: SignUpWithEmailAndPasswordUseCase
+    private val signUpWithEmailAndPasswordUseCase: SignUpWithEmailAndPasswordUseCase,
+    private val authWithGoogleUseCase: AuthWithGoogleUseCase
 ): ViewModel() {
 
     private val _state: MutableStateFlow<SignUpState> = MutableStateFlow(SignUpState())
@@ -35,6 +38,17 @@ class SignUpViewModel(
                 is Result.Error -> { updateState { copy(isSignUpSuccessful = false, errorMessage = result.error.getErrorMessageId()) } }
             }
             updateState { copy(isSignUpLoading = false) }
+        }
+    }
+
+    fun onGoogleSignUp(context: Context) {
+        viewModelScope.launch {
+            updateState { copy(isGoogleSignInLoading = true) }
+            when (val result = authWithGoogleUseCase(context)) {
+                is Result.Success -> { updateState { copy(isSignUpSuccessful = result.data) } }
+                is Result.Error -> { updateState { copy(isSignUpSuccessful = false, errorMessage = result.error.getErrorMessageId()) } }
+            }
+            updateState { copy(isGoogleSignInLoading = false) }
         }
     }
 

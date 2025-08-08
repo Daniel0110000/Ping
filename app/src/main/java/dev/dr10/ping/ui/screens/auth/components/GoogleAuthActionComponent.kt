@@ -23,7 +23,7 @@ fun GoogleAuthActionComponent(
     isLoading: Boolean = false,
     onClick: () -> Unit
 ) = Button(
-    onClick = { onClick() },
+    onClick = { if (!isLoading) onClick() },
     colors = ButtonDefaults.buttonColors().copy(
         containerColor = AppTheme.colors.text,
         contentColor = AppTheme.colors.complementary

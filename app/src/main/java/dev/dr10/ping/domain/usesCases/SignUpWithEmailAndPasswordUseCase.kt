@@ -3,9 +3,9 @@ package dev.dr10.ping.domain.usesCases
 import android.util.Log
 import dev.dr10.ping.domain.repositories.AuthRepository
 import dev.dr10.ping.domain.utils.AuthDataValidator
+import dev.dr10.ping.domain.utils.Constants
 import dev.dr10.ping.domain.utils.ErrorType
 import dev.dr10.ping.domain.utils.Result
-import io.appwrite.exceptions.AppwriteException
 
 class SignUpWithEmailAndPasswordUseCase(
     private val authRepository: AuthRepository
@@ -18,15 +18,11 @@ class SignUpWithEmailAndPasswordUseCase(
         return try {
             // Creates a new user with the provided email and password
             authRepository.sigUpWithEmailAndPassword(email, password)
-            // Logs in the user created in the previous step
-            authRepository.signInWithEmailAndPassword(email,  password)
             Result.Success(true)
-        } catch (e: AppwriteException) {
-            Log.e("[ - ] SignUpWithEmailAndPasswordUseCase", e.message.toString())
-            when (e.code) {
-                409 -> Result.Error(ErrorType.USER_ALREADY_EXISTS)
-                else -> Result.Error(ErrorType.UNKNOWN_ERROR)
-            }
+        } catch (e: Exception) {
+            Log.e(this::class.java.simpleName, e.message.toString())
+            if (e.message.orEmpty().contains(Constants.ERROR_USER_ALREADY_EXISTS, ignoreCase = true)) Result.Error(ErrorType.USER_ALREADY_EXISTS)
+            else Result.Error(ErrorType.UNKNOWN_ERROR)
         }
     }
 
