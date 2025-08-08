@@ -12,6 +12,11 @@
     <string name="sign_in_description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</string>
     <string name="sign_in_question">Don\'t have an account?</string>
 
+    <string name="profile_image">Profile Image</string>
+    <string name="username">Username</string>
+    <string name="description">Description</string>
+    <string name="finish">Finish</string>
+
     <!--Errors-->
     <string name="invalid_email">Invalid email</string>
     <string name="empty_fields">Please fill all fields</string>

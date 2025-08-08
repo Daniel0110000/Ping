@@ -91,4 +91,7 @@ dependencies {
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.navigation)
     implementation(libs.koin.androidx.compose)
+
+    // ConstraintLayout
+    implementation(libs.androidx.constraintlayout.compose)
 }
