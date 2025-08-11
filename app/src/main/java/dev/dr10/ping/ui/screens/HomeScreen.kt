@@ -8,6 +8,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 
 @Composable
-fun MainScreen() {
+fun HomeScreen() {
     Box(Modifier.fillMaxSize().background(Color.Blue))
 }

@@ -12,6 +12,6 @@ sealed interface NavDestination: NavKey {
     @Serializable
     data object SetupProfile: NavDestination
     @Serializable
-    data object Main: NavDestination
+    data object Home: NavDestination
 
 }

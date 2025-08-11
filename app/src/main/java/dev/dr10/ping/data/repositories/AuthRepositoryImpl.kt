@@ -6,6 +6,7 @@ import androidx.credentials.GetCredentialRequest
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import dev.dr10.ping.BuildConfig
+import dev.dr10.ping.data.local.datastore.UserProfileStore
 import dev.dr10.ping.domain.repositories.AuthRepository
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.auth.providers.Google
@@ -14,7 +15,8 @@ import io.github.jan.supabase.auth.providers.builtin.IDToken
 import io.github.jan.supabase.auth.user.UserSession
 
 class AuthRepositoryImpl(
-    private val authService: Auth
+    private val authService: Auth,
+    private val userProfileStore: UserProfileStore
 ): AuthRepository {
 
     /**
@@ -49,6 +51,12 @@ class AuthRepositoryImpl(
      * @return UserSession if available, null otherwise
      */
     override suspend fun getCurrentSession(): UserSession? = authService.currentSessionOrNull()
+
+    override suspend fun loginCompleted() { userProfileStore.loginCompleted() }
+
+    override suspend fun isUserLoggedIn(): Boolean = userProfileStore.isLoggedIn()
+
+    override suspend fun isProfileSetupCompleted(): Boolean = userProfileStore.isProfileSetupCompleted()
 
     /**
      * Retrieves Google credentials using the CredentialManager

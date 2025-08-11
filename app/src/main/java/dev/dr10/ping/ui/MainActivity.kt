@@ -19,7 +19,9 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import dev.dr10.ping.ui.navigation.NavHost
 import dev.dr10.ping.ui.theme.AppTheme
+import dev.dr10.ping.ui.viewmodels.MainViewModel
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,6 +34,11 @@ class MainActivity : ComponentActivity() {
         setContent {
             val scope = rememberCoroutineScope()
             val snackBarHostState = remember { SnackbarHostState() }
+
+            val viewModel: MainViewModel = koinViewModel()
+            val isLogged = viewModel.isUserLoggedIn()
+            val isCompletedProfile = viewModel.isProfileSetupCompleted()
+
             splashScreen.setKeepOnScreenCondition { false }
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
@@ -47,8 +54,8 @@ class MainActivity : ComponentActivity() {
             ) { innerPadding ->
                 NavHost(
                     modifier = Modifier.padding(innerPadding),
-                    isLogged = false,
-                    isCompletedProfile = false
+                    isLogged = isLogged,
+                    isCompletedProfile = isCompletedProfile,
                 ) { message ->
                     scope.launch { snackBarHostState.showSnackbar(getString(message)) }
                 }

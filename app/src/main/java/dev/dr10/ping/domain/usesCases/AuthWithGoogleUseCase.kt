@@ -13,6 +13,8 @@ class AuthWithGoogleUseCase(
 
     suspend operator fun invoke(context: Context): Result<Boolean, ErrorType> = try {
         authRepository.authWithGoogle(context)
+        // Marks the login as completed after successful authentication
+        authRepository.loginCompleted()
         Result.Success(true)
     } catch (e: Exception) {
         Log.e(this::class.java.simpleName, e.message.toString())

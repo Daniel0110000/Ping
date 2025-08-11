@@ -10,4 +10,9 @@ interface AuthRepository {
 
     suspend fun getCurrentSession(): UserSession?
 
+    suspend fun loginCompleted()
+
+    suspend fun isUserLoggedIn(): Boolean
+    suspend fun isProfileSetupCompleted(): Boolean
+
 }

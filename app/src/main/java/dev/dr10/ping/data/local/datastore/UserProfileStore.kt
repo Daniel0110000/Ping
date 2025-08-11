@@ -9,6 +9,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import dev.dr10.ping.data.models.UserProfileData
 import dev.dr10.ping.domain.utils.Constants
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 
@@ -31,6 +32,8 @@ class UserProfileStore (
         private val IS_PROFILE_SETUP_COMPLETED = booleanPreferencesKey(Constants.IS_PROFILE_SETUP_COMPLETED)
     }
 
+    suspend fun loginCompleted() { context.dataStore.edit { preferences -> preferences[IS_LOGGED_IN] = true } }
+
     /**
      * Saves user profile data to DataStore
      *
@@ -42,7 +45,6 @@ class UserProfileStore (
             preferences[USERNAME] = profileData.username
             preferences[BIO] = profileData.bio
             preferences[PROFILE_IMAGE_PATH] = profileData.profileImagePath
-            preferences[IS_LOGGED_IN] = true
             preferences[IS_PROFILE_SETUP_COMPLETED] = true
         }
     }
@@ -66,4 +68,11 @@ class UserProfileStore (
         )
     }.firstOrNull()
 
+    suspend fun isLoggedIn() = context.dataStore.data.map {
+        preferences -> preferences[IS_LOGGED_IN] ?: false
+    }.first()
+
+    suspend fun isProfileSetupCompleted() = context.dataStore.data.map { preferences ->
+        preferences[IS_PROFILE_SETUP_COMPLETED] ?: false
+    }.first()
 }

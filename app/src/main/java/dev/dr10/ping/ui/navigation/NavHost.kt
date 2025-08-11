@@ -6,7 +6,7 @@ import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
-import dev.dr10.ping.ui.screens.MainScreen
+import dev.dr10.ping.ui.screens.HomeScreen
 import dev.dr10.ping.ui.screens.auth.ProfileSetupScreen
 import dev.dr10.ping.ui.screens.auth.SignInScreen
 import dev.dr10.ping.ui.screens.auth.SignUpScreen
@@ -20,7 +20,7 @@ fun NavHost(
 ) {
     val backStack = rememberNavBackStack(
         when {
-            isLogged && isCompletedProfile -> NavDestination.Main
+            isLogged && isCompletedProfile -> NavDestination.Home
             isLogged -> NavDestination.SetupProfile
             else -> NavDestination.SignIn
         }
@@ -44,10 +44,10 @@ fun NavHost(
                 onErrorMessage = { onErrorMessage(it) },
                 onNavigateToHome = {
                     backStack.clear()
-                    backStack.add(NavDestination.Main)
+                    backStack.add(NavDestination.Home)
                 }
             ) }
-            entry<NavDestination.Main> { MainScreen() }
+            entry<NavDestination.Home> { HomeScreen() }
         }
     )
 }

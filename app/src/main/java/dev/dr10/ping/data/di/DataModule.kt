@@ -32,7 +32,7 @@ val dataModule = module {
     single<Auth> { get<SupabaseClient>().auth }
     single<Storage> { get<SupabaseClient>().storage }
 
-    single<AuthRepository> { AuthRepositoryImpl(get()) }
+    single<AuthRepository> { AuthRepositoryImpl(get(), get()) }
     single<StorageRepository> { StorageRepositoryImpl(get(), get()) }
     single<LocalImageStorageManager> { LocalImageStorageManager(get()) }
     single<ProfileSetupRepository> { ProfileSetupRepositoryImpl(get(), get()) }
