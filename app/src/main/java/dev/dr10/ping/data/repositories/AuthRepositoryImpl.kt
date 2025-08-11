@@ -11,6 +11,7 @@ import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.auth.providers.Google
 import io.github.jan.supabase.auth.providers.builtin.Email
 import io.github.jan.supabase.auth.providers.builtin.IDToken
+import io.github.jan.supabase.auth.user.UserSession
 
 class AuthRepositoryImpl(
     private val authService: Auth
@@ -41,6 +42,13 @@ class AuthRepositoryImpl(
             provider = Google
         }
     }
+
+    /**
+     * Retrieves the current user session
+     *
+     * @return UserSession if available, null otherwise
+     */
+    override suspend fun getCurrentSession(): UserSession? = authService.currentSessionOrNull()
 
     /**
      * Retrieves Google credentials using the CredentialManager

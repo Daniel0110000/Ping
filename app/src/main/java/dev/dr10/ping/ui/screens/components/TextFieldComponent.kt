@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -30,6 +31,7 @@ fun TextFieldComponent(
     onValueChange: (String) -> Unit,
     placeholder: String,
     height: Dp = 55.dp,
+    capitalization: Boolean = false,
     isEmail: Boolean = false,
     isPassword: Boolean = false,
     isNext: Boolean = false,
@@ -72,7 +74,8 @@ fun TextFieldComponent(
             cursorBrush = SolidColor(AppTheme.colors.complementary),
             keyboardOptions = KeyboardOptions(
                 keyboardType = keyboardType,
-                imeAction = imeAction
+                imeAction = imeAction,
+                capitalization = if (capitalization) KeyboardCapitalization.Sentences else KeyboardCapitalization.Unspecified
             ),
             visualTransformation = visualTransformation,
             decorationBox = { innerTextField ->

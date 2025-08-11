@@ -40,7 +40,13 @@ fun NavHost(
                     }
                 )
             }
-            entry<NavDestination.SetupProfile> { ProfileSetupScreen() }
+            entry<NavDestination.SetupProfile> { ProfileSetupScreen(
+                onErrorMessage = { onErrorMessage(it) },
+                onNavigateToHome = {
+                    backStack.clear()
+                    backStack.add(NavDestination.Main)
+                }
+            ) }
             entry<NavDestination.Main> { MainScreen() }
         }
     )

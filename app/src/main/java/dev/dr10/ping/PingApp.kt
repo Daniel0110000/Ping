@@ -1,10 +1,9 @@
 package dev.dr10.ping
 
 import android.app.Application
-import dev.dr10.ping.di.repositoriesModule
-import dev.dr10.ping.di.supabaseModule
-import dev.dr10.ping.di.useCasesModule
-import dev.dr10.ping.di.viewModelsModule
+import dev.dr10.ping.data.di.dataModule
+import dev.dr10.ping.domain.di.domainModule
+import dev.dr10.ping.ui.di.uiModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
@@ -13,7 +12,7 @@ class PingApp: Application() {
         super.onCreate()
         startKoin {
             androidContext(this@PingApp)
-            modules(supabaseModule, repositoriesModule, useCasesModule, viewModelsModule)
+            modules(dataModule, domainModule, uiModule)
         }
     }
 }

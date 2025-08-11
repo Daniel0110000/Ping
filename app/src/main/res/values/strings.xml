@@ -14,16 +14,20 @@
 
     <string name="profile_image">Profile Image</string>
     <string name="username">Username</string>
-    <string name="description">Description</string>
+    <string name="bio">Bio</string>
     <string name="finish">Finish</string>
 
     <!--Errors-->
     <string name="invalid_email">Invalid email</string>
     <string name="empty_fields">Please fill all fields</string>
+    <string name="empty_profile_image">Please select a profile image</string>
     <string name="password_too_short">Password must be at least 8 characters long</string>
     <string name="user_already_exists">User already exists</string>
     <string name="user_cancelled_auth">User cancelled auth</string>
     <string name="network_error">Network error</string>
+    <string name="bio_too_long">Bio must be less than 80 characters</string>
+    <string name="processing_image">Error processing the imagen</string>
+    <string name="user_not_authenticated">You are not authenticated. Please log in to continue</string>
     <string name="unknown_error">Unknown error</string>
 
 </resources>

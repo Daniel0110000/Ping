@@ -3,8 +3,12 @@ package dev.dr10.ping.domain.utils
 enum class ErrorType: Error {
     INVALID_EMAIL,
     EMPTY_FIELDS,
+    EMPTY_PROFILE_IMAGE,
     PASSWORD_TOO_SHORT,
     USER_ALREADY_EXISTS,
     USER_CANCELLED_AUTH,
+    BIO_TOO_LONG,
+    PROCESSING_IMAGE,
+    USER_NOT_AUTHENTICATED,
     UNKNOWN_ERROR,
 }

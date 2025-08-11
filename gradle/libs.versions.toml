@@ -1,9 +1,11 @@
 [versions]
 agp = "8.12.0"
 authKt = "3.0.0"
+coilCompose = "2.7.0"
 constraintlayoutCompose = "1.1.1"
 coreSplashscreen = "1.0.1"
 credentials = "1.5.0"
+datastorePreferences = "1.1.7"
 googleid = "1.1.1"
 koinAndroid = "4.1.0"
 koinAndroidxNavigation = "4.1.0"
@@ -29,9 +31,11 @@ androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = 
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
 androidx-credentials = { module = "androidx.credentials:credentials", version.ref = "credentials" }
 androidx-credentials-play-services-auth = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "credentials" }
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 androidx-navigation3-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "navigation3Ui" }
 androidx-navigation3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "navigation3Runtime" }
 auth-kt = { module = "io.github.jan-tennert.supabase:auth-kt", version.ref = "authKt" }
+coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 googleid = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "googleid" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
@@ -52,6 +56,7 @@ koin-android = { module = "io.insert-koin:koin-android", version.ref = "koinAndr
 kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinxSerializationCore" }
 ktor-client-android = { module = "io.ktor:ktor-client-android", version.ref = "ktorClientAndroid" }
 postgrest-kt = { module = "io.github.jan-tennert.supabase:postgrest-kt", version.ref = "postgrestKt" }
+storage-kt = { module = "io.github.jan-tennert.supabase:storage-kt", version.ref = "authKt" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

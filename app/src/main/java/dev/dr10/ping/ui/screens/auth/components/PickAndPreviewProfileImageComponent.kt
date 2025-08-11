@@ -1,8 +1,10 @@
 package dev.dr10.ping.ui.screens.auth.components
 
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
@@ -10,17 +12,21 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import coil.compose.AsyncImage
 import dev.dr10.ping.R
 import dev.dr10.ping.ui.theme.AppTheme
 
 @Composable
 fun PickAndPreviewProfileImageComponent(
+    profileImagePreview: Uri?,
     onPickImage: () -> Unit
 ) = ConstraintLayout {
     val (imageBoxContainer, pickImageBtn) = createRefs()
@@ -37,13 +43,22 @@ fun PickAndPreviewProfileImageComponent(
             },
         contentAlignment = Alignment.Center
     ) {
-        Text(
-            stringResource(R.string.profile_image),
-            color = AppTheme.colors.textSecondary,
-            fontFamily = AppTheme.robotoFont,
-            fontWeight = FontWeight.Normal,
-            fontSize = 14.sp
-        )
+        if (profileImagePreview != null) {
+            AsyncImage(
+                model = profileImagePreview,
+                contentDescription = stringResource(R.string.profile_image),
+                modifier = Modifier.fillMaxSize().clip(CircleShape),
+                contentScale = ContentScale.Crop
+            )
+        } else {
+            Text(
+                stringResource(R.string.profile_image),
+                color = AppTheme.colors.textSecondary,
+                fontFamily = AppTheme.robotoFont,
+                fontWeight = FontWeight.Normal,
+                fontSize = 14.sp
+            )
+        }
     }
 
     Box(

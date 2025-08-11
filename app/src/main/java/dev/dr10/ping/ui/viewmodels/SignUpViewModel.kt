@@ -33,10 +33,20 @@ class SignUpViewModel(
     fun onSignUp() {
         viewModelScope.launch {
             updateState { copy(isSignUpLoading = true) }
-            when (val result = signUpWithEmailAndPasswordUseCase(state.value.email, state.value.password)) {
-                is Result.Success -> { updateState { copy(isSignUpSuccessful = result.data) } }
-                is Result.Error -> { updateState { copy(isSignUpSuccessful = false, errorMessage = result.error.getErrorMessageId()) } }
+
+            val result = signUpWithEmailAndPasswordUseCase(_state.value.email, _state.value.password)
+
+            updateState {
+                when (result) {
+                    is Result.Success -> copy(
+                        isSignUpSuccessful = result.data,
+                        email = "",
+                        password = ""
+                    )
+                    is Result.Error -> copy(isSignUpSuccessful = false, errorMessage = result.error.getErrorMessageId())
+                }
             }
+
             updateState { copy(isSignUpLoading = false) }
         }
     }
@@ -44,10 +54,16 @@ class SignUpViewModel(
     fun onGoogleSignUp(context: Context) {
         viewModelScope.launch {
             updateState { copy(isGoogleSignInLoading = true) }
-            when (val result = authWithGoogleUseCase(context)) {
-                is Result.Success -> { updateState { copy(isSignUpSuccessful = result.data) } }
-                is Result.Error -> { updateState { copy(isSignUpSuccessful = false, errorMessage = result.error.getErrorMessageId()) } }
+
+            val result = authWithGoogleUseCase(context)
+
+            updateState {
+                when (result) {
+                    is Result.Success -> copy(isSignUpSuccessful = result.data)
+                    is Result.Error -> copy(isSignUpSuccessful = false, errorMessage = result.error.getErrorMessageId())
+                }
             }
+
             updateState { copy(isGoogleSignInLoading = false) }
         }
     }
