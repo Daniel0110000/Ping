@@ -7,6 +7,7 @@ import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import dev.dr10.ping.BuildConfig
 import dev.dr10.ping.data.local.datastore.UserProfileStore
+import dev.dr10.ping.data.models.UserProfileData
 import dev.dr10.ping.domain.repositories.AuthRepository
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.auth.providers.Google
@@ -27,6 +28,19 @@ class AuthRepositoryImpl(
      */
     override suspend fun sigUpWithEmailAndPassword(email: String, password: String) {
         authService.signUpWith(Email) {
+            this.email = email
+            this.password = password
+        }
+    }
+
+    /**
+     * Signs in user with email and password
+     *
+     * @param email The user's email
+     * @param password The user's password
+     */
+    override suspend fun signInWithEmailAndPassword(email: String, password: String) {
+        authService.signInWith(Email) {
             this.email = email
             this.password = password
         }
@@ -57,6 +71,8 @@ class AuthRepositoryImpl(
     override suspend fun isUserLoggedIn(): Boolean = userProfileStore.isLoggedIn()
 
     override suspend fun isProfileSetupCompleted(): Boolean = userProfileStore.isProfileSetupCompleted()
+
+    override suspend fun localSaveProfileData(data: UserProfileData) { userProfileStore.saveProfileData(data) }
 
     /**
      * Retrieves Google credentials using the CredentialManager

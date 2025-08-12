@@ -21,4 +21,17 @@ class StorageRepositoryImpl(
         storageService.from(Constants.PROFILE_IMAGE_BUCKET).upload(imageName, image) { upsert = false }
         return localStorageManager.saveImageToLocalStorage(image, imageName)
     }
+
+    /**
+     * Downloads the profile image from Supabase storage and saves it to local storage
+     *
+     * @param imageName The name of the image file to download
+     * @return The local path where the image is saved
+     */
+    override suspend fun downloadAndSaveProfileImage(imageName: String): String {
+        val profileImageByte = storageService.from(Constants.PROFILE_IMAGE_BUCKET).downloadAuthenticated(imageName)
+        return localStorageManager.saveImageToLocalStorage(profileImageByte, imageName)
+    }
+
+
 }

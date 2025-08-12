@@ -6,7 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.dr10.ping.domain.usesCases.AuthWithGoogleUseCase
 import dev.dr10.ping.domain.usesCases.FetchAndStoreUserDataUseCase
-import dev.dr10.ping.domain.usesCases.SignUpWithEmailAndPasswordUseCase
+import dev.dr10.ping.domain.usesCases.SignInWithEmailAndPasswordUseCase
+import dev.dr10.ping.domain.utils.ErrorType
 import dev.dr10.ping.domain.utils.Result
 import dev.dr10.ping.domain.utils.getErrorMessageId
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,53 +15,45 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class SignUpViewModel(
-    private val signUpWithEmailAndPasswordUseCase: SignUpWithEmailAndPasswordUseCase,
+class SignInViewModel(
+    private val signInWithEmailAndPasswordUseCase: SignInWithEmailAndPasswordUseCase,
     private val authWithGoogleUseCase: AuthWithGoogleUseCase,
     private val fetchAndStoreUserDataUseCase: FetchAndStoreUserDataUseCase
 ): ViewModel() {
 
-    private val _state: MutableStateFlow<SignUpState> = MutableStateFlow(SignUpState())
-    val state: StateFlow<SignUpState> = _state.asStateFlow()
+    private val _state: MutableStateFlow<SignInState> = MutableStateFlow(SignInState())
+    val state: StateFlow<SignInState> = _state.asStateFlow()
 
-    data class SignUpState(
+    data class SignInState(
         val email: String = "",
         val password: String = "",
-        val isSignUpSuccessful: Boolean = false,
-        val isSignUpLoading: Boolean = false,
+        val isSignInSuccessful: Boolean = false,
+        val isSignInLoading: Boolean = false,
         val isGoogleSignInLoading: Boolean = false,
-        val isCompleteProfile: Boolean = false,
+        val isIncompleteProfile: Boolean = false,
         @StringRes val errorMessage: Int? = null
     )
 
-    fun onSignUp() {
+    fun onSignIn() {
         viewModelScope.launch {
-            updateState { copy(isSignUpLoading = true) }
+            updateState { copy(isSignInLoading = true) }
 
-            val result = signUpWithEmailAndPasswordUseCase(_state.value.email, _state.value.password)
-
-            updateState {
-                when (result) {
-                    is Result.Success -> copy(
-                        isSignUpSuccessful = result.data,
-                        email = "",
-                        password = ""
-                    )
-                    is Result.Error -> copy(isSignUpSuccessful = false, errorMessage = result.error.getErrorMessageId())
-                }
+            when (val result = signInWithEmailAndPasswordUseCase(_state.value.email, _state.value.password)) {
+                is Result.Success -> processUserData()
+                is Result.Error -> updateState { copy(isSignInSuccessful = false, errorMessage = result.error.getErrorMessageId()) }
             }
 
-            updateState { copy(isSignUpLoading = false) }
+            updateState { copy(isSignInLoading = false) }
         }
     }
 
-    fun onGoogleSignUp(context: Context) {
+    fun onGoogleSignIn(context: Context) {
         viewModelScope.launch {
             updateState { copy(isGoogleSignInLoading = true) }
 
             when (val result = authWithGoogleUseCase(context)) {
                 is Result.Success -> processUserData()
-                is Result.Error -> updateState { copy(isSignUpSuccessful = false, errorMessage = result.error.getErrorMessageId()) }
+                is Result.Error -> updateState { copy(isSignInSuccessful = false, errorMessage = result.error.getErrorMessageId()) }
             }
 
             updateState { copy(isGoogleSignInLoading = false) }
@@ -68,11 +61,11 @@ class SignUpViewModel(
     }
 
     private suspend fun processUserData() {
-        val result = fetchAndStoreUserDataUseCase()
-        updateState {
-            when (result) {
-                is Result.Success -> copy(isCompleteProfile = true)
-                is Result.Error -> copy(isSignUpSuccessful = true)
+        when (val result = fetchAndStoreUserDataUseCase()) {
+            is Result.Success -> updateState { copy(isSignInSuccessful = result.data) }
+            is Result.Error -> updateState {
+                if (result.error == ErrorType.USER_DATA_NOT_FOUND) copy(isIncompleteProfile = true)
+                else copy(isSignInSuccessful = false, errorMessage = result.error.getErrorMessageId())
             }
         }
     }
@@ -89,7 +82,7 @@ class SignUpViewModel(
         updateState { copy(errorMessage = null) }
     }
 
-    private fun updateState(newState: SignUpState.() -> SignUpState) {
+    private fun updateState(newState: SignInState.() -> SignInState) {
         _state.value = _state.value.newState()
     }
 

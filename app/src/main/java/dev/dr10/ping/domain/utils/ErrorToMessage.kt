@@ -12,5 +12,7 @@ fun ErrorType.getErrorMessageId(): Int = when(this) {
     ErrorType.BIO_TOO_LONG -> R.string.bio_too_long
     ErrorType.PROCESSING_IMAGE -> R.string.processing_image
     ErrorType.USER_NOT_AUTHENTICATED -> R.string.user_not_authenticated
+    ErrorType.INVALID_CREDENTIALS -> R.string.invalid_credentials
+    ErrorType.USER_DATA_NOT_FOUND -> 0
     ErrorType.UNKNOWN_ERROR -> R.string.unknown_error
 }

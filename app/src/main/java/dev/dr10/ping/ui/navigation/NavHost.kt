@@ -29,7 +29,20 @@ fun NavHost(
         modifier = modifier,
         backStack = backStack,
         entryProvider = entryProvider {
-            entry<NavDestination.SignIn> { SignInScreen { backStack.add(NavDestination.SignUp) } }
+            entry<NavDestination.SignIn> {
+                SignInScreen(
+                    onErrorMessage = { onErrorMessage(it) },
+                    onNavigateToSignUp = { backStack.add(NavDestination.SignUp) },
+                    onNavigateToHome = {
+                        backStack.clear()
+                        backStack.add(NavDestination.Home)
+                    },
+                    onNavigateToProfileSetup = {
+                        backStack.clear()
+                        backStack.add(NavDestination.SetupProfile)
+                    }
+                )
+            }
             entry<NavDestination.SignUp> {
                 SignUpScreen(
                     onErrorMessage = { onErrorMessage(it) },
@@ -37,6 +50,10 @@ fun NavHost(
                     onNavigateToSetupProfile = {
                         backStack.clear()
                         backStack.add(NavDestination.SetupProfile)
+                    },
+                    onNavigateToHome = {
+                        backStack.clear()
+                        backStack.add(NavDestination.Home)
                     }
                 )
             }

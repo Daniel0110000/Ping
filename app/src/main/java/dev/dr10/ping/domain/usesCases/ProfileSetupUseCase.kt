@@ -6,8 +6,8 @@ import android.util.Log
 import dev.dr10.ping.data.models.UserProfileData
 import dev.dr10.ping.domain.exceptions.ImageProcessingException
 import dev.dr10.ping.domain.repositories.AuthRepository
-import dev.dr10.ping.domain.repositories.ProfileSetupRepository
 import dev.dr10.ping.domain.repositories.StorageRepository
+import dev.dr10.ping.domain.repositories.UsersRepository
 import dev.dr10.ping.domain.utils.AuthDataValidator
 import dev.dr10.ping.domain.utils.ErrorType
 import dev.dr10.ping.domain.utils.ImageUtils
@@ -16,7 +16,7 @@ import io.github.jan.supabase.auth.user.UserSession
 
 class ProfileSetupUseCase(
     private val context: Context,
-    private val repository: ProfileSetupRepository,
+    private val usersRepository: UsersRepository,
     private val authRepository: AuthRepository,
     private val storageRepository: StorageRepository
 ) {
@@ -46,14 +46,17 @@ class ProfileSetupUseCase(
             // Uploads the profile image and saves it to the local storage
             val localImagePath = storageRepository.uploadAndSaveProfileImage(profileImageByte, imageName)
 
-            // Saves the user profile data on Supabase
-            repository.saveProfile(UserProfileData(
+            // Saves the user profile data on Supabase and in local storage
+            val userData = UserProfileData(
                 userId = currentSession.user!!.id,
                 username = username,
                 bio = bio,
                 profileImageName = imageName,
                 profileImagePath = localImagePath
-            ))
+            )
+            authRepository.localSaveProfileData(userData)
+            usersRepository.saveUserData(userData)
+
 
             Result.Success(true)
         } catch (e: ImageProcessingException) {

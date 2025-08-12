@@ -30,7 +30,8 @@ fun SignUpScreen(
     viewModel: SignUpViewModel = koinViewModel(),
     onErrorMessage: (Int) -> Unit,
     onNavigateToSignIn: () -> Unit,
-    onNavigateToSetupProfile: () -> Unit
+    onNavigateToSetupProfile: () -> Unit,
+    onNavigateToHome: () -> Unit
 ) {
     val context = LocalContext.current
     val state = viewModel.state.collectAsState().value
@@ -44,6 +45,10 @@ fun SignUpScreen(
             onErrorMessage(it)
             viewModel.clearErrorMessage()
         }
+    }
+
+    LaunchedEffect(state.isCompleteProfile) {
+        if (state.isCompleteProfile) onNavigateToHome()
     }
 
     Column(

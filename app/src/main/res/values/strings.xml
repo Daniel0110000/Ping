@@ -28,6 +28,7 @@
     <string name="bio_too_long">Bio must be less than 80 characters</string>
     <string name="processing_image">Error processing the imagen</string>
     <string name="user_not_authenticated">You are not authenticated. Please log in to continue</string>
+    <string name="invalid_credentials">Incorrect email or password. Please try again</string>
     <string name="unknown_error">Unknown error</string>
 
 </resources>
