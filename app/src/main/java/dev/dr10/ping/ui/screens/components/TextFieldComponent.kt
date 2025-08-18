@@ -1,18 +1,24 @@
 package dev.dr10.ping.ui.screens.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -31,11 +37,15 @@ fun TextFieldComponent(
     onValueChange: (String) -> Unit,
     placeholder: String,
     height: Dp = 55.dp,
+    background: Color = AppTheme.colors.background,
+    iconId: Int? = null,
+    horizontalPadding: Dp = 20.dp,
     capitalization: Boolean = false,
     isEmail: Boolean = false,
     isPassword: Boolean = false,
     isNext: Boolean = false,
-    isDone: Boolean = true
+    isDone: Boolean = true,
+    isSearch: Boolean = false
 ) {
 
     val keyboardType = when {
@@ -49,17 +59,31 @@ fun TextFieldComponent(
     val imeAction = when {
         isNext -> ImeAction.Next
         isDone -> ImeAction.Done
+        isSearch -> ImeAction.Search
         else -> ImeAction.Default
     }
 
-    Box(
+    Row(
         modifier = Modifier
             .fillMaxWidth()
             .height(height)
-            .padding(horizontal = 20.dp)
-            .background(color = AppTheme.colors.background, shape = RoundedCornerShape(10.dp)),
-        contentAlignment = Alignment.Center
+            .padding(horizontal = horizontalPadding)
+            .background(color = background, shape = RoundedCornerShape(10.dp)),
+        verticalAlignment = Alignment.CenterVertically
     ) {
+
+        if (iconId != null) {
+
+            Spacer(Modifier.width(8.dp))
+
+            Icon(
+                painter = painterResource(iconId),
+                contentDescription = null,
+                tint = AppTheme.colors.textSecondary,
+                modifier = Modifier.size(23.dp)
+            )
+        }
+
         BasicTextField(
             value = value,
             onValueChange = { onValueChange(it) },

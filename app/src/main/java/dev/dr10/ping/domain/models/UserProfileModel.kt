@@ -4,5 +4,5 @@ data class UserProfileModel(
     val userId: String,
     val username: String,
     val bio: String,
-    val profileImagePath: String
+    val profileImageUrl: String
 )

@@ -19,8 +19,11 @@ object AppTheme {
     class Colors(
         val background: Color = Color(0xFF171717),
         val onBackground: Color = Color(0xFF121313),
+        val surfaceBackground: Color = Color(0xFF1C1C1C),
         val complementary: Color = Color(0xFF4561EE),
         val text: Color = Color(0xFFFFFFFF),
         val textSecondary: Color = Color(0xFFB5B5B5),
+
+        val online: Color = Color(0xFF0CFF79)
     )
 }

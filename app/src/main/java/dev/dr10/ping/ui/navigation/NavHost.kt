@@ -6,7 +6,7 @@ import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
-import dev.dr10.ping.ui.screens.HomeScreen
+import dev.dr10.ping.ui.screens.HomeContainerScreen
 import dev.dr10.ping.ui.screens.auth.ProfileSetupScreen
 import dev.dr10.ping.ui.screens.auth.SignInScreen
 import dev.dr10.ping.ui.screens.auth.SignUpScreen
@@ -64,7 +64,7 @@ fun NavHost(
                     backStack.add(NavDestination.Home)
                 }
             ) }
-            entry<NavDestination.Home> { HomeScreen() }
+            entry<NavDestination.Home> { HomeContainerScreen() }
         }
     )
 }
