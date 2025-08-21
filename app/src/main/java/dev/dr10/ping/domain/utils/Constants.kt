@@ -13,6 +13,10 @@ object Constants {
     const val IS_LOGGED_IN = "is_logged_in"
     const val IS_PROFILE_SETUP_COMPLETED = "is_profile_setup_completed"
 
+    const val RPC_FUNCTION_NAME = "get_random_users"
+    const val RPC_FUNCTION_PARAM = "excluded_id"
+    const val PROFILE_IMAGES_BUCKET_PATH = "/storage/v1/object/public/$PROFILE_IMAGE_BUCKET/"
+
     // Error messages
     const val ERROR_USER_ALREADY_EXISTS = "User already registered"
     const val ERROR_CANCELLED_AUTH = "activity is cancelled by the user"

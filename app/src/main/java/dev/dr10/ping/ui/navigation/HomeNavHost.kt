@@ -12,14 +12,19 @@ import dev.dr10.ping.ui.screens.components.HomePlaceholder
 @Composable
 fun HomeNavHost(
     backStack: NavBackStack,
-    modifier: Modifier
+    modifier: Modifier,
+    onErrorMessage: (Int) -> Unit
 ) {
     NavDisplay(
         modifier = modifier,
         backStack = backStack,
         entryProvider = entryProvider {
             entry<HomeNavDestination.HomePlaceHolder> { HomePlaceholder() }
-            entry<HomeNavDestination.Network> { NetworkScreen() }
+            entry<HomeNavDestination.Network> {
+                NetworkScreen(
+                    onErrorMessage = { onErrorMessage(it) }
+                )
+            }
         }
     )
 

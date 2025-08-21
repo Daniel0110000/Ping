@@ -25,7 +25,9 @@ import dev.dr10.ping.ui.screens.components.ProfileImageAndStatusComponent
 import dev.dr10.ping.ui.theme.AppTheme
 
 @Composable
-fun HomeContainerScreen() {
+fun HomeContainerScreen(
+    onErrorMessage: (Int) -> Unit
+) {
     val backStack = rememberNavBackStack(HomeNavDestination.HomePlaceHolder)
 
     Row(
@@ -70,7 +72,7 @@ fun HomeContainerScreen() {
         HomeNavHost(
             backStack = backStack,
             modifier = Modifier.fillMaxSize()
-        )
+        ) { onErrorMessage(it) }
 
         HomePlaceholder()
 

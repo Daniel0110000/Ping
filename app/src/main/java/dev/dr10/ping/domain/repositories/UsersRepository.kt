@@ -6,4 +6,8 @@ interface UsersRepository {
     suspend fun saveUserData(data: UserProfileData)
 
     suspend fun fetchUserData(userId: String): UserProfileData?
+
+    suspend fun fetchSuggestedUsers(userId: String): List<UserProfileData>
+
+    suspend fun fetchUsersByUsername(username: String): List<UserProfileData>
 }

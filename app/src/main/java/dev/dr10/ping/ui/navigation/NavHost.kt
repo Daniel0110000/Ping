@@ -64,7 +64,7 @@ fun NavHost(
                     backStack.add(NavDestination.Home)
                 }
             ) }
-            entry<NavDestination.Home> { HomeContainerScreen() }
+            entry<NavDestination.Home> { HomeContainerScreen { onErrorMessage(it) } }
         }
     )
 }

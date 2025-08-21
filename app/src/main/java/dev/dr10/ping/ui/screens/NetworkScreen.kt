@@ -8,24 +8,43 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.dr10.ping.R
-import dev.dr10.ping.domain.models.UserProfileModel
 import dev.dr10.ping.ui.screens.components.IconButtonComponent
 import dev.dr10.ping.ui.screens.components.TextFieldComponent
 import dev.dr10.ping.ui.screens.components.UserListItem
 import dev.dr10.ping.ui.theme.AppTheme
+import dev.dr10.ping.ui.viewmodels.NetworkViewModel
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun NetworkScreen() {
+fun NetworkScreen(
+    onErrorMessage: (Int) -> Unit,
+    viewModel: NetworkViewModel = koinViewModel()
+) {
+    val state = viewModel.state.collectAsState().value
+
+    LaunchedEffect(state.errorMessage) {
+        state.errorMessage?.let {
+            onErrorMessage(it)
+            viewModel.clearErrorMessage()
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -40,7 +59,7 @@ fun NetworkScreen() {
 
             IconButtonComponent(
                 iconId = R.drawable.ic_back,
-                contentDescription = "Back",
+                contentDescription = stringResource(R.string.back),
                 background = AppTheme.colors.onBackground,
                 size = 40.dp,
                 iconSize = 18.dp
@@ -51,7 +70,7 @@ fun NetworkScreen() {
             Spacer(Modifier.width(8.dp))
 
             Text(
-                text = "Network",
+                text = stringResource(R.string.network),
                 fontFamily = AppTheme.robotoFont,
                 fontWeight = FontWeight.Medium,
                 color = AppTheme.colors.text,
@@ -63,9 +82,9 @@ fun NetworkScreen() {
         Spacer(Modifier.height(10.dp))
 
         TextFieldComponent(
-            value = "",
-            onValueChange = {},
-            placeholder = "Search friend",
+            value = state.search,
+            onValueChange = { viewModel.setSearchText(it) },
+            placeholder = stringResource(R.string.search_friend),
             capitalization = true,
             height = 50.dp,
             background = AppTheme.colors.onBackground,
@@ -77,25 +96,27 @@ fun NetworkScreen() {
         Spacer(Modifier.height(15.dp))
         
         Text(
-            text = "Suggestions for you",
+            text = stringResource(R.string.suggestions),
             fontFamily = AppTheme.robotoFont,
             fontWeight = FontWeight.Medium,
             color = AppTheme.colors.text,
             fontSize = 17.sp,
         )
 
-        LazyColumn(Modifier.fillMaxSize()) {
-            items(3) {
-                Spacer(Modifier.height(10.dp))
-
-                UserListItem(
-                    UserProfileModel(
-                        userId = "12345",
-                        username = "Jhon Doe",
-                        bio = "This is a test user.",
-                        profileImageUrl = "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/428c5ec9-de92-4956-85cb-4d4e41e41567/dcby6dy-a149403d-b644-4dfd-b578-836dca58e926.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzQyOGM1ZWM5LWRlOTItNDk1Ni04NWNiLTRkNGU0MWU0MTU2N1wvZGNieTZkeS1hMTQ5NDAzZC1iNjQ0LTRkZmQtYjU3OC04MzZkY2E1OGU5MjYucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.AvFCy0bRuk11MUe16nYyxIYo5Lztd_ilG4FHmp52TAc"
-                    )
-                ) { }
+        if (state.isSuggestedUsersLoading) {
+            Spacer(Modifier.height(10.dp))
+            CircularProgressIndicator(
+                strokeWidth = (2.5).dp,
+                modifier = Modifier.size(24.dp).align(Alignment.CenterHorizontally),
+                color = AppTheme.colors.complementary,
+                trackColor = AppTheme.colors.background,
+            )
+        } else {
+            LazyColumn(Modifier.fillMaxSize()) {
+                items(state.userSuggestions) {
+                    Spacer(Modifier.height(10.dp))
+                    UserListItem(it) { }
+                }
             }
         }
 
