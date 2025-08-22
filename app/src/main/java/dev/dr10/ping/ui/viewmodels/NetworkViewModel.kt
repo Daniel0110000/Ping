@@ -6,8 +6,9 @@ import androidx.lifecycle.viewModelScope
 import dev.dr10.ping.domain.models.UserProfileModel
 import dev.dr10.ping.domain.usesCases.GetSuggestedUsersUseCase
 import dev.dr10.ping.domain.usesCases.SearchUserUseCase
-import dev.dr10.ping.domain.utils.Result
 import dev.dr10.ping.domain.utils.getErrorMessageId
+import dev.dr10.ping.ui.extensions.onError
+import dev.dr10.ping.ui.extensions.onSuccess
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,7 +31,9 @@ class NetworkViewModel(
 
     data class NetworkState(
         val search: String = "",
+        val users: List<UserProfileModel>? = null,
         val userSuggestions: List<UserProfileModel> = emptyList(),
+        val isSearchUserLoading: Boolean = false,
         val isSuggestedUsersLoading: Boolean = false,
         @StringRes val errorMessage: Int? = null
     )
@@ -38,19 +41,33 @@ class NetworkViewModel(
     init {
         viewModelScope.launch {
             updateState { copy(isSuggestedUsersLoading = true) }
-            when (val result = getSuggestedUsersUseCase()) {
-                is Result.Success -> { updateState { copy(userSuggestions = result.data) } }
-                is Result.Error -> { updateState { copy(errorMessage = result.error.getErrorMessageId()) } }
-            }
+
+            getSuggestedUsersUseCase()
+                .onSuccess { users -> updateState { copy(userSuggestions = users) }  }
+                .onError { err -> updateState { copy(errorMessage = err.getErrorMessageId()) } }
+
             updateState { copy(isSuggestedUsersLoading = false) }
         }
 
         viewModelScope.launch {
             _state.map { it.search }
-                .debounce(400)
+                .debounce(300)
                 .distinctUntilChanged()
-                .mapLatest { query -> searchUserUseCase(query) }
-                .collect { users -> }
+                .mapLatest { query ->
+                    if (query.isNotBlank()) {
+                        updateState { copy(isSuggestedUsersLoading = true) }
+                        val result = searchUserUseCase(query)
+                        updateState { copy(isSuggestedUsersLoading = false) }
+                        result
+                    }
+                    else null
+                }
+                .collect { result ->
+                    result
+                        ?.onSuccess { users -> updateState { copy(users = users) } }
+                        ?.onError { err -> updateState { copy(errorMessage = err.getErrorMessageId()) } }
+                        ?: updateState { copy(users = null) }
+                }
         }
     }
 

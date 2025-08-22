@@ -47,10 +47,18 @@ class UsersRepositoryImpl(
             parameters = buildJsonObject { put(Constants.RPC_FUNCTION_PARAM, userId) }
         ).decodeList<UserData>().map { it.toProfileData() }
 
-    override suspend fun fetchUsersByUsername(username: String): List<UserProfileData> = supabaseService.from(
+    /**
+     * Fetch users by username, excluding the current user
+     *
+     * @param id The ID of the current user
+     * @param query The username query to search for
+     * @return A list of user profiles matching the query
+     */
+    override suspend fun fetchUsersByUsername(id: String, query: String): List<UserProfileData> = supabaseService.from(
         Constants.USERS_TABLE).select {
             filter {
-                UserData::username ilike "%$username%"
+                UserData::user_id neq id
+                UserData::username ilike "%$query%"
             }
         }
         .decodeList<UserData>()

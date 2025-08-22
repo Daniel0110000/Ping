@@ -9,22 +9,23 @@ import dev.dr10.ping.domain.repositories.UsersRepository
 import dev.dr10.ping.domain.utils.ErrorType
 import dev.dr10.ping.domain.utils.Result
 
-class GetSuggestedUsersUseCase(
-    private val authRepository: AuthRepository,
-    private val usersRepository: UsersRepository
+class SearchUserUseCase(
+    private val usersRepository: UsersRepository,
+    private val authRepository: AuthRepository
 ) {
 
-    suspend operator fun invoke(): Result<List<UserProfileModel>, ErrorType> = try {
+    suspend operator fun invoke(query: String): Result<List<UserProfileModel>, ErrorType> = try {
         // Get the current user ID from the session
         val currentUserId: String = authRepository.getCurrentSession()!!.user!!.id
-        // Fetch the list of suggested users for the current user
-        val suggestedUsers = usersRepository.fetchSuggestedUsers(currentUserId).map { fetch ->
-            fetch.toModel().copy(profileImageUrl = fetch.profileImageName.toProfileImageUrl())
+
+        // Fetch users by username
+        val users = usersRepository.fetchUsersByUsername(id = currentUserId, query = query).map { user ->
+            user.toModel().copy(profileImageUrl = user.profileImageName.toProfileImageUrl())
         }
-        // Return the list of suggested users
-        Result.Success(suggestedUsers)
+
+        Result.Success(users)
     } catch (e: Exception) {
-        Log.d(this::class.java.simpleName, e.message.toString())
+        Log.e(this::class.java.simpleName, e.message.toString())
         Result.Error(ErrorType.UNKNOWN_ERROR)
     }
 

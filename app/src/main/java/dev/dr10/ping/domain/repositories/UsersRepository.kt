@@ -9,5 +9,5 @@ interface UsersRepository {
 
     suspend fun fetchSuggestedUsers(userId: String): List<UserProfileData>
 
-    suspend fun fetchUsersByUsername(username: String): List<UserProfileData>
+    suspend fun fetchUsersByUsername(id: String, query: String): List<UserProfileData>
 }

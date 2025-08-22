@@ -16,5 +16,5 @@ val domainModule = module {
     single { ProfileSetupUseCase(get(), get(), get(), get()) }
     single { FetchAndStoreUserDataUseCase(get(), get(), get()) }
     single { GetSuggestedUsersUseCase(get(), get()) }
-    single { SearchUserUseCase(get()) }
+    single { SearchUserUseCase(get(), get()) }
 }

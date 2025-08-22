@@ -21,6 +21,8 @@
     <string name="network">Network</string>
     <string name="search_friend">Search friend</string>
     <string name="suggestions">Suggestions for you</string>
+    <string name="search_results">Search results</string>
+    <string name="friend_not_found">Friend not found</string>
 
     <!--Errors-->
     <string name="invalid_email">Invalid email</string>

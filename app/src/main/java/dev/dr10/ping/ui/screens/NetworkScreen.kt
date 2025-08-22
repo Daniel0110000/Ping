@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.dr10.ping.R
 import dev.dr10.ping.ui.screens.components.IconButtonComponent
+import dev.dr10.ping.ui.screens.components.PlaceholderComponent
 import dev.dr10.ping.ui.screens.components.TextFieldComponent
 import dev.dr10.ping.ui.screens.components.UserListItem
 import dev.dr10.ping.ui.theme.AppTheme
@@ -93,32 +94,68 @@ fun NetworkScreen(
             isSearch = true
         )
 
-        Spacer(Modifier.height(15.dp))
-        
-        Text(
-            text = stringResource(R.string.suggestions),
-            fontFamily = AppTheme.robotoFont,
-            fontWeight = FontWeight.Medium,
-            color = AppTheme.colors.text,
-            fontSize = 17.sp,
-        )
+        Spacer(Modifier.height(10.dp))
 
-        if (state.isSuggestedUsersLoading) {
-            Spacer(Modifier.height(10.dp))
-            CircularProgressIndicator(
-                strokeWidth = (2.5).dp,
-                modifier = Modifier.size(24.dp).align(Alignment.CenterHorizontally),
-                color = AppTheme.colors.complementary,
-                trackColor = AppTheme.colors.background,
-            )
-        } else {
-            LazyColumn(Modifier.fillMaxSize()) {
-                items(state.userSuggestions) {
+        when {
+            state.users != null && state.isSearchUserLoading -> {
+                CircularProgressIndicator(
+                    strokeWidth = (2.5).dp,
+                    modifier = Modifier.size(24.dp).align(Alignment.CenterHorizontally),
+                    color = AppTheme.colors.complementary,
+                    trackColor = AppTheme.colors.background,
+                )
+            }
+            state.users != null && state.users.isNotEmpty() -> {
+                Text(
+                    text = stringResource(R.string.search_results),
+                    fontFamily = AppTheme.robotoFont,
+                    fontWeight = FontWeight.Medium,
+                    color = AppTheme.colors.text,
+                    fontSize = 17.sp,
+                )
+
+                LazyColumn(Modifier.fillMaxSize()) {
+                    items(state.users) {
+                        Spacer(Modifier.height(10.dp))
+                        UserListItem(it) { }
+                    }
+                }
+            }
+            state.users != null -> {
+                PlaceholderComponent(
+                    iconId = R.drawable.ic_not_found,
+                    label = stringResource(R.string.friend_not_found),
+                    iconSize = 150.dp,
+                    fontSize = 30.sp,
+                    marginTop = (-20).dp
+                )
+            }
+            else -> {
+                Text(
+                    text = stringResource(R.string.suggestions),
+                    fontFamily = AppTheme.robotoFont,
+                    fontWeight = FontWeight.Medium,
+                    color = AppTheme.colors.text,
+                    fontSize = 17.sp,
+                )
+
+                if (state.isSuggestedUsersLoading) {
                     Spacer(Modifier.height(10.dp))
-                    UserListItem(it) { }
+                    CircularProgressIndicator(
+                        strokeWidth = (2.5).dp,
+                        modifier = Modifier.size(24.dp).align(Alignment.CenterHorizontally),
+                        color = AppTheme.colors.complementary,
+                        trackColor = AppTheme.colors.background,
+                    )
+                } else {
+                    LazyColumn(Modifier.fillMaxSize()) {
+                        items(state.userSuggestions) {
+                            Spacer(Modifier.height(10.dp))
+                            UserListItem(it) { }
+                        }
+                    }
                 }
             }
         }
-
     }
 }
