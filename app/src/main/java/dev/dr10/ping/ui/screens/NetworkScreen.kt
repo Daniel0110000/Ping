@@ -34,8 +34,9 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun NetworkScreen(
-    onErrorMessage: (Int) -> Unit,
-    viewModel: NetworkViewModel = koinViewModel()
+    viewModel: NetworkViewModel = koinViewModel(),
+    onBack: () -> Unit,
+    onErrorMessage: (Int) -> Unit
 ) {
     val state = viewModel.state.collectAsState().value
 
@@ -64,9 +65,7 @@ fun NetworkScreen(
                 background = AppTheme.colors.onBackground,
                 size = 40.dp,
                 iconSize = 18.dp
-            ) {
-
-            }
+            ) { onBack() }
 
             Spacer(Modifier.width(8.dp))
 

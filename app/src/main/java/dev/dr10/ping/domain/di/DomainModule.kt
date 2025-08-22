@@ -2,6 +2,7 @@ package dev.dr10.ping.domain.di
 
 import dev.dr10.ping.domain.usesCases.AuthWithGoogleUseCase
 import dev.dr10.ping.domain.usesCases.FetchAndStoreUserDataUseCase
+import dev.dr10.ping.domain.usesCases.GetProfileImageUseCase
 import dev.dr10.ping.domain.usesCases.GetSuggestedUsersUseCase
 import dev.dr10.ping.domain.usesCases.ProfileSetupUseCase
 import dev.dr10.ping.domain.usesCases.SearchUserUseCase
@@ -17,4 +18,5 @@ val domainModule = module {
     single { FetchAndStoreUserDataUseCase(get(), get(), get()) }
     single { GetSuggestedUsersUseCase(get(), get()) }
     single { SearchUserUseCase(get(), get()) }
+    single { GetProfileImageUseCase(get(), get()) }
 }

@@ -66,6 +66,13 @@ class AuthRepositoryImpl(
      */
     override suspend fun getCurrentSession(): UserSession? = authService.currentSessionOrNull()
 
+    /**
+     * Retrieve the current user's profile data
+     *
+     * @return [UserProfileData] the current user's profile data
+     */
+    override suspend fun getProfileData(): UserProfileData? = userProfileStore.getProfileData()
+
     override suspend fun loginCompleted() { userProfileStore.loginCompleted() }
 
     override suspend fun isUserLoggedIn(): Boolean = userProfileStore.isLoggedIn()

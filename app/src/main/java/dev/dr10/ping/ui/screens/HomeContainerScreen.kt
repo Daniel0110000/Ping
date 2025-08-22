@@ -10,9 +10,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.rememberNavBackStack
 import dev.dr10.ping.R
@@ -23,12 +26,23 @@ import dev.dr10.ping.ui.screens.components.HomePlaceholder
 import dev.dr10.ping.ui.screens.components.IconButtonComponent
 import dev.dr10.ping.ui.screens.components.ProfileImageAndStatusComponent
 import dev.dr10.ping.ui.theme.AppTheme
+import dev.dr10.ping.ui.viewmodels.HomeViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun HomeContainerScreen(
+    viewModel: HomeViewModel = koinViewModel(),
     onErrorMessage: (Int) -> Unit
 ) {
+    val state = viewModel.state.collectAsState().value
     val backStack = rememberNavBackStack(HomeNavDestination.HomePlaceHolder)
+
+    LaunchedEffect(state.errorMessage) {
+        state.errorMessage?.let {
+            onErrorMessage(it)
+            viewModel.clearErrorMessage()
+        }
+    }
 
     Row(
         modifier = Modifier
@@ -61,9 +75,11 @@ fun HomeContainerScreen(
 
             Spacer(Modifier.height(8.dp))
 
-            ProfileImageAndStatusComponent(
-                image = painterResource(R.drawable.tmp_profile_image)
-            )
+            state.profileImage?.let {
+                ProfileImageAndStatusComponent(
+                    image = BitmapPainter(it.asImageBitmap())
+                )
+            }
 
             Spacer(Modifier.height(15.dp))
 
@@ -71,8 +87,10 @@ fun HomeContainerScreen(
 
         HomeNavHost(
             backStack = backStack,
-            modifier = Modifier.fillMaxSize()
-        ) { onErrorMessage(it) }
+            modifier = Modifier.fillMaxSize(),
+            onBack = { backStack.removeLastOrNull() },
+            onErrorMessage = { onErrorMessage(it) }
+        )
 
         HomePlaceholder()
 

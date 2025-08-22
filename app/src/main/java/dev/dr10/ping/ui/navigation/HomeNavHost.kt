@@ -13,6 +13,7 @@ import dev.dr10.ping.ui.screens.components.HomePlaceholder
 fun HomeNavHost(
     backStack: NavBackStack,
     modifier: Modifier,
+    onBack: () -> Unit,
     onErrorMessage: (Int) -> Unit
 ) {
     NavDisplay(
@@ -22,6 +23,7 @@ fun HomeNavHost(
             entry<HomeNavDestination.HomePlaceHolder> { HomePlaceholder() }
             entry<HomeNavDestination.Network> {
                 NetworkScreen(
+                    onBack = { onBack() },
                     onErrorMessage = { onErrorMessage(it) }
                 )
             }

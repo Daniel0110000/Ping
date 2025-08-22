@@ -1,5 +1,6 @@
 package dev.dr10.ping.ui.di
 
+import dev.dr10.ping.ui.viewmodels.HomeViewModel
 import dev.dr10.ping.ui.viewmodels.MainViewModel
 import dev.dr10.ping.ui.viewmodels.NetworkViewModel
 import dev.dr10.ping.ui.viewmodels.ProfileSetupViewModel
@@ -14,4 +15,5 @@ val uiModule = module {
     viewModel { ProfileSetupViewModel(get()) }
     viewModel { MainViewModel(get()) }
     viewModel { NetworkViewModel(get(), get()) }
+    viewModel { HomeViewModel(get()) }
 }

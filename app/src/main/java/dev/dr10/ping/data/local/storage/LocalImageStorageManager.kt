@@ -1,13 +1,15 @@
 package dev.dr10.ping.data.local.storage
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 
 class LocalImageStorageManager(
     private val context: Context
 ) {
 
     /**
-     * Saves an image to the local storage
+     * Save an image to the local storage
      *
      * @param image The image as a byte array
      * @param imageName The name of the image file to be saved
@@ -20,5 +22,13 @@ class LocalImageStorageManager(
         }
         return file.absolutePath
     }
+
+    /**
+     * Load the profile image using the [path]
+     *
+     * @param path The path of the image to load
+     * @return [Bitmap] of the loaded image
+     */
+    fun loadImage(path: String): Bitmap = BitmapFactory.decodeFile(path)
 
 }
