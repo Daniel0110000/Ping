@@ -27,16 +27,19 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import dev.dr10.ping.ui.theme.AppTheme
+import network.chaintech.sdpcomposemultiplatform.ssp
 
 @Composable
 fun TextFieldComponent(
+    modifier: Modifier = Modifier,
     value: String,
     onValueChange: (String) -> Unit,
     placeholder: String,
     height: Dp = 55.dp,
+    fontSize: TextUnit = 11.ssp,
     background: Color = AppTheme.colors.background,
     iconId: Int? = null,
     horizontalPadding: Dp = 20.dp,
@@ -45,7 +48,8 @@ fun TextFieldComponent(
     isPassword: Boolean = false,
     isNext: Boolean = false,
     isDone: Boolean = true,
-    isSearch: Boolean = false
+    isSearch: Boolean = false,
+    singleLine: Boolean = true,
 ) {
 
     val keyboardType = when {
@@ -64,7 +68,7 @@ fun TextFieldComponent(
     }
 
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(height)
             .padding(horizontal = horizontalPadding)
@@ -90,11 +94,11 @@ fun TextFieldComponent(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp),
             textStyle = TextStyle(
                 color = AppTheme.colors.text,
-                fontSize = 16.sp,
+                fontSize = fontSize,
                 fontFamily = AppTheme.robotoFont,
                 fontWeight = FontWeight.Normal
             ),
-            singleLine = true,
+            singleLine = singleLine,
             cursorBrush = SolidColor(AppTheme.colors.complementary),
             keyboardOptions = KeyboardOptions(
                 keyboardType = keyboardType,
@@ -107,7 +111,7 @@ fun TextFieldComponent(
                     Text(
                         text = placeholder,
                         color = AppTheme.colors.textSecondary,
-                        fontSize = 16.sp,
+                        fontSize = fontSize,
                         fontFamily = AppTheme.robotoFont,
                         fontWeight = FontWeight.Normal
                     )

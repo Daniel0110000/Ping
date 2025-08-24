@@ -10,4 +10,7 @@ sealed interface HomeNavDestination: NavKey {
 
     @Serializable
     data object Network: HomeNavDestination
+
+    @Serializable
+    data object Chat: HomeNavDestination
 }

@@ -12,15 +12,18 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import dev.dr10.ping.R
 import dev.dr10.ping.ui.theme.AppTheme
+import network.chaintech.sdpcomposemultiplatform.sdp
 
 @Composable
 fun ProfileImageAndStatusComponent(
     image: Painter,
-    isOnline: Boolean = true
+    isOnline: Boolean = true,
+    size: Dp = 50.dp
 ) = ConstraintLayout(Modifier.size(60.dp)) {
     val (profileImage, statusIndicator) = createRefs()
 
@@ -29,8 +32,8 @@ fun ProfileImageAndStatusComponent(
         contentDescription = stringResource(R.string.profile_image),
         contentScale = ContentScale.Crop,
         modifier = Modifier
-            .size(50.dp)
-            .clip(RoundedCornerShape(12.dp))
+            .size(size)
+            .clip(RoundedCornerShape(6.sdp))
             .constrainAs(profileImage) {
                 top.linkTo(parent.top)
                 bottom.linkTo(parent.bottom)

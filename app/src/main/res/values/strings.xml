@@ -24,6 +24,11 @@
     <string name="search_results">Search results</string>
     <string name="friend_not_found">Friend not found</string>
 
+    <string name="message">Message …</string>
+    <string name="expand">Expand</string>
+    <string name="online">Online</string>
+    <string name="send">Send Message</string>
+
     <!--Errors-->
     <string name="invalid_email">Invalid email</string>
     <string name="empty_fields">Please fill all fields</string>

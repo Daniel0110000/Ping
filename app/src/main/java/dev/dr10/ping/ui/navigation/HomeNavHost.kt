@@ -7,6 +7,7 @@ import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import dev.dr10.ping.ui.screens.NetworkScreen
+import dev.dr10.ping.ui.screens.chats.ChatScreen
 import dev.dr10.ping.ui.screens.components.HomePlaceholder
 
 @Composable
@@ -26,6 +27,9 @@ fun HomeNavHost(
                     onBack = { onBack() },
                     onErrorMessage = { onErrorMessage(it) }
                 )
+            }
+            entry<HomeNavDestination.Chat> {
+                ChatScreen()
             }
         }
     )

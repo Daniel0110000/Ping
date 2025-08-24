@@ -1,0 +1,147 @@
+package dev.dr10.ping.ui.screens.chats
+
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import dev.dr10.ping.R
+import dev.dr10.ping.domain.models.MessageDataModel
+import dev.dr10.ping.ui.screens.chats.components.ReceiverMessageItemList
+import dev.dr10.ping.ui.screens.chats.components.SenderMessageItemList
+import dev.dr10.ping.ui.screens.components.IconButtonComponent
+import dev.dr10.ping.ui.screens.components.ProfileImageAndStatusComponent
+import dev.dr10.ping.ui.screens.components.TextFieldComponent
+import dev.dr10.ping.ui.theme.AppTheme
+import network.chaintech.sdpcomposemultiplatform.sdp
+import network.chaintech.sdpcomposemultiplatform.ssp
+
+@Composable
+fun ChatScreen() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(5.sdp)
+    ) {
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButtonComponent(
+                iconId = R.drawable.ic_back,
+                contentDescription = stringResource(R.string.back),
+                background = AppTheme.colors.onBackground,
+                size = 30.sdp,
+                iconSize = 15.sdp
+            ) {  }
+
+            ProfileImageAndStatusComponent(
+                image = painterResource(R.drawable.tmp_profile_image),
+                isOnline = false,
+                size = 32.sdp
+            )
+            
+            Spacer(Modifier.width(1.sdp))
+
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = "Kimberly Martinez",
+                    fontFamily = AppTheme.robotoFont,
+                    color = AppTheme.colors.text,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 12.ssp
+                )
+
+                Text(
+                    text = stringResource(R.string.online),
+                    fontFamily = AppTheme.robotoFont,
+                    color = AppTheme.colors.textSecondary,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 9.ssp
+                )
+            }
+
+            IconButtonComponent(
+                iconId = R.drawable.ic_expand,
+                contentDescription = stringResource(R.string.expand),
+                background = AppTheme.colors.onBackground,
+                size = 30.sdp,
+                iconSize = 13.sdp
+            ) {  }
+        }
+
+        LazyColumn(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
+        ) {
+            items(4) {
+                Spacer(Modifier.height(20.dp))
+
+                SenderMessageItemList(
+                    MessageDataModel(
+                        senderId = "",
+                        receiverId = "",
+                        receiverUsername = "",
+                        message = "Hi everyone, I'm Daniel Blas, Im Android Developer",
+                        date = "July 22 - 10:01 PM"
+                    )
+                )
+
+                Spacer(Modifier.height(20.dp))
+
+                ReceiverMessageItemList(
+                    MessageDataModel(
+                        senderId = "",
+                        receiverId = "",
+                        receiverUsername = "",
+                        message = "Hi everyone, I'm Daniel Blas, Im Android Developer",
+                        date = "July 22 - 10:01 PM"
+                    )
+                )
+
+            }
+        }
+
+        Spacer(Modifier.height(5.sdp))
+
+        Row(Modifier.fillMaxWidth()) {
+            TextFieldComponent(
+                value = "",
+                onValueChange = { },
+                placeholder = stringResource(R.string.message),
+                height = 36.sdp,
+                horizontalPadding = 0.dp,
+                singleLine = false,
+                background = AppTheme.colors.onBackground,
+                modifier = Modifier.weight(1f)
+            )
+
+            Spacer(Modifier.width(7.sdp))
+
+            IconButtonComponent(
+                iconId = R.drawable.ic_send,
+                contentDescription = stringResource(R.string.send),
+                background = AppTheme.colors.onBackground,
+                iconColor = AppTheme.colors.complementary,
+                size = 36.sdp,
+                iconSize = 15.sdp
+            ) {  }
+        }
+
+
+    }
+}

@@ -13,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId = "dev.dr10.ping"
-        minSdk = 23
+        minSdk = 24
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
@@ -101,4 +101,6 @@ dependencies {
 
     // Datastore
     implementation(libs.androidx.datastore.preferences)
+
+    implementation("network.chaintech:sdp-ssp-compose-multiplatform:1.0.6")
 }
