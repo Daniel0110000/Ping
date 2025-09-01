@@ -6,6 +6,7 @@ import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
+import dev.dr10.ping.domain.models.UserProfileModel
 import dev.dr10.ping.ui.screens.NetworkScreen
 import dev.dr10.ping.ui.screens.chats.ChatScreen
 import dev.dr10.ping.ui.screens.components.HomePlaceholder
@@ -15,6 +16,7 @@ fun HomeNavHost(
     backStack: NavBackStack,
     modifier: Modifier,
     onBack: () -> Unit,
+    onNavigateToChat: (UserProfileModel) -> Unit,
     onErrorMessage: (Int) -> Unit
 ) {
     NavDisplay(
@@ -25,12 +27,11 @@ fun HomeNavHost(
             entry<HomeNavDestination.Network> {
                 NetworkScreen(
                     onBack = { onBack() },
+                    onNavigateToChat = { onNavigateToChat(it) },
                     onErrorMessage = { onErrorMessage(it) }
                 )
             }
-            entry<HomeNavDestination.Chat> {
-                ChatScreen()
-            }
+            entry<HomeNavDestination.Chat> { key -> ChatScreen(receiverData = key.userData) }
         }
     )
 

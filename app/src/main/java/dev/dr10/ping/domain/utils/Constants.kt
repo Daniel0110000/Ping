@@ -10,6 +10,7 @@ object Constants {
     const val USER_PROFILE_USERNAME = "username"
     const val USER_PROFILE_BIO = "bio"
     const val USERS_TABLE = "users"
+    const val MESSAGES_TABLE = "messages"
     const val IS_LOGGED_IN = "is_logged_in"
     const val IS_PROFILE_SETUP_COMPLETED = "is_profile_setup_completed"
 

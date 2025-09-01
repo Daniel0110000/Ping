@@ -24,6 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.dr10.ping.R
+import dev.dr10.ping.domain.models.UserProfileModel
 import dev.dr10.ping.ui.screens.components.IconButtonComponent
 import dev.dr10.ping.ui.screens.components.PlaceholderComponent
 import dev.dr10.ping.ui.screens.components.TextFieldComponent
@@ -36,6 +37,7 @@ import org.koin.compose.viewmodel.koinViewModel
 fun NetworkScreen(
     viewModel: NetworkViewModel = koinViewModel(),
     onBack: () -> Unit,
+    onNavigateToChat: (UserProfileModel) -> Unit,
     onErrorMessage: (Int) -> Unit
 ) {
     val state = viewModel.state.collectAsState().value
@@ -116,7 +118,7 @@ fun NetworkScreen(
                 LazyColumn(Modifier.fillMaxSize()) {
                     items(state.users) {
                         Spacer(Modifier.height(10.dp))
-                        UserListItem(it) { }
+                        UserListItem(it) { onNavigateToChat(it) }
                     }
                 }
             }
@@ -150,7 +152,7 @@ fun NetworkScreen(
                     LazyColumn(Modifier.fillMaxSize()) {
                         items(state.userSuggestions) {
                             Spacer(Modifier.height(10.dp))
-                            UserListItem(it) { }
+                            UserListItem(it) { onNavigateToChat(it) }
                         }
                     }
                 }

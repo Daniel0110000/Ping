@@ -4,9 +4,11 @@ import dev.dr10.ping.BuildConfig
 import dev.dr10.ping.data.local.datastore.UserProfileStore
 import dev.dr10.ping.data.local.storage.LocalImageStorageManager
 import dev.dr10.ping.data.repositories.AuthRepositoryImpl
+import dev.dr10.ping.data.repositories.MessagesRepositoryImpl
 import dev.dr10.ping.data.repositories.StorageRepositoryImpl
 import dev.dr10.ping.data.repositories.UsersRepositoryImpl
 import dev.dr10.ping.domain.repositories.AuthRepository
+import dev.dr10.ping.domain.repositories.MessagesRepository
 import dev.dr10.ping.domain.repositories.StorageRepository
 import dev.dr10.ping.domain.repositories.UsersRepository
 import io.github.jan.supabase.SupabaseClient
@@ -36,6 +38,7 @@ val dataModule = module {
     single<StorageRepository> { StorageRepositoryImpl(get(), get()) }
     single<LocalImageStorageManager> { LocalImageStorageManager(get()) }
     single<UsersRepository> { UsersRepositoryImpl(get()) }
+    single<MessagesRepository> { MessagesRepositoryImpl(get()) }
 
     single { UserProfileStore(get()) }
 }

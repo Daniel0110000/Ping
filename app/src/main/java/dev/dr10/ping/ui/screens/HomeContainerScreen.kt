@@ -89,6 +89,8 @@ fun HomeContainerScreen(
             backStack = backStack,
             modifier = Modifier.fillMaxSize(),
             onBack = { backStack.removeLastOrNull() },
+            onNavigateToChat = {
+                backStack.addIfNotExists(HomeNavDestination.Chat(it)) },
             onErrorMessage = { onErrorMessage(it) }
         )
 

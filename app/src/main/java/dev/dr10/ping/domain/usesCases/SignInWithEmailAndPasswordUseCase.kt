@@ -18,6 +18,8 @@ class SignInWithEmailAndPasswordUseCase(
         return try {
             // Logins the user with the provided email and password
             authRepository.signInWithEmailAndPassword(email, password)
+            // Marks the login as completed after successful authentication
+            authRepository.loginCompleted()
             Result.Success(true)
         } catch (e: Exception) {
             Log.e(this::class.java.simpleName, e.message.toString())

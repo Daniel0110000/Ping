@@ -7,29 +7,44 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import dev.dr10.ping.R
 import dev.dr10.ping.domain.models.MessageDataModel
+import dev.dr10.ping.domain.models.UserProfileModel
 import dev.dr10.ping.ui.screens.chats.components.ReceiverMessageItemList
 import dev.dr10.ping.ui.screens.chats.components.SenderMessageItemList
 import dev.dr10.ping.ui.screens.components.IconButtonComponent
-import dev.dr10.ping.ui.screens.components.ProfileImageAndStatusComponent
 import dev.dr10.ping.ui.screens.components.TextFieldComponent
 import dev.dr10.ping.ui.theme.AppTheme
+import dev.dr10.ping.ui.viewmodels.ChatViewModel
 import network.chaintech.sdpcomposemultiplatform.sdp
 import network.chaintech.sdpcomposemultiplatform.ssp
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun ChatScreen() {
+fun ChatScreen(
+    viewModel: ChatViewModel = koinViewModel(),
+    receiverData: UserProfileModel
+) {
+
+    LaunchedEffect(Unit) { viewModel.setReceiverData(receiverData) }
+    val state = viewModel.state.collectAsState().value
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -48,17 +63,22 @@ fun ChatScreen() {
                 iconSize = 15.sdp
             ) {  }
 
-            ProfileImageAndStatusComponent(
-                image = painterResource(R.drawable.tmp_profile_image),
-                isOnline = false,
-                size = 32.sdp
+            Spacer(Modifier.width(2.sdp))
+
+            AsyncImage(
+                model = receiverData.profileImageUrl,
+                contentDescription = receiverData.username,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(32.sdp)
+                    .clip(RoundedCornerShape(6.sdp))
             )
             
-            Spacer(Modifier.width(1.sdp))
+            Spacer(Modifier.width(5.sdp))
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "Kimberly Martinez",
+                    text = receiverData.username,
                     fontFamily = AppTheme.robotoFont,
                     color = AppTheme.colors.text,
                     fontWeight = FontWeight.SemiBold,
@@ -120,8 +140,8 @@ fun ChatScreen() {
 
         Row(Modifier.fillMaxWidth()) {
             TextFieldComponent(
-                value = "",
-                onValueChange = { },
+                value = state.message,
+                onValueChange = { viewModel.setMessage(it) },
                 placeholder = stringResource(R.string.message),
                 height = 36.sdp,
                 horizontalPadding = 0.dp,
@@ -139,7 +159,7 @@ fun ChatScreen() {
                 iconColor = AppTheme.colors.complementary,
                 size = 36.sdp,
                 iconSize = 15.sdp
-            ) {  }
+            ) { viewModel.sendMessage() }
         }
 
 
