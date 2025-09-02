@@ -1,5 +1,6 @@
 package dev.dr10.ping.ui.screens.chats
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -22,10 +24,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.paging.LoadState
+import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import dev.dr10.ping.R
-import dev.dr10.ping.domain.models.MessageDataModel
 import dev.dr10.ping.domain.models.UserProfileModel
+import dev.dr10.ping.ui.screens.chats.components.EmptyChatComponent
 import dev.dr10.ping.ui.screens.chats.components.ReceiverMessageItemList
 import dev.dr10.ping.ui.screens.chats.components.SenderMessageItemList
 import dev.dr10.ping.ui.screens.components.IconButtonComponent
@@ -39,11 +43,23 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun ChatScreen(
     viewModel: ChatViewModel = koinViewModel(),
-    receiverData: UserProfileModel
+    receiverData: UserProfileModel,
+    onErrorMessage: (Int) -> Unit
 ) {
 
-    LaunchedEffect(Unit) { viewModel.setReceiverData(receiverData) }
+    LaunchedEffect(Unit) { viewModel.loadMessagesForReceiver(receiverData) }
     val state = viewModel.state.collectAsState().value
+    val messagesFlow = viewModel.messages.collectAsState().value
+    val messagesState = messagesFlow.collectAsLazyPagingItems()
+    val isLoadingMessages = messagesState.loadState.refresh is LoadState.Loading ||
+            messagesState.loadState.append is LoadState.Loading
+
+    LaunchedEffect(state.errorMessage) {
+        state.errorMessage?.let {
+            onErrorMessage(it)
+            viewModel.clearErrorMessage()
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -103,36 +119,40 @@ fun ChatScreen(
             ) {  }
         }
 
-        LazyColumn(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth()
-        ) {
-            items(4) {
-                Spacer(Modifier.height(20.dp))
+        Spacer(Modifier.height(5.sdp))
 
-                SenderMessageItemList(
-                    MessageDataModel(
-                        senderId = "",
-                        receiverId = "",
-                        receiverUsername = "",
-                        message = "Hi everyone, I'm Daniel Blas, Im Android Developer",
-                        date = "July 22 - 10:01 PM"
-                    )
+        Box(Modifier.weight(1f)) {
+            if (messagesState.itemCount != 0) {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    reverseLayout = true
+                ) {
+                    items(messagesState.itemCount) { index ->
+                        Spacer(Modifier.height(20.dp))
+
+                        messagesState[index]?.let {
+                            if (it.senderId == receiverData.userId) {
+                                ReceiverMessageItemList(
+                                    profileImageUrl = receiverData.profileImageUrl,
+                                    messageModel = it
+                                )
+                            } else {
+                                SenderMessageItemList(it)
+                            }
+                        }
+                    }
+                }
+            } else EmptyChatComponent(receiverData)
+
+            if (isLoadingMessages) {
+                CircularProgressIndicator(
+                    strokeWidth = (1.8).sdp,
+                    modifier = Modifier
+                        .size(18.sdp)
+                        .align(Alignment.TopCenter),
+                    color = AppTheme.colors.complementary,
+                    trackColor = AppTheme.colors.background,
                 )
-
-                Spacer(Modifier.height(20.dp))
-
-                ReceiverMessageItemList(
-                    MessageDataModel(
-                        senderId = "",
-                        receiverId = "",
-                        receiverUsername = "",
-                        message = "Hi everyone, I'm Daniel Blas, Im Android Developer",
-                        date = "July 22 - 10:01 PM"
-                    )
-                )
-
             }
         }
 

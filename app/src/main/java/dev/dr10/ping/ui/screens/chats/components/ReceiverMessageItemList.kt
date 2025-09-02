@@ -1,6 +1,5 @@
 package dev.dr10.ping.ui.screens.chats.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,21 +18,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import dev.dr10.ping.R
-import dev.dr10.ping.domain.models.MessageDataModel
+import coil.compose.AsyncImage
+import dev.dr10.ping.domain.models.MessageModel
 import dev.dr10.ping.ui.theme.AppTheme
 import network.chaintech.sdpcomposemultiplatform.sdp
 import network.chaintech.sdpcomposemultiplatform.ssp
 
 @Composable
 fun ReceiverMessageItemList(
-    messageData: MessageDataModel
+    profileImageUrl: String,
+    messageModel: MessageModel
 ) = Row(Modifier.fillMaxWidth()) {
-    Image(
-        painter = painterResource(R.drawable.tmp_profile_image),
-        contentDescription = messageData.receiverId,
+    AsyncImage(
+        model = profileImageUrl,
+        contentDescription = messageModel.receiverId,
         modifier = Modifier
             .size(20.sdp)
             .clip(RoundedCornerShape(4.sdp))
@@ -53,7 +52,7 @@ fun ReceiverMessageItemList(
                 )
         ) {
             Text(
-                text = messageData.message,
+                text = messageModel.content,
                 color = AppTheme.colors.text,
                 fontFamily = AppTheme.robotoFont,
                 fontWeight = FontWeight.Normal,
@@ -65,7 +64,7 @@ fun ReceiverMessageItemList(
         Spacer(Modifier.height(3.sdp))
 
         Text(
-            text = messageData.date,
+            text = messageModel.date,
             color = AppTheme.colors.textSecondary,
             fontFamily = AppTheme.robotoFont,
             fontWeight = FontWeight.Normal,

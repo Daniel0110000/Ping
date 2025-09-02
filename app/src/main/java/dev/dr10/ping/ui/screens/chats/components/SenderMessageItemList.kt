@@ -15,14 +15,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import dev.dr10.ping.domain.models.MessageDataModel
+import dev.dr10.ping.domain.models.MessageModel
 import dev.dr10.ping.ui.theme.AppTheme
 import network.chaintech.sdpcomposemultiplatform.sdp
 import network.chaintech.sdpcomposemultiplatform.ssp
 
 @Composable
 fun SenderMessageItemList(
-    messageData: MessageDataModel
+    messageModel: MessageModel
 ) = Row (Modifier.fillMaxWidth()) {
     Spacer(Modifier.weight(1f))
 
@@ -36,7 +36,7 @@ fun SenderMessageItemList(
                 )
         ) {
             Text(
-                text = messageData.message,
+                text = messageModel.content,
                 color = AppTheme.colors.text,
                 fontFamily = AppTheme.robotoFont,
                 fontWeight = FontWeight.Normal,
@@ -48,7 +48,7 @@ fun SenderMessageItemList(
         Spacer(Modifier.height(3.sdp))
 
         Text(
-            text = messageData.date,
+            text = messageModel.date,
             color = AppTheme.colors.textSecondary,
             fontFamily = AppTheme.robotoFont,
             fontWeight = FontWeight.Normal,

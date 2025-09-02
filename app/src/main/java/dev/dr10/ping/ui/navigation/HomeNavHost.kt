@@ -31,7 +31,9 @@ fun HomeNavHost(
                     onErrorMessage = { onErrorMessage(it) }
                 )
             }
-            entry<HomeNavDestination.Chat> { key -> ChatScreen(receiverData = key.userData) }
+            entry<HomeNavDestination.Chat> { key ->
+                ChatScreen(receiverData = key.userData) { onErrorMessage(it) }
+            }
         }
     )
 

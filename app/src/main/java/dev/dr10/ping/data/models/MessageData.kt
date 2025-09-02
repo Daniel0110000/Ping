@@ -8,5 +8,5 @@ data class MessageData(
     val sender_id: String,
     val receiver_id: String,
     val content: String,
-    val create_at: String = ""
+    val created_at: String = ""
 )

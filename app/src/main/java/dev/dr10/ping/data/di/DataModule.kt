@@ -1,7 +1,9 @@
 package dev.dr10.ping.data.di
 
+import androidx.room.Room
 import dev.dr10.ping.BuildConfig
 import dev.dr10.ping.data.local.datastore.UserProfileStore
+import dev.dr10.ping.data.local.room.AppDatabase
 import dev.dr10.ping.data.local.storage.LocalImageStorageManager
 import dev.dr10.ping.data.repositories.AuthRepositoryImpl
 import dev.dr10.ping.data.repositories.MessagesRepositoryImpl
@@ -38,7 +40,14 @@ val dataModule = module {
     single<StorageRepository> { StorageRepositoryImpl(get(), get()) }
     single<LocalImageStorageManager> { LocalImageStorageManager(get()) }
     single<UsersRepository> { UsersRepositoryImpl(get()) }
-    single<MessagesRepository> { MessagesRepositoryImpl(get()) }
+    single<MessagesRepository> { MessagesRepositoryImpl(get(), get()) }
 
     single { UserProfileStore(get()) }
+    single<AppDatabase> {
+        Room.databaseBuilder(
+            get(),
+            AppDatabase::class.java,
+            "ping_database"
+        ).build()
+    }
 }

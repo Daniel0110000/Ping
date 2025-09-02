@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.jetbrains.kotlin.serialization)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -102,5 +103,16 @@ dependencies {
     // Datastore
     implementation(libs.androidx.datastore.preferences)
 
-    implementation("network.chaintech:sdp-ssp-compose-multiplatform:1.0.6")
+    // Sdp-Ssp
+    implementation(libs.sdp.ssp.compose.multiplatform)
+
+    // Room
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.room.paging)
+    ksp(libs.androidx.room.compiler)
+
+    // Paging
+    implementation(libs.androidx.paging.runtime.ktx)
+    implementation(libs.androidx.paging.compose)
 }

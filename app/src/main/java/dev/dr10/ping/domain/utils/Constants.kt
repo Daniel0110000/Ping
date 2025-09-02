@@ -18,6 +18,11 @@ object Constants {
     const val RPC_FUNCTION_PARAM = "excluded_id"
     const val PROFILE_IMAGES_BUCKET_PATH = "/storage/v1/object/public/$PROFILE_IMAGE_BUCKET/"
 
+    const val RPC_MESSAGES_NAME = "get_messages"
+    const val RPC_MESSAGES_PARAM_WITH_USER = "with_user"
+    const val RPC_MESSAGES_PARAM_LAST_TIMESTAMP = "last_timestamp"
+    const val RPC_MESSAGES_PARAM_LIMIT_COUNT = "limit_count"
+
     // Error messages
     const val ERROR_USER_ALREADY_EXISTS = "User already registered"
     const val ERROR_CANCELLED_AUTH = "activity is cancelled by the user"
