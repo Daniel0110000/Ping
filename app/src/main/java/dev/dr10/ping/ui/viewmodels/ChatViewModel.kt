@@ -8,10 +8,12 @@ import androidx.paging.cachedIn
 import dev.dr10.ping.domain.models.MessageModel
 import dev.dr10.ping.domain.models.UserProfileModel
 import dev.dr10.ping.domain.usesCases.GetMessagesUseCase
+import dev.dr10.ping.domain.usesCases.InitializeRealtimeChatUseCase
 import dev.dr10.ping.domain.usesCases.SendMessageUseCase
 import dev.dr10.ping.domain.utils.getErrorMessageId
 import dev.dr10.ping.ui.extensions.onError
 import dev.dr10.ping.ui.extensions.onSuccess
+import io.github.jan.supabase.realtime.RealtimeChannel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,13 +23,15 @@ import kotlinx.coroutines.launch
 
 class ChatViewModel(
     private val sendMessageUseCase: SendMessageUseCase,
-    private val getMessagesUseCase: GetMessagesUseCase
+    private val getMessagesUseCase: GetMessagesUseCase,
+    private val initializeRealtimeChatUseCase: InitializeRealtimeChatUseCase
 ): ViewModel() {
 
     private val _state: MutableStateFlow<ChatState> = MutableStateFlow(ChatState())
     val state: StateFlow<ChatState> = _state.asStateFlow()
 
     private var receiverUserData: UserProfileModel? = null
+    private var currentChannel: RealtimeChannel? = null
 
     private val _messages = MutableStateFlow<Flow<PagingData<MessageModel>>>(emptyFlow())
     val messages: StateFlow<Flow<PagingData<MessageModel>>> = _messages
@@ -37,22 +41,33 @@ class ChatViewModel(
         @StringRes val errorMessage: Int? = null
     )
 
-    fun sendMessage() {
-        viewModelScope.launch {
-            sendMessageUseCase(
-                receiverId = receiverUserData?.userId ?: "",
-                content = state.value.message
-            ).onError { err -> updateState { copy(errorMessage = err.getErrorMessageId()) } }
-            updateState { copy(message = "") }
-        }
-    }
-
-    fun loadMessagesForReceiver(data: UserProfileModel) {
+    fun initializeAndListenChatSession(data: UserProfileModel) {
         receiverUserData = data
         viewModelScope.launch {
             getMessagesUseCase(data.userId)
                 .onSuccess { flow -> _messages.value = flow.cachedIn(viewModelScope) }
                 .onError { err -> updateState { copy(errorMessage = err.getErrorMessageId()) } }
+
+            initializeRealtimeChatUseCase(data.userId)
+                .onSuccess { channel -> currentChannel = channel }
+                .onError { err -> updateState { copy(errorMessage = err.getErrorMessageId()) } }
+        }
+    }
+
+    fun sendMessage() {
+        viewModelScope.launch {
+            sendMessageUseCase(
+                receiverId = receiverUserData?.userId ?: "",
+                content = state.value.message
+            )
+            updateState { copy(message = "") }
+        }
+    }
+
+    fun stopListening() {
+        viewModelScope.launch {
+            currentChannel?.unsubscribe()
+            currentChannel = null
         }
     }
 

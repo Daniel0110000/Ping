@@ -20,8 +20,7 @@ import kotlinx.serialization.json.put
 class MessagesRemoteMediator(
     private val supabaseService: SupabaseClient,
     private val database: AppDatabase,
-    private val senderId: String,
-    private val receiverId: String
+    private val chatId: String
 ): RemoteMediator<Int, MessageEntity>() {
 
     override suspend fun load(
@@ -34,7 +33,7 @@ class MessagesRemoteMediator(
             LoadType.PREPEND -> return MediatorResult.Success(endOfPaginationReached = true)
             LoadType.APPEND -> {
                 // For appending, get the last message in the local database
-                val lastMessage = database.messagesDao().getLastedMessage(senderId, receiverId)
+                val lastMessage = database.messagesDao().getLastedMessage(chatId)
                     ?: return MediatorResult.Success(endOfPaginationReached = true)
                 // Use the `created_at` of the last message as the cursor
                 lastMessage.createdAt
@@ -46,7 +45,7 @@ class MessagesRemoteMediator(
             val messages: List<MessageEntity> = supabaseService.postgrest.rpc(
                 function = Constants.RPC_MESSAGES_NAME,
                 parameters = buildJsonObject {
-                    put(Constants.RPC_MESSAGES_PARAM_WITH_USER, receiverId)
+                    put(Constants.RPC_MESSAGES_PARAM_CHAT_ID, chatId)
                     cursor?.let { put(Constants.RPC_MESSAGES_PARAM_LAST_TIMESTAMP, it) }
                     put(Constants.RPC_MESSAGES_PARAM_LIMIT_COUNT, state.config.pageSize)
                 }

@@ -7,5 +7,5 @@ fun MessageEntity.toModel(): MessageModel = MessageModel(
     senderId = senderId,
     receiverId = receiverId,
     content = content,
-    date = createdAt
+    date = date
 )

@@ -5,6 +5,7 @@ import dev.dr10.ping.domain.usesCases.FetchAndStoreUserDataUseCase
 import dev.dr10.ping.domain.usesCases.GetMessagesUseCase
 import dev.dr10.ping.domain.usesCases.GetProfileImageUseCase
 import dev.dr10.ping.domain.usesCases.GetSuggestedUsersUseCase
+import dev.dr10.ping.domain.usesCases.InitializeRealtimeChatUseCase
 import dev.dr10.ping.domain.usesCases.ProfileSetupUseCase
 import dev.dr10.ping.domain.usesCases.SearchUserUseCase
 import dev.dr10.ping.domain.usesCases.SendMessageUseCase
@@ -24,4 +25,5 @@ val domainModule = module {
     single { FetchAndStoreUserDataUseCase(get(), get(), get()) }
     single { SendMessageUseCase(get(), get()) }
     single { GetMessagesUseCase(get(), get()) }
+    single { InitializeRealtimeChatUseCase(get(), get()) }
 }

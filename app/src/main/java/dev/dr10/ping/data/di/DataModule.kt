@@ -13,11 +13,13 @@ import dev.dr10.ping.domain.repositories.AuthRepository
 import dev.dr10.ping.domain.repositories.MessagesRepository
 import dev.dr10.ping.domain.repositories.StorageRepository
 import dev.dr10.ping.domain.repositories.UsersRepository
+import dev.dr10.ping.domain.utils.Constants
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
+import io.github.jan.supabase.realtime.Realtime
 import io.github.jan.supabase.storage.Storage
 import io.github.jan.supabase.storage.storage
 import org.koin.dsl.module
@@ -31,6 +33,7 @@ val dataModule = module {
             install(Postgrest)
             install(Auth)
             install(Storage)
+            install(Realtime)
         }
     }
     single<Auth> { get<SupabaseClient>().auth }
@@ -47,7 +50,7 @@ val dataModule = module {
         Room.databaseBuilder(
             get(),
             AppDatabase::class.java,
-            "ping_database"
+            Constants.APP_DB
         ).build()
     }
 }

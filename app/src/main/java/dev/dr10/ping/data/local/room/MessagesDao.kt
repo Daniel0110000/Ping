@@ -12,28 +12,23 @@ interface MessagesDao {
     @Query(
         """
         SELECT * FROM messages
-        WHERE (sender_id = :senderId AND receiver_id = :receiverId)
-        OR (sender_id = :receiverId AND receiver_id = :senderId)
+        WHERE chat_id = :chatId
         ORDER BY created_at DESC
         """
     )
-    fun pagingResource(
-        senderId: String,
-        receiverId: String
-    ): PagingSource<Int, MessageEntity>
+    fun pagingResource(chatId: String): PagingSource<Int, MessageEntity>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertMessagesIfNoExists(messages: List<MessageEntity>)
 
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertMessageIfNoExists(message: MessageEntity)
+
     @Query("""
         SELECT * FROM messages 
-        WHERE (sender_id = :senderId AND receiver_id = :receiverId)
-        OR (sender_id = :receiverId AND receiver_id = :senderId)        
+        WHERE chat_id = :chatId
         ORDER BY created_at ASC LIMIT 1
     """)
-    suspend fun getLastedMessage(
-        senderId: String,
-        receiverId: String
-    ): MessageEntity?
+    suspend fun getLastedMessage(chatId: String): MessageEntity?
 
 }

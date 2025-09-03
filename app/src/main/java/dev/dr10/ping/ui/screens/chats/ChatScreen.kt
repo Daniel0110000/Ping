@@ -1,5 +1,6 @@
 package dev.dr10.ping.ui.screens.chats
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -44,11 +45,12 @@ import org.koin.androidx.compose.koinViewModel
 fun ChatScreen(
     viewModel: ChatViewModel = koinViewModel(),
     receiverData: UserProfileModel,
+    onBack: () -> Unit,
     onErrorMessage: (Int) -> Unit
 ) {
-
-    LaunchedEffect(Unit) { viewModel.loadMessagesForReceiver(receiverData) }
+    LaunchedEffect(Unit) { viewModel.initializeAndListenChatSession(receiverData) }
     val state = viewModel.state.collectAsState().value
+
     val messagesFlow = viewModel.messages.collectAsState().value
     val messagesState = messagesFlow.collectAsLazyPagingItems()
     val isLoadingMessages = messagesState.loadState.refresh is LoadState.Loading ||
@@ -77,7 +79,10 @@ fun ChatScreen(
                 background = AppTheme.colors.onBackground,
                 size = 30.sdp,
                 iconSize = 15.sdp
-            ) {  }
+            ) {
+                viewModel.stopListening()
+                onBack()
+            }
 
             Spacer(Modifier.width(2.sdp))
 
@@ -109,14 +114,6 @@ fun ChatScreen(
                     fontSize = 9.ssp
                 )
             }
-
-            IconButtonComponent(
-                iconId = R.drawable.ic_expand,
-                contentDescription = stringResource(R.string.expand),
-                background = AppTheme.colors.onBackground,
-                size = 30.sdp,
-                iconSize = 13.sdp
-            ) {  }
         }
 
         Spacer(Modifier.height(5.sdp))
@@ -183,5 +180,10 @@ fun ChatScreen(
         }
 
 
+    }
+
+    BackHandler {
+        viewModel.stopListening()
+        onBack()
     }
 }

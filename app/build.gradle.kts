@@ -38,6 +38,7 @@ android {
         }
     }
     compileOptions {
+        isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
@@ -51,7 +52,7 @@ android {
 }
 
 dependencies {
-
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -77,12 +78,14 @@ dependencies {
 
     // Serialization
     implementation(libs.kotlinx.serialization.core)
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
 
     // Supabase
     implementation(libs.postgrest.kt)
     implementation(libs.auth.kt)
     implementation(libs.storage.kt)
-    implementation(libs.ktor.client.android)
+    implementation(libs.realtime.kt)
+    implementation(libs.ktor.client.cio)
 
     // Google Credentials
     implementation(libs.androidx.credentials)

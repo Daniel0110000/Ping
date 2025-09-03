@@ -2,6 +2,7 @@ package dev.dr10.ping.domain.utils
 
 object Constants {
 
+    const val APP_DB = "ping_database"
     const val PROFILE_IMAGE_BUCKET = "profile-images"
 
     const val USER_PROFILE_PREFS = "user_profile_prefs"
@@ -11,6 +12,7 @@ object Constants {
     const val USER_PROFILE_BIO = "bio"
     const val USERS_TABLE = "users"
     const val MESSAGES_TABLE = "messages"
+    const val MESSAGES_TABLE_SCHEMA = "public"
     const val IS_LOGGED_IN = "is_logged_in"
     const val IS_PROFILE_SETUP_COMPLETED = "is_profile_setup_completed"
 
@@ -19,7 +21,7 @@ object Constants {
     const val PROFILE_IMAGES_BUCKET_PATH = "/storage/v1/object/public/$PROFILE_IMAGE_BUCKET/"
 
     const val RPC_MESSAGES_NAME = "get_messages"
-    const val RPC_MESSAGES_PARAM_WITH_USER = "with_user"
+    const val RPC_MESSAGES_PARAM_CHAT_ID = "chat_id"
     const val RPC_MESSAGES_PARAM_LAST_TIMESTAMP = "last_timestamp"
     const val RPC_MESSAGES_PARAM_LIMIT_COUNT = "limit_count"
 

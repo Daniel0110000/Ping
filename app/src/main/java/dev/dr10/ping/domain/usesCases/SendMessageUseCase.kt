@@ -5,6 +5,7 @@ import dev.dr10.ping.data.models.MessageData
 import dev.dr10.ping.domain.repositories.AuthRepository
 import dev.dr10.ping.domain.repositories.MessagesRepository
 import dev.dr10.ping.domain.utils.ErrorType
+import dev.dr10.ping.domain.utils.MessageUtils
 import dev.dr10.ping.domain.utils.Result
 
 class SendMessageUseCase(
@@ -19,8 +20,14 @@ class SendMessageUseCase(
 
             // Get the sender ID from the auth repository
             val senderId = authRepository.getProfileData()!!.userId
+            val chatId = MessageUtils.generateChatId(senderId, receiverId)
             // Send the message
-            repository.sendMessage(MessageData(sender_id = senderId, receiver_id = receiverId, content = content))
+            repository.sendMessage(MessageData(
+                chat_id = chatId,
+                sender_id = senderId,
+                receiver_id = receiverId,
+                content = content
+            ))
             Result.Success(true)
         } catch (e: Exception) {
             Log.d(this.javaClass.simpleName, e.message.toString())
