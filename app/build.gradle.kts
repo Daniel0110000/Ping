@@ -78,7 +78,6 @@ dependencies {
 
     // Serialization
     implementation(libs.kotlinx.serialization.core)
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
 
     // Supabase
     implementation(libs.postgrest.kt)

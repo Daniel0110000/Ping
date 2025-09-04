@@ -16,6 +16,6 @@ val uiModule = module {
     viewModel { ProfileSetupViewModel(get()) }
     viewModel { MainViewModel(get()) }
     viewModel { NetworkViewModel(get(), get()) }
-    viewModel { HomeViewModel(get()) }
+    viewModel { HomeViewModel(get(), get(), get()) }
     viewModel { ChatViewModel(get(), get(), get()) }
 }

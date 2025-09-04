@@ -10,9 +10,9 @@ interface MessagesRepository {
 
     suspend fun sendMessage(message: MessageData)
 
-    suspend fun getMessages(chatId: String): Flow<PagingData<MessageEntity>>
+    suspend fun getMessages(conversationId: String): Flow<PagingData<MessageEntity>>
 
-    suspend fun subscribeAndListenNewMessages(chatId: String): NewMessageData
+    suspend fun subscribeAndListenNewMessages(conversationId: String): NewMessageData
 
     suspend fun insertNewMessage(message: MessageEntity)
 

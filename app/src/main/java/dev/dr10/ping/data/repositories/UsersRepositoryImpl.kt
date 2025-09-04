@@ -2,6 +2,7 @@ package dev.dr10.ping.data.repositories
 
 import dev.dr10.ping.data.mappers.toProfileData
 import dev.dr10.ping.data.mappers.toUserData
+import dev.dr10.ping.data.models.SimpleUserData
 import dev.dr10.ping.data.models.UserData
 import dev.dr10.ping.data.models.UserProfileData
 import dev.dr10.ping.domain.repositories.UsersRepository
@@ -9,6 +10,7 @@ import dev.dr10.ping.domain.utils.Constants
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.postgrest
+import io.github.jan.supabase.postgrest.query.Columns
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 
@@ -63,6 +65,19 @@ class UsersRepositoryImpl(
         }
         .decodeList<UserData>()
         .map { it.toProfileData() }
+
+    /**
+     * Fetch the columns [Constants.USERNAME_COLUMN] and [Constants.PROFILE_IMAGE_COLUMN] from the [Constants.USERS_TABLE]
+     *
+     * @param userId The ID of the user whose data is to be fetched
+     * @return The simple user data
+     */
+    override suspend fun fetchSimpleUserData(userId: String): SimpleUserData =
+        supabaseService.from(Constants.USERS_TABLE).select(
+            columns = Columns.list(Constants.USERNAME_COLUMN, Constants.PROFILE_IMAGE_COLUMN)
+        ) {
+            filter { UserData::user_id eq userId }
+        }.decodeList<SimpleUserData>().single()
 
 
 }

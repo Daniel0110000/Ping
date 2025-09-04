@@ -40,10 +40,10 @@ class MessagesRepositoryImpl(
     /**
      * Get all messages of the current user and the receiver using [Pager] and [RemoteMediator]
      *
-     * @param chatId The unique identifier of the chat
+     * @param conversationId The unique identifier of the chat
      */
     @OptIn(ExperimentalPagingApi::class)
-    override suspend fun getMessages(chatId: String): Flow<PagingData<MessageEntity>> = Pager(
+    override suspend fun getMessages(conversationId: String): Flow<PagingData<MessageEntity>> = Pager(
         config = PagingConfig(
             pageSize = 20,
             prefetchDistance = 10,
@@ -52,23 +52,23 @@ class MessagesRepositoryImpl(
         remoteMediator = MessagesRemoteMediator(
             supabaseService = supabaseService,
             database = database,
-            chatId = chatId
+            conversationId = conversationId
         ),
-        pagingSourceFactory = { database.messagesDao().pagingResource(chatId) }
+        pagingSourceFactory = { database.messagesDao().pagingResource(conversationId) }
     ).flow
 
     /**
      * Subscribe to the [Constants.MESSAGES_TABLE] table and listen for new messages
      *
-     * @param chatId The unique identifier of the chat
+     * @param conversationId The unique identifier of the chat
      * @return A [NewMessageData] object containing the new messages and the channel
      */
     @OptIn(SupabaseExperimental::class)
-    override suspend fun subscribeAndListenNewMessages(chatId: String): NewMessageData {
-        val channel = supabaseService.channel(chatId)
-        val insertChangeFlow = channel.postgresChangeFlow<PostgresAction.Insert>(schema = Constants.MESSAGES_TABLE_SCHEMA) {
+    override suspend fun subscribeAndListenNewMessages(conversationId: String): NewMessageData {
+        val channel = supabaseService.channel(conversationId)
+        val insertChangeFlow = channel.postgresChangeFlow<PostgresAction.Insert>(schema = Constants.TABLE_SCHEMA) {
             table = Constants.MESSAGES_TABLE
-            filter(Constants.RPC_MESSAGES_PARAM_CHAT_ID, FilterOperator.EQ, chatId)
+            filter(Constants.RPC_MESSAGES_PARAM_CONVERSATION_ID, FilterOperator.EQ, conversationId)
         }
         channel.subscribe()
 
@@ -80,6 +80,11 @@ class MessagesRepositoryImpl(
         )
     }
 
+    /**
+     * Insert a new message into the [Constants.MESSAGES_TABLE] table
+     *
+     * @param message The message data to be inserted into the table
+     */
     override suspend fun insertNewMessage(message: MessageEntity) {
         database.messagesDao().insertMessageIfNoExists(message)
     }

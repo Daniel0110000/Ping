@@ -12,18 +12,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import dev.dr10.ping.ui.theme.AppTheme
+import network.chaintech.sdpcomposemultiplatform.sdp
 
 @Composable
 fun IconButtonComponent(
     iconId: Int,
     contentDescription: String? = null,
-    size: Dp = 50.dp,
-    iconSize: Dp = 25.dp,
+    size: Dp = 35.sdp,
+    iconSize: Dp = 18.sdp,
     background: Color = AppTheme.colors.surfaceBackground,
     iconColor: Color = AppTheme.colors.textSecondary,
-    borderRadius: Dp = 12.dp,
+    borderRadius: Dp = 7.sdp,
     isClickable: Boolean = true,
     onClick: () -> Unit = {}
 ) = Box(

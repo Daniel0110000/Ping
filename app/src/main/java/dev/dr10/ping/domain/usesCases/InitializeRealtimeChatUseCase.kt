@@ -20,10 +20,10 @@ class InitializeRealtimeChatUseCase(
         // Get the sender ID from the auth repository
         val senderId = authRepository.getProfileData()!!.userId
         // Generate the chat ID
-        val chatId = MessageUtils.generateChatId(senderId, receiverId)
+        val conversationId = MessageUtils.generateConversationId(senderId, receiverId)
 
         // Subscribe to the new messages channel
-        val newMessageResponse = messagesRepository.subscribeAndListenNewMessages(chatId)
+        val newMessageResponse = messagesRepository.subscribeAndListenNewMessages(conversationId)
 
         // Insert new messages into the local database for display in the UI
         CoroutineScope(Dispatchers.IO).launch {

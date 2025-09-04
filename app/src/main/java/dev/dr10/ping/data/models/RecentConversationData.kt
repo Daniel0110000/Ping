@@ -3,11 +3,9 @@ package dev.dr10.ping.data.models
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class MessageData(
-    val id: Int = 0,
+data class RecentConversationData(
     val conversation_id: String,
     val sender_id: String,
     val receiver_id: String,
-    val content: String,
-    val created_at: String = ""
+    val updated_at: String = ""
 )

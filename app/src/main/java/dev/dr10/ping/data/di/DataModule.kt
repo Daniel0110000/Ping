@@ -6,10 +6,12 @@ import dev.dr10.ping.data.local.datastore.UserProfileStore
 import dev.dr10.ping.data.local.room.AppDatabase
 import dev.dr10.ping.data.local.storage.LocalImageStorageManager
 import dev.dr10.ping.data.repositories.AuthRepositoryImpl
+import dev.dr10.ping.data.repositories.ConversationsRepositoryImpl
 import dev.dr10.ping.data.repositories.MessagesRepositoryImpl
 import dev.dr10.ping.data.repositories.StorageRepositoryImpl
 import dev.dr10.ping.data.repositories.UsersRepositoryImpl
 import dev.dr10.ping.domain.repositories.AuthRepository
+import dev.dr10.ping.domain.repositories.ConversationsRepository
 import dev.dr10.ping.domain.repositories.MessagesRepository
 import dev.dr10.ping.domain.repositories.StorageRepository
 import dev.dr10.ping.domain.repositories.UsersRepository
@@ -44,6 +46,7 @@ val dataModule = module {
     single<LocalImageStorageManager> { LocalImageStorageManager(get()) }
     single<UsersRepository> { UsersRepositoryImpl(get()) }
     single<MessagesRepository> { MessagesRepositoryImpl(get(), get()) }
+    single<ConversationsRepository> { ConversationsRepositoryImpl(get(), get(), get(), get()) }
 
     single { UserProfileStore(get()) }
     single<AppDatabase> {

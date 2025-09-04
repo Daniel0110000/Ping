@@ -6,6 +6,6 @@ import kotlinx.serialization.Serializable
 data class UserProfileModel(
     val userId: String,
     val username: String,
-    val bio: String,
+    val bio: String = "",
     val profileImageUrl: String = ""
 )

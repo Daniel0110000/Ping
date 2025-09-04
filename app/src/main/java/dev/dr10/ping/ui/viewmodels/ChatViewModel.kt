@@ -57,7 +57,7 @@ class ChatViewModel(
     fun sendMessage() {
         viewModelScope.launch {
             sendMessageUseCase(
-                receiverId = receiverUserData?.userId ?: "",
+                receiverUserData = receiverUserData,
                 content = state.value.message
             )
             updateState { copy(message = "") }

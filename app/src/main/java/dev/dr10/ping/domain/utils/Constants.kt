@@ -11,8 +11,11 @@ object Constants {
     const val USER_PROFILE_USERNAME = "username"
     const val USER_PROFILE_BIO = "bio"
     const val USERS_TABLE = "users"
+    const val USERNAME_COLUMN = "username"
+    const val PROFILE_IMAGE_COLUMN = "profile_image"
+    const val CONVERSATIONS_TABLE = "conversations"
     const val MESSAGES_TABLE = "messages"
-    const val MESSAGES_TABLE_SCHEMA = "public"
+    const val TABLE_SCHEMA = "public"
     const val IS_LOGGED_IN = "is_logged_in"
     const val IS_PROFILE_SETUP_COMPLETED = "is_profile_setup_completed"
 
@@ -21,9 +24,11 @@ object Constants {
     const val PROFILE_IMAGES_BUCKET_PATH = "/storage/v1/object/public/$PROFILE_IMAGE_BUCKET/"
 
     const val RPC_MESSAGES_NAME = "get_messages"
-    const val RPC_MESSAGES_PARAM_CHAT_ID = "chat_id"
+    const val RPC_MESSAGES_PARAM_CONVERSATION_ID = "conversation_id"
     const val RPC_MESSAGES_PARAM_LAST_TIMESTAMP = "last_timestamp"
     const val RPC_MESSAGES_PARAM_LIMIT_COUNT = "limit_count"
+
+    const val RPC_UPSERT_CONVERSATION_NAME = "upsert_conversation"
 
     // Error messages
     const val ERROR_USER_ALREADY_EXISTS = "User already registered"

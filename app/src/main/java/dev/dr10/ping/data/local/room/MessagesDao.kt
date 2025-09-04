@@ -12,11 +12,11 @@ interface MessagesDao {
     @Query(
         """
         SELECT * FROM messages
-        WHERE chat_id = :chatId
+        WHERE conversation_id = :conversationId
         ORDER BY created_at DESC
         """
     )
-    fun pagingResource(chatId: String): PagingSource<Int, MessageEntity>
+    fun pagingResource(conversationId: String): PagingSource<Int, MessageEntity>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertMessagesIfNoExists(messages: List<MessageEntity>)
@@ -26,9 +26,9 @@ interface MessagesDao {
 
     @Query("""
         SELECT * FROM messages 
-        WHERE chat_id = :chatId
+        WHERE conversation_id = :conversationId
         ORDER BY created_at ASC LIMIT 1
     """)
-    suspend fun getLastedMessage(chatId: String): MessageEntity?
+    suspend fun getLastedMessage(conversationId: String): MessageEntity?
 
 }

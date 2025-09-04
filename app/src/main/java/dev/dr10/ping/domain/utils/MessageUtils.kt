@@ -15,7 +15,7 @@ object MessageUtils {
      * @param senderId The ID of the sender
      * @param receiver The ID of the receiver
      */
-    fun generateChatId(senderId: String, receiver: String): String {
+    fun generateConversationId(senderId: String, receiver: String): String {
         val (userIdA, userIdB) = listOf(senderId, receiver).sorted()
         return "$userIdA:$userIdB"
     }
@@ -43,4 +43,14 @@ object MessageUtils {
         return localZoned.format(outputFormatter)
     }
 
+    /**
+     * Extract the user ID based on the current user and sender/receiver IDs
+     *
+     * @param currentUserId The ID of the current user
+     * @param senderId The ID of the sender
+     * @param receiverId The ID of the receiver
+     * @return The extracted user ID
+     */
+    fun extractUserId(currentUserId: String, senderId: String, receiverId: String): String =
+        if (senderId == currentUserId) receiverId else senderId
 }

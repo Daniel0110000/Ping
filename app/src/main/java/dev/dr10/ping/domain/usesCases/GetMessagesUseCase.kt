@@ -22,9 +22,9 @@ class GetMessagesUseCase(
         // Get the sender ID
         val senderId = authRepository.getProfileData()!!.userId
         // Generate the chat ID
-        val chatId = MessageUtils.generateChatId(senderId, receiverId)
+        val conversationId = MessageUtils.generateConversationId(senderId, receiverId)
         // Get the messages of the current user and the receiver
-        val result = repository.getMessages(chatId).map { pagingData -> pagingData.map { it.toModel() } }
+        val result = repository.getMessages(conversationId).map { pagingData -> pagingData.map { it.toModel() } }
         Result.Success(result)
     } catch (e: Exception) {
         Log.d(this.javaClass.simpleName, e.message.toString())

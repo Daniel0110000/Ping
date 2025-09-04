@@ -84,7 +84,7 @@ fun ChatScreen(
                 onBack()
             }
 
-            Spacer(Modifier.width(2.sdp))
+            Spacer(Modifier.width(4.sdp))
 
             AsyncImage(
                 model = receiverData.profileImageUrl,

@@ -6,7 +6,7 @@ import dev.dr10.ping.domain.utils.MessageUtils
 
 fun MessageData.toEntity(): MessageEntity = MessageEntity(
     id = this.id,
-    chatId = this.chat_id,
+    conversationId = this.conversation_id,
     senderId = this.sender_id,
     receiverId = this.receiver_id,
     content = this.content,
