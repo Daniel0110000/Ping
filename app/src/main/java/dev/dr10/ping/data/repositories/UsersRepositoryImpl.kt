@@ -5,6 +5,7 @@ import dev.dr10.ping.data.mappers.toUserData
 import dev.dr10.ping.data.models.SimpleUserData
 import dev.dr10.ping.data.models.UserData
 import dev.dr10.ping.data.models.UserProfileData
+import dev.dr10.ping.data.models.UserStatusData
 import dev.dr10.ping.domain.repositories.UsersRepository
 import dev.dr10.ping.domain.utils.Constants
 import io.github.jan.supabase.SupabaseClient
@@ -75,9 +76,32 @@ class UsersRepositoryImpl(
     override suspend fun fetchSimpleUserData(userId: String): SimpleUserData =
         supabaseService.from(Constants.USERS_TABLE).select(
             columns = Columns.list(Constants.USERNAME_COLUMN, Constants.PROFILE_IMAGE_COLUMN)
-        ) {
-            filter { UserData::user_id eq userId }
-        }.decodeList<SimpleUserData>().single()
+        ) { filter { UserData::user_id eq userId } }.decodeList<SimpleUserData>().single()
 
+    /**
+     * Update the user's online presence status
+     *
+     * @param isOnline Boolean indicating whether the user is online or offline
+     * @param currentUserId The ID of the current user
+     */
+    override suspend fun updateUserPresence(isOnline: Boolean, currentUserId: String) {
+        supabaseService.postgrest.rpc(
+            function = Constants.RPC_UPDATE_STATUS,
+            parameters = buildJsonObject {
+                put(Constants.RPC_UPDATE_STATUS_PARAM_USER_ID, currentUserId)
+                put(Constants.RPC_UPDATE_STATUS_PARAM_IS_ONLINE, isOnline)
+            }
+        )
+    }
 
+    /**
+     * Get the user's presence status
+     *
+     * @param userId The ID of the user whose presence status is to be fetched
+     * @return The user's presence status data
+     */
+    override suspend fun getUserPresence(userId: String): UserStatusData =
+        supabaseService.from(Constants.USERS_TABLE).select(
+            columns = Columns.list(Constants.IS_ONLINE_COLUMN, Constants.LAST_CONNECTED_COLUMN)
+        ) { filter { UserData::user_id eq userId } }.decodeList<UserStatusData>().single()
 }

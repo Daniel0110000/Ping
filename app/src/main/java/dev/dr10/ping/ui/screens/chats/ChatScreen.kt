@@ -106,13 +106,15 @@ fun ChatScreen(
                     fontSize = 12.ssp
                 )
 
-                Text(
-                    text = stringResource(R.string.online),
-                    fontFamily = AppTheme.robotoFont,
-                    color = AppTheme.colors.textSecondary,
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 9.ssp
-                )
+                if (state.isOnline || state.lastConnected.isNotEmpty()) {
+                    Text(
+                        text = if (state.isOnline) stringResource(R.string.online) else state.lastConnected,
+                        fontFamily = AppTheme.robotoFont,
+                        color = AppTheme.colors.textSecondary,
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 9.ssp
+                    )
+                }
             }
         }
 

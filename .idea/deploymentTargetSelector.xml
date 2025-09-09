@@ -3,11 +3,11 @@
   <component name="deploymentTargetSelector">
     <selectionStates>
       <SelectionState runConfigName="app">
-        <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-09-04T22:48:44.165033757Z">
+        <option name="selectionMode" value="DIALOG" />
+        <DropdownSelection timestamp="2025-09-08T22:55:05.814460400Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=/home/daniel/.android/avd/Pixel_5.avd" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\Daniel\.android\avd\Pixel_5.avd" />
             </handle>
           </Target>
         </DropdownSelection>
@@ -15,12 +15,12 @@
           <targets>
             <Target type="DEFAULT_BOOT">
               <handle>
-                <DeviceId pluginId="Default" identifier="serial=192.168.1.64:5555;connection=48380840" />
+                <DeviceId pluginId="Default" identifier="serial=192.168.1.64:5555;connection=2af7e664" />
               </handle>
             </Target>
             <Target type="DEFAULT_BOOT">
               <handle>
-                <DeviceId pluginId="LocalEmulator" identifier="path=/home/daniel/.android/avd/Pixel_5.avd" />
+                <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\Daniel\.android\avd\Pixel_5.avd" />
               </handle>
             </Target>
           </targets>

@@ -12,6 +12,8 @@ object Constants {
     const val USER_PROFILE_BIO = "bio"
     const val USERS_TABLE = "users"
     const val USERNAME_COLUMN = "username"
+    const val IS_ONLINE_COLUMN = "is_online"
+    const val LAST_CONNECTED_COLUMN = "last_connected"
     const val PROFILE_IMAGE_COLUMN = "profile_image"
     const val CONVERSATIONS_TABLE = "conversations"
     const val MESSAGES_TABLE = "messages"
@@ -29,6 +31,9 @@ object Constants {
     const val RPC_MESSAGES_PARAM_LIMIT_COUNT = "limit_count"
 
     const val RPC_UPSERT_CONVERSATION_NAME = "upsert_conversation"
+    const val RPC_UPDATE_STATUS = "update_status"
+    const val RPC_UPDATE_STATUS_PARAM_USER_ID = "p_user_id"
+    const val RPC_UPDATE_STATUS_PARAM_IS_ONLINE = "p_is_online"
 
     // Error messages
     const val ERROR_USER_ALREADY_EXISTS = "User already registered"
