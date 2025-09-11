@@ -110,7 +110,8 @@ class ChatViewModel(
         viewModelScope.launch {
             sendMessageUseCase(
                 receiverUserData = receiverUserData,
-                content = state.value.message
+                content = state.value.message,
+                isOnline = state.value.isOnline
             )
             updateState { copy(message = "") }
         }

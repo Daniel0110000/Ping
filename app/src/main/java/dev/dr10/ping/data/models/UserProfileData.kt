@@ -7,6 +7,7 @@ data class UserProfileData(
     val userId: String,
     val username: String,
     val bio: String,
-    val profileImageName: String = "",
-    val profileImagePath: String
+    val profileImageName: String,
+    val profileImagePath: String,
+    val fcmToken: String = ""
 )

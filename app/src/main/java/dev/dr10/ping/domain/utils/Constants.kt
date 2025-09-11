@@ -2,12 +2,17 @@ package dev.dr10.ping.domain.utils
 
 object Constants {
 
+    const val NOTIFICATIONS_CHANNEL_ID = "ping_chat_notifications"
+    const val NOTIFICATIONS_CHANNEL_NAME = "Ping Chat Notifications"
+    const val NOTIFICATION_DEEP_LINK_BASE_URL = "ping://chat/"
+
     const val APP_DB = "ping_database"
     const val PROFILE_IMAGE_BUCKET = "profile-images"
 
     const val USER_PROFILE_PREFS = "user_profile_prefs"
     const val USER_PROFILE_ID = "user_id"
     const val USER_PROFILE_IMAGE_PATH = "profile_image_path"
+    const val USER_PROFILE_IMAGE_NAME = "profile_image_name"
     const val USER_PROFILE_USERNAME = "username"
     const val USER_PROFILE_BIO = "bio"
     const val USERS_TABLE = "users"
@@ -15,6 +20,7 @@ object Constants {
     const val IS_ONLINE_COLUMN = "is_online"
     const val LAST_CONNECTED_COLUMN = "last_connected"
     const val PROFILE_IMAGE_COLUMN = "profile_image"
+    const val FCM_TOKEN_COLUMN = "fcm_token"
     const val CONVERSATIONS_TABLE = "conversations"
     const val MESSAGES_TABLE = "messages"
     const val TABLE_SCHEMA = "public"

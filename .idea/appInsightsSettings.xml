@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="dev.dr10.ping" />
+                  <option name="mobileSdkAppId" value="1:143698527711:android:cddaee56f937010eccf06a" />
+                  <option name="projectId" value="ping-b2e54" />
+                  <option name="projectNumber" value="143698527711" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

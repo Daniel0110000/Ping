@@ -1,5 +1,7 @@
 package dev.dr10.ping.ui.screens
 
+import android.Manifest
+import android.os.Build
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -21,14 +23,20 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation3.runtime.rememberNavBackStack
+import androidx.navigation.compose.rememberNavController
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
 import dev.dr10.ping.R
-import dev.dr10.ping.ui.extensions.addIfNotExists
-import dev.dr10.ping.ui.navigation.HomeNavDestination
+import dev.dr10.ping.android.notifications.AppNotificationsManager
+import dev.dr10.ping.domain.mappers.encodeToString
+import dev.dr10.ping.ui.navigation.Chat
 import dev.dr10.ping.ui.navigation.HomeNavHost
+import dev.dr10.ping.ui.navigation.Network
 import dev.dr10.ping.ui.screens.components.HomePlaceholder
 import dev.dr10.ping.ui.screens.components.IconButtonComponent
 import dev.dr10.ping.ui.screens.components.RecentConversationItemList
@@ -36,16 +44,31 @@ import dev.dr10.ping.ui.theme.AppTheme
 import dev.dr10.ping.ui.viewmodels.HomeViewModel
 import network.chaintech.sdpcomposemultiplatform.sdp
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun HomeContainerScreen(
     viewModel: HomeViewModel = koinViewModel(),
     onErrorMessage: (Int) -> Unit
 ) {
+    val context = LocalContext.current
     val state = viewModel.state.collectAsState().value
     val recentConversationsFlow = viewModel.recentConversations.collectAsState().value
     val recentConversationsState = recentConversationsFlow.collectAsLazyPagingItems()
-    val backStack = rememberNavBackStack(HomeNavDestination.HomePlaceHolder)
+    val navController = rememberNavController()
+    val appNotificationsManager: AppNotificationsManager = koinInject()
+
+    LaunchedEffect(Unit) { appNotificationsManager.clearAllDisplayedNotifications(context) }
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        val notificationPermissionState = rememberPermissionState(Manifest.permission.POST_NOTIFICATIONS)
+        LaunchedEffect(Unit) {
+            if (!notificationPermissionState.status.isGranted) {
+                notificationPermissionState.launchPermissionRequest()
+            }
+        }
+    }
 
     LaunchedEffect(state.errorMessage) {
         state.errorMessage?.let {
@@ -82,7 +105,7 @@ fun HomeContainerScreen(
                 items(recentConversationsState.itemCount) {
                     recentConversationsState[it]?.let { data ->
                         RecentConversationItemList(data) { userData ->
-                            backStack.addIfNotExists(HomeNavDestination.Chat(userData))
+                            navController.navigate(Chat(userData.encodeToString()))
                         }
 
                         Spacer(Modifier.height(5.sdp))
@@ -95,7 +118,7 @@ fun HomeContainerScreen(
             IconButtonComponent(
                 iconId = R.drawable.ic_add,
                 iconColor = AppTheme.colors.complementary
-            ) { backStack.addIfNotExists(HomeNavDestination.Network) }
+            ) { navController.navigate(Network) }
 
             Spacer(Modifier.height(6.sdp))
 
@@ -114,11 +137,10 @@ fun HomeContainerScreen(
         }
 
         HomeNavHost(
-            backStack = backStack,
+            navHostController = navController,
             modifier = Modifier.fillMaxSize(),
-            onBack = { backStack.removeLastOrNull() },
-            onNavigateToChat = {
-                backStack.addIfNotExists(HomeNavDestination.Chat(it)) },
+            onBack = { navController.popBackStack() },
+            onNavigateToChat = { navController.navigate(Chat(it.encodeToString())) },
             onErrorMessage = { onErrorMessage(it) }
         )
 

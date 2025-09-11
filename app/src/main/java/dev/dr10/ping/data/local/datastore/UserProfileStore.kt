@@ -28,6 +28,7 @@ class UserProfileStore (
         private val USERNAME = stringPreferencesKey(Constants.USER_PROFILE_USERNAME)
         private val BIO = stringPreferencesKey(Constants.USER_PROFILE_BIO)
         private val PROFILE_IMAGE_PATH = stringPreferencesKey(Constants.USER_PROFILE_IMAGE_PATH)
+        private val PROFILE_IMAGE_NAME = stringPreferencesKey(Constants.USER_PROFILE_IMAGE_NAME)
         private val IS_LOGGED_IN = booleanPreferencesKey(Constants.IS_LOGGED_IN)
         private val IS_PROFILE_SETUP_COMPLETED = booleanPreferencesKey(Constants.IS_PROFILE_SETUP_COMPLETED)
     }
@@ -45,6 +46,7 @@ class UserProfileStore (
             preferences[USERNAME] = profileData.username
             preferences[BIO] = profileData.bio
             preferences[PROFILE_IMAGE_PATH] = profileData.profileImagePath
+            preferences[PROFILE_IMAGE_NAME] = profileData.profileImageName
             preferences[IS_PROFILE_SETUP_COMPLETED] = true
         }
     }
@@ -59,12 +61,14 @@ class UserProfileStore (
         val username = preferences[USERNAME] ?: return@map null
         val bio = preferences[BIO] ?: return@map null
         val profileImagePath = preferences[PROFILE_IMAGE_PATH] ?: return@map null
+        val profileImageName = preferences[PROFILE_IMAGE_NAME] ?: return@map null
 
         UserProfileData(
             userId = userId,
             username = username,
             bio = bio,
-            profileImagePath = profileImagePath
+            profileImagePath = profileImagePath,
+            profileImageName = profileImageName,
         )
     }.firstOrNull()
 

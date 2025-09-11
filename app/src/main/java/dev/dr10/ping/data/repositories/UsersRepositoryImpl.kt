@@ -104,4 +104,27 @@ class UsersRepositoryImpl(
         supabaseService.from(Constants.USERS_TABLE).select(
             columns = Columns.list(Constants.IS_ONLINE_COLUMN, Constants.LAST_CONNECTED_COLUMN)
         ) { filter { UserData::user_id eq userId } }.decodeList<UserStatusData>().single()
+
+    /**
+     * Update the FCM token for the current user
+     *
+     * @param fcmToken The new FCM token to be updated
+     * @param currentUserId The ID of the current user
+     */
+    override suspend fun updateFcmToken(fcmToken: String, currentUserId: String) {
+        supabaseService.from(Constants.USERS_TABLE).update(
+            { set(Constants.FCM_TOKEN_COLUMN, fcmToken) }
+        ) { filter { UserData::user_id eq currentUserId } }
+    }
+
+    /**
+     * Fetch the FCM token for a given user ID
+     *
+     * @param userId The ID of the user whose FCM token is to be fetched
+     * @return The FCM token if found, null otherwise
+     */
+    override suspend fun fetchFcmToken(userId: String): String? =
+        supabaseService.from(Constants.USERS_TABLE).select(
+            columns = Columns.list(Constants.FCM_TOKEN_COLUMN)
+        ) { filter { UserData::user_id eq userId } }.decodeList<Map<String, String?>>().single()[Constants.FCM_TOKEN_COLUMN]
 }

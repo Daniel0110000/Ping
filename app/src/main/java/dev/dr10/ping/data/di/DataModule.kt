@@ -5,15 +5,18 @@ import dev.dr10.ping.BuildConfig
 import dev.dr10.ping.data.local.datastore.UserProfileStore
 import dev.dr10.ping.data.local.room.AppDatabase
 import dev.dr10.ping.data.local.storage.LocalImageStorageManager
+import dev.dr10.ping.data.remote.NotificationsApiService
 import dev.dr10.ping.data.repositories.AuthRepositoryImpl
 import dev.dr10.ping.data.repositories.ConversationsRepositoryImpl
 import dev.dr10.ping.data.repositories.MessagesRepositoryImpl
+import dev.dr10.ping.data.repositories.NotificationsRepositoryImpl
 import dev.dr10.ping.data.repositories.PresenceRepositoryImpl
 import dev.dr10.ping.data.repositories.StorageRepositoryImpl
 import dev.dr10.ping.data.repositories.UsersRepositoryImpl
 import dev.dr10.ping.domain.repositories.AuthRepository
 import dev.dr10.ping.domain.repositories.ConversationsRepository
 import dev.dr10.ping.domain.repositories.MessagesRepository
+import dev.dr10.ping.domain.repositories.NotificationsRepository
 import dev.dr10.ping.domain.repositories.PresenceRepository
 import dev.dr10.ping.domain.repositories.StorageRepository
 import dev.dr10.ping.domain.repositories.UsersRepository
@@ -29,6 +32,8 @@ import io.github.jan.supabase.realtime.channel
 import io.github.jan.supabase.storage.Storage
 import io.github.jan.supabase.storage.storage
 import org.koin.dsl.module
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 val dataModule = module {
     single<SupabaseClient> {
@@ -53,6 +58,7 @@ val dataModule = module {
     single<MessagesRepository> { MessagesRepositoryImpl(get(), get()) }
     single<ConversationsRepository> { ConversationsRepositoryImpl(get(), get(), get(), get()) }
     single<PresenceRepository> { PresenceRepositoryImpl(get(), get()) }
+    single<NotificationsRepository> { NotificationsRepositoryImpl(get()) }
 
     single { UserProfileStore(get()) }
     single<AppDatabase> {
@@ -61,5 +67,13 @@ val dataModule = module {
             AppDatabase::class.java,
             Constants.APP_DB
         ).build()
+    }
+
+    single<NotificationsApiService> {
+        Retrofit.Builder()
+            .baseUrl("https://wwdqwsramtghvkkqyuef.supabase.co")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(NotificationsApiService::class.java)
     }
 }

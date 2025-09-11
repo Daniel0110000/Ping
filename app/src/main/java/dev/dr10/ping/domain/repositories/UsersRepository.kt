@@ -18,4 +18,8 @@ interface UsersRepository {
     suspend fun updateUserPresence(isOnline: Boolean, currentUserId: String)
 
     suspend fun getUserPresence(userId: String): UserStatusData
+
+    suspend fun updateFcmToken(fcmToken: String, currentUserId: String)
+
+    suspend fun fetchFcmToken(userId: String): String?
 }
