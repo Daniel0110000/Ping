@@ -4,9 +4,11 @@ import android.content.Context
 import android.net.Uri
 import android.util.Log
 import com.google.firebase.messaging.FirebaseMessaging
+import dev.dr10.ping.data.models.PresenceData
 import dev.dr10.ping.data.models.UserProfileData
 import dev.dr10.ping.domain.exceptions.ImageProcessingException
 import dev.dr10.ping.domain.repositories.AuthRepository
+import dev.dr10.ping.domain.repositories.PresencesRepository
 import dev.dr10.ping.domain.repositories.StorageRepository
 import dev.dr10.ping.domain.repositories.UsersRepository
 import dev.dr10.ping.domain.utils.AuthDataValidator
@@ -20,7 +22,8 @@ class ProfileSetupUseCase(
     private val context: Context,
     private val usersRepository: UsersRepository,
     private val authRepository: AuthRepository,
-    private val storageRepository: StorageRepository
+    private val storageRepository: StorageRepository,
+    private val presencesRepository: PresencesRepository
 ) {
     suspend operator fun invoke(
         profileImageUri: Uri?,
@@ -40,10 +43,13 @@ class ProfileSetupUseCase(
             // Checks if the user is authenticated if the session is null returns an error
             if (currentSession == null) return Result.Error(ErrorType.USER_NOT_AUTHENTICATED)
 
+            // Retrieve the current user ID
+            val currentUserId = currentSession.user!!.id
+
             // Converts the profile image URI to a byte array
             val profileImageByte: ByteArray = ImageUtils.uriToByteArray(context, profileImageUri!!)
             // Creates a unique image name using the user ID and current timestamp
-            val imageName = "${currentSession.user!!.id}_${System.currentTimeMillis()}.png"
+            val imageName = "${currentUserId}_${System.currentTimeMillis()}.png"
 
             // Uploads the profile image and saves it to the local storage
             val localImagePath = storageRepository.uploadAndSaveProfileImage(profileImageByte, imageName)
@@ -53,7 +59,7 @@ class ProfileSetupUseCase(
 
             // Saves the user profile data on Supabase and in local storage
             val userData = UserProfileData(
-                userId = currentSession.user!!.id,
+                userId = currentUserId,
                 username = username,
                 bio = bio,
                 profileImageName = imageName,
@@ -62,6 +68,11 @@ class ProfileSetupUseCase(
             )
             authRepository.localSaveProfileData(userData)
             usersRepository.saveUserData(userData)
+
+            // Create the initial presence for the new user
+            presencesRepository.createInitialPresence(
+                PresenceData(currentUserId, true, "now()")
+            )
 
             Result.Success(true)
         } catch (e: ImageProcessingException) {

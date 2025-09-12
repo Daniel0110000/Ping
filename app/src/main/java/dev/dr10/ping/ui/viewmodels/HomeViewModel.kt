@@ -2,36 +2,39 @@ package dev.dr10.ping.ui.viewmodels
 
 import android.graphics.Bitmap
 import androidx.annotation.StringRes
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import dev.dr10.ping.domain.models.RecentConversationModel
-import dev.dr10.ping.domain.repositories.PresenceRepository
 import dev.dr10.ping.domain.usesCases.GetProfileImageUseCase
 import dev.dr10.ping.domain.usesCases.GetRecentConversationsUseCase
 import dev.dr10.ping.domain.usesCases.InitializeRealtimeRecentConversationsUseCase
-import dev.dr10.ping.domain.usesCases.UpdateUserPresenceUseCase
+import dev.dr10.ping.domain.usesCases.UpdateLastConnectedUseCase
+import dev.dr10.ping.domain.usesCases.UpdateStatusUseCase
 import dev.dr10.ping.domain.utils.getErrorMessageId
 import dev.dr10.ping.ui.extensions.onError
 import dev.dr10.ping.ui.extensions.onSuccess
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
     private val getProfileImageUseCase: GetProfileImageUseCase,
     private val getRecentConversationsUseCase: GetRecentConversationsUseCase,
     private val initializeRealtimeRecentConversationsUseCase: InitializeRealtimeRecentConversationsUseCase,
-    private val presenceRepository: PresenceRepository,
-    private val updateUserPresenceUseCase: UpdateUserPresenceUseCase
+    private val updateStatusUseCase: UpdateStatusUseCase,
+    private val updateLastConnectedUseCase: UpdateLastConnectedUseCase
 ): ViewModel() {
 
     private val _state: MutableStateFlow<HomeState> = MutableStateFlow(HomeState())
@@ -40,15 +43,15 @@ class HomeViewModel(
     private val _recentConversations = MutableStateFlow<Flow<PagingData<RecentConversationModel>>>(emptyFlow())
     val recentConversations: StateFlow<Flow<PagingData<RecentConversationModel>>> = _recentConversations
 
+    private var presenceJob: Job? = null
+
     data class HomeState(
         val profileImage: Bitmap? = null,
         @StringRes val errorMessage: Int? = null
     )
 
     init {
-        observeAppLifecycle()
-        viewModelScope.launch { presenceRepository.subscribeToChannelAndSendTrack() }
-
+        ProcessLifecycleOwner.get().lifecycle.addObserver(AppLifecycleObserver())
         viewModelScope.launch {
             val recentConversationsDeferred = async(Dispatchers.IO) { getRecentConversationsUseCase() }
             val profileImageDeferred = async(Dispatchers.IO) { getProfileImageUseCase() }
@@ -67,17 +70,6 @@ class HomeViewModel(
         }
     }
 
-    private fun observeAppLifecycle() {
-        val observer = LifecycleEventObserver { _, event ->
-            when (event) {
-                Lifecycle.Event.ON_RESUME -> updateUserPresenceUseCase(true)
-                Lifecycle.Event.ON_STOP -> updateUserPresenceUseCase(false)
-                else -> Unit
-            }
-        }
-        ProcessLifecycleOwner.get().lifecycle.addObserver(observer)
-    }
-
     fun clearErrorMessage() {
         updateState { copy(errorMessage = null) }
     }
@@ -86,10 +78,21 @@ class HomeViewModel(
         _state.value = _state.value.update()
     }
 
-    override fun onCleared() {
-        updateUserPresenceUseCase(false)
-        super.onCleared()
-    }
+    private inner class AppLifecycleObserver: DefaultLifecycleObserver {
+        override fun onStart(owner: LifecycleOwner) {
+            updateStatusUseCase(true)
+            presenceJob = viewModelScope.launch(Dispatchers.IO) {
+                while (isActive) {
+                    updateLastConnectedUseCase()
+                    delay(30_000)
+                }
+            }
+        }
 
+        override fun onStop(owner: LifecycleOwner) {
+            updateStatusUseCase(false)
+            presenceJob?.cancel()
+        }
+    }
 
 }

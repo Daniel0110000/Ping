@@ -8,7 +8,5 @@ fun UserProfileData.toUserData(): UserData = UserData(
     username = username,
     bio = bio,
     profile_image = profileImageName,
-    last_connected = "now()",
-    is_online = true,
     fcm_token = fcmToken
 )

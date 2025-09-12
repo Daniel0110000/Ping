@@ -10,14 +10,14 @@ import dev.dr10.ping.data.repositories.AuthRepositoryImpl
 import dev.dr10.ping.data.repositories.ConversationsRepositoryImpl
 import dev.dr10.ping.data.repositories.MessagesRepositoryImpl
 import dev.dr10.ping.data.repositories.NotificationsRepositoryImpl
-import dev.dr10.ping.data.repositories.PresenceRepositoryImpl
+import dev.dr10.ping.data.repositories.PresencesRepositoryImpl
 import dev.dr10.ping.data.repositories.StorageRepositoryImpl
 import dev.dr10.ping.data.repositories.UsersRepositoryImpl
 import dev.dr10.ping.domain.repositories.AuthRepository
 import dev.dr10.ping.domain.repositories.ConversationsRepository
 import dev.dr10.ping.domain.repositories.MessagesRepository
 import dev.dr10.ping.domain.repositories.NotificationsRepository
-import dev.dr10.ping.domain.repositories.PresenceRepository
+import dev.dr10.ping.domain.repositories.PresencesRepository
 import dev.dr10.ping.domain.repositories.StorageRepository
 import dev.dr10.ping.domain.repositories.UsersRepository
 import dev.dr10.ping.domain.utils.Constants
@@ -57,8 +57,8 @@ val dataModule = module {
     single<UsersRepository> { UsersRepositoryImpl(get()) }
     single<MessagesRepository> { MessagesRepositoryImpl(get(), get()) }
     single<ConversationsRepository> { ConversationsRepositoryImpl(get(), get(), get(), get()) }
-    single<PresenceRepository> { PresenceRepositoryImpl(get(), get()) }
     single<NotificationsRepository> { NotificationsRepositoryImpl(get()) }
+    single<PresencesRepository> { PresencesRepositoryImpl(get()) }
 
     single { UserProfileStore(get()) }
     single<AppDatabase> {
