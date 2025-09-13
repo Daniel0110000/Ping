@@ -35,6 +35,7 @@ import dev.dr10.ping.android.notifications.AppNotificationsManager
 import dev.dr10.ping.domain.mappers.encodeToString
 import dev.dr10.ping.ui.navigation.Chat
 import dev.dr10.ping.ui.navigation.HomeNavHost
+import dev.dr10.ping.ui.navigation.HomePlaceHolder
 import dev.dr10.ping.ui.navigation.Network
 import dev.dr10.ping.ui.screens.components.HomePlaceholder
 import dev.dr10.ping.ui.screens.components.IconButtonComponent
@@ -104,7 +105,9 @@ fun HomeContainerScreen(
                 items(recentConversationsState.itemCount) {
                     recentConversationsState[it]?.let { data ->
                         RecentConversationItemList(data) { userData ->
-                            navController.navigate(Chat(userData.encodeToString()))
+                            navController.navigate(Chat(userData.encodeToString())) {
+                                popUpTo(HomePlaceHolder) { inclusive = false }
+                            }
                         }
 
                         Spacer(Modifier.height(5.sdp))
@@ -117,7 +120,7 @@ fun HomeContainerScreen(
             IconButtonComponent(
                 iconId = R.drawable.ic_add,
                 iconColor = AppTheme.colors.complementary
-            ) { navController.navigate(Network) }
+            ) { navController.navigate(Network) { launchSingleTop = true } }
 
             Spacer(Modifier.height(6.sdp))
 
@@ -139,7 +142,11 @@ fun HomeContainerScreen(
             navHostController = navController,
             modifier = Modifier.fillMaxSize(),
             onBack = { navController.popBackStack() },
-            onNavigateToChat = { navController.navigate(Chat(it.encodeToString())) },
+            onNavigateToChat = {
+                navController.navigate(Chat(it.encodeToString())) {
+                    popUpTo(HomePlaceHolder) { inclusive = false }
+                }
+            },
             onErrorMessage = { onErrorMessage(it) }
         )
 
