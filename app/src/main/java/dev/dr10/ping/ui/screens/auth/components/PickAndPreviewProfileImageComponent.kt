@@ -18,11 +18,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import coil.compose.AsyncImage
 import dev.dr10.ping.R
 import dev.dr10.ping.ui.theme.AppTheme
+import network.chaintech.sdpcomposemultiplatform.sdp
+import network.chaintech.sdpcomposemultiplatform.ssp
 
 @Composable
 fun PickAndPreviewProfileImageComponent(
@@ -33,7 +34,7 @@ fun PickAndPreviewProfileImageComponent(
 
     Box(
         modifier = Modifier
-            .size(130.dp)
+            .size(95.sdp)
             .background(AppTheme.colors.onBackground, shape = CircleShape)
             .constrainAs(imageBoxContainer) {
                 top.linkTo(parent.top)
@@ -56,18 +57,18 @@ fun PickAndPreviewProfileImageComponent(
                 color = AppTheme.colors.textSecondary,
                 fontFamily = AppTheme.robotoFont,
                 fontWeight = FontWeight.Normal,
-                fontSize = 14.sp
+                fontSize = (10.5).ssp
             )
         }
     }
 
     Box(
         modifier = Modifier
-            .size(35.dp)
+            .size(26.sdp)
             .background(AppTheme.colors.complementary, shape = CircleShape)
             .constrainAs(pickImageBtn) {
                 bottom.linkTo(imageBoxContainer.bottom)
-                end.linkTo(imageBoxContainer.end, margin = 5.dp)
+                end.linkTo(imageBoxContainer.end, margin = 3.dp)
             }
             .clickable { onPickImage() },
         contentAlignment = Alignment.Center
@@ -76,7 +77,7 @@ fun PickAndPreviewProfileImageComponent(
             painter = painterResource(R.drawable.ic_add_photo),
             contentDescription = stringResource(R.string.profile_image),
             tint = AppTheme.colors.background,
-            modifier = Modifier.size(20.dp)
+            modifier = Modifier.size(15.sdp)
         )
     }
 

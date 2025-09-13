@@ -25,7 +25,6 @@ import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -88,7 +87,7 @@ fun HomeContainerScreen(
                 .width(50.sdp)
                 .background(
                     AppTheme.colors.onBackground,
-                    shape = RoundedCornerShape(topEnd = 20.dp, bottomEnd = 20.dp)
+                    shape = RoundedCornerShape(topEnd = 15.sdp, bottomEnd = 15.sdp)
                 ),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {

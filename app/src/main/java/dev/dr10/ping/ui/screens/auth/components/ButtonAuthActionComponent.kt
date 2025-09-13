@@ -13,14 +13,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import dev.dr10.ping.ui.theme.AppTheme
+import network.chaintech.sdpcomposemultiplatform.sdp
+import network.chaintech.sdpcomposemultiplatform.ssp
 
 @Composable
 fun ButtonAuthActionComponent(
     label: String,
-    height: Dp = 55.dp,
+    height: Dp = 40.sdp,
     isLoading: Boolean = false,
     onClick: () -> Unit
 ) = Button(
@@ -29,16 +29,16 @@ fun ButtonAuthActionComponent(
         containerColor = AppTheme.colors.complementary,
         contentColor = AppTheme.colors.text
     ),
-    shape = RoundedCornerShape(10.dp),
+    shape = RoundedCornerShape(7.sdp),
     modifier = Modifier
         .fillMaxWidth()
         .height(height)
-        .padding(horizontal = 20.dp)
+        .padding(horizontal = 15.sdp)
 ) {
     if (isLoading) {
         CircularProgressIndicator(
-            strokeWidth = (2.5).dp,
-            modifier = Modifier.size(24.dp),
+            strokeWidth = (1.7).sdp,
+            modifier = Modifier.size(17.sdp),
             color = AppTheme.colors.complementary,
             trackColor = AppTheme.colors.text,
         )
@@ -47,7 +47,7 @@ fun ButtonAuthActionComponent(
             text = label,
             fontFamily = AppTheme.robotoFont,
             fontWeight = FontWeight.Medium,
-            fontSize = 18.sp
+            fontSize = (13.5).ssp
         )
     }
 }

@@ -11,13 +11,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import dev.dr10.ping.ui.theme.AppTheme
+import network.chaintech.sdpcomposemultiplatform.sdp
 
 @Composable
 fun ActionsAuthContainerComponent(
     content: @Composable ColumnScope.() -> Unit
 ) = Column(
     modifier = Modifier
-        .clip(RoundedCornerShape(20.dp, 20.dp, 0.dp, 0.dp))
+        .clip(RoundedCornerShape(15.sdp, 15.sdp, 0.dp, 0.dp))
         .background(AppTheme.colors.onBackground)
         .fillMaxSize(),
     horizontalAlignment = Alignment.CenterHorizontally

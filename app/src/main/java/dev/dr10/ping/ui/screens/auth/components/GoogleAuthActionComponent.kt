@@ -13,13 +13,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import dev.dr10.ping.R
 import dev.dr10.ping.ui.theme.AppTheme
+import network.chaintech.sdpcomposemultiplatform.sdp
 
 @Composable
 fun GoogleAuthActionComponent(
-    height: Dp = 55.dp,
+    height: Dp = 40.sdp,
     isLoading: Boolean = false,
     onClick: () -> Unit
 ) = Button(
@@ -28,16 +28,16 @@ fun GoogleAuthActionComponent(
         containerColor = AppTheme.colors.text,
         contentColor = AppTheme.colors.complementary
     ),
-    shape = RoundedCornerShape(10.dp),
+    shape = RoundedCornerShape(7.sdp),
     modifier = Modifier
         .fillMaxWidth()
         .height(height)
-        .padding(horizontal = 20.dp)
+        .padding(horizontal = 15.sdp)
 ) {
     if (isLoading) {
         CircularProgressIndicator(
-            strokeWidth = (2.5).dp,
-            modifier = Modifier.size(24.dp),
+            strokeWidth = (1.7).sdp,
+            modifier = Modifier.size(17.sdp),
             color = AppTheme.colors.text,
             trackColor = AppTheme.colors.complementary,
         )
@@ -45,7 +45,7 @@ fun GoogleAuthActionComponent(
         Image(
             painter = painterResource(R.drawable.ic_google),
             contentDescription = "Google",
-            modifier = Modifier.size(26.dp)
+            modifier = Modifier.size((19.5).sdp)
         )
     }
 }

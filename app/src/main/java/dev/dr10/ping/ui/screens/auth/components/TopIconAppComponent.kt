@@ -9,8 +9,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import dev.dr10.ping.R
+import network.chaintech.sdpcomposemultiplatform.sdp
 
 @Composable
 fun TopIconAppComponent() = Box(
@@ -20,6 +20,6 @@ fun TopIconAppComponent() = Box(
     Image(
         painter = painterResource(id = R.drawable.ic_app),
         contentDescription = stringResource(R.string.app_name),
-        modifier = Modifier.size(50.dp)
+        modifier = Modifier.size(35.sdp)
     )
 }

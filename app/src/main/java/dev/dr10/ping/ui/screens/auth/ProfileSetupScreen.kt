@@ -14,7 +14,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import dev.dr10.ping.R
 import dev.dr10.ping.ui.screens.auth.components.ActionsAuthContainerComponent
 import dev.dr10.ping.ui.screens.auth.components.ButtonAuthActionComponent
@@ -23,6 +22,7 @@ import dev.dr10.ping.ui.screens.auth.components.TopIconAppComponent
 import dev.dr10.ping.ui.screens.components.TextFieldComponent
 import dev.dr10.ping.ui.theme.AppTheme
 import dev.dr10.ping.ui.viewmodels.ProfileSetupViewModel
+import network.chaintech.sdpcomposemultiplatform.sdp
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -55,16 +55,16 @@ fun ProfileSetupScreen(
     ) {
         TopIconAppComponent()
 
-        Spacer(Modifier.height(30.dp))
+        Spacer(Modifier.height(22.sdp))
 
         PickAndPreviewProfileImageComponent(state.profileImage) {
             photoPickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
 
-        Spacer(Modifier.height(50.dp))
+        Spacer(Modifier.height(36.sdp))
 
         ActionsAuthContainerComponent {
-            Spacer(Modifier.height(40.dp))
+            Spacer(Modifier.height(25.sdp))
 
             TextFieldComponent(
                 value = state.username,
@@ -74,7 +74,7 @@ fun ProfileSetupScreen(
                 isNext = true
             )
 
-            Spacer(Modifier.height(15.dp))
+            Spacer(Modifier.height(9.sdp))
 
             TextFieldComponent(
                 value = state.bio,
@@ -84,7 +84,7 @@ fun ProfileSetupScreen(
                 isDone = true
             )
 
-            Spacer(Modifier.height(25.dp))
+            Spacer(Modifier.height(18.sdp))
 
             ButtonAuthActionComponent(
                 label = stringResource(R.string.finish),

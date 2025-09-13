@@ -11,7 +11,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import dev.dr10.ping.R
 import dev.dr10.ping.ui.screens.auth.components.ActionsAuthContainerComponent
 import dev.dr10.ping.ui.screens.auth.components.ButtonAuthActionComponent
@@ -23,6 +22,7 @@ import dev.dr10.ping.ui.screens.auth.components.TopIconAppComponent
 import dev.dr10.ping.ui.screens.components.TextFieldComponent
 import dev.dr10.ping.ui.theme.AppTheme
 import dev.dr10.ping.ui.viewmodels.SignUpViewModel
+import network.chaintech.sdpcomposemultiplatform.sdp
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -58,18 +58,18 @@ fun SignUpScreen(
     ) {
         TopIconAppComponent()
 
-        Spacer(Modifier.height(30.dp))
+        Spacer(Modifier.height(22.sdp))
 
         HeaderInfoScreenComponent(
             title = stringResource(R.string.sign_up),
             description = stringResource(R.string.sign_up_description)
         )
 
-        Spacer(Modifier.height(50.dp))
+        Spacer(Modifier.height(36.sdp))
 
         ActionsAuthContainerComponent {
 
-            Spacer(Modifier.height(40.dp))
+            Spacer(Modifier.height(25.sdp))
 
             TextFieldComponent(
                 value = state.email,
@@ -79,7 +79,7 @@ fun SignUpScreen(
                 isNext = true
             )
 
-            Spacer(Modifier.height(15.dp))
+            Spacer(Modifier.height(9.sdp))
 
             TextFieldComponent(
                 value = state.password,
@@ -89,26 +89,26 @@ fun SignUpScreen(
                 isDone = true
             )
 
-            Spacer(Modifier.height(25.dp))
+            Spacer(Modifier.height(18.sdp))
 
             ButtonAuthActionComponent(
                 label = stringResource(R.string.sign_up),
                 isLoading = state.isSignUpLoading
             ) { viewModel.onSignUp() }
 
-            Spacer(Modifier.height(15.dp))
+            Spacer(Modifier.height(11.sdp))
 
             OrTextComponent()
 
-            Spacer(Modifier.height(15.dp))
+            Spacer(Modifier.height(11.sdp))
 
             GoogleAuthActionComponent(isLoading = state.isGoogleSignInLoading) { viewModel.onGoogleSignUp(context) }
 
-            Spacer(Modifier.height(30.dp))
+            Spacer(Modifier.height(20.sdp))
 
             QuestionTextComponent(stringResource(R.string.sign_up_question))
 
-            Spacer(Modifier.height(10.dp))
+            Spacer(Modifier.height(8.sdp))
 
             ButtonAuthActionComponent(label = stringResource(R.string.sign_in)) { onNavigateToSignIn() }
 

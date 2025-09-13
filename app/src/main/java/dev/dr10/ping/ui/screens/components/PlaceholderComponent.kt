@@ -13,19 +13,19 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import dev.dr10.ping.ui.theme.AppTheme
+import network.chaintech.sdpcomposemultiplatform.sdp
+import network.chaintech.sdpcomposemultiplatform.ssp
 
 @Composable
 fun PlaceholderComponent(
     iconId: Int,
     label: String,
-    iconSize: Dp = 125.dp,
-    fontSize: TextUnit = 40.sp,
-    marginTop: Dp = (-25).dp
-    ) = Box(
+    iconSize: Dp = 100.sdp,
+    fontSize: TextUnit = 30.ssp,
+    marginTop: Dp = (-20).sdp
+) = Box(
     modifier = Modifier
         .fillMaxSize()
         .background(AppTheme.colors.background),

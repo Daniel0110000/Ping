@@ -28,8 +28,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.dp
 import dev.dr10.ping.ui.theme.AppTheme
+import network.chaintech.sdpcomposemultiplatform.sdp
 import network.chaintech.sdpcomposemultiplatform.ssp
 
 @Composable
@@ -38,11 +38,11 @@ fun TextFieldComponent(
     value: String,
     onValueChange: (String) -> Unit,
     placeholder: String,
-    height: Dp = 55.dp,
+    height: Dp = 40.sdp,
     fontSize: TextUnit = 11.ssp,
     background: Color = AppTheme.colors.background,
     iconId: Int? = null,
-    horizontalPadding: Dp = 20.dp,
+    horizontalPadding: Dp = 15.sdp,
     capitalization: Boolean = false,
     isEmail: Boolean = false,
     isPassword: Boolean = false,
@@ -72,26 +72,26 @@ fun TextFieldComponent(
             .fillMaxWidth()
             .height(height)
             .padding(horizontal = horizontalPadding)
-            .background(color = background, shape = RoundedCornerShape(10.dp)),
+            .background(color = background, shape = RoundedCornerShape(7.sdp)),
         verticalAlignment = Alignment.CenterVertically
     ) {
 
         if (iconId != null) {
 
-            Spacer(Modifier.width(8.dp))
+            Spacer(Modifier.width(8.sdp))
 
             Icon(
                 painter = painterResource(iconId),
                 contentDescription = null,
                 tint = AppTheme.colors.textSecondary,
-                modifier = Modifier.size(23.dp)
+                modifier = Modifier.size(16.sdp)
             )
         }
 
         BasicTextField(
             value = value,
             onValueChange = { onValueChange(it) },
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp),
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 8.sdp),
             textStyle = TextStyle(
                 color = AppTheme.colors.text,
                 fontSize = fontSize,

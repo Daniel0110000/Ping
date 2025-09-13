@@ -22,7 +22,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import dev.dr10.ping.R
 import dev.dr10.ping.domain.models.UserProfileModel
 import dev.dr10.ping.ui.screens.components.IconButtonComponent
@@ -31,6 +30,8 @@ import dev.dr10.ping.ui.screens.components.TextFieldComponent
 import dev.dr10.ping.ui.screens.components.UserListItem
 import dev.dr10.ping.ui.theme.AppTheme
 import dev.dr10.ping.ui.viewmodels.NetworkViewModel
+import network.chaintech.sdpcomposemultiplatform.sdp
+import network.chaintech.sdpcomposemultiplatform.ssp
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -53,7 +54,7 @@ fun NetworkScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(AppTheme.colors.background)
-            .padding(vertical = 15.dp, horizontal = 10.dp)
+            .padding(vertical = 7.sdp, horizontal = 5.sdp)
     ) {
 
         Row(
@@ -65,43 +66,43 @@ fun NetworkScreen(
                 iconId = R.drawable.ic_back,
                 contentDescription = stringResource(R.string.back),
                 background = AppTheme.colors.onBackground,
-                size = 40.dp,
-                iconSize = 18.dp
+                size = 30.sdp,
+                iconSize = 15.sdp
             ) { onBack() }
 
-            Spacer(Modifier.width(8.dp))
+            Spacer(Modifier.width(5.sdp))
 
             Text(
                 text = stringResource(R.string.network),
                 fontFamily = AppTheme.robotoFont,
                 fontWeight = FontWeight.Medium,
                 color = AppTheme.colors.text,
-                fontSize = 20.sp
+                fontSize = 15.ssp
             )
 
         }
 
-        Spacer(Modifier.height(10.dp))
+        Spacer(Modifier.height(7.sdp))
 
         TextFieldComponent(
             value = state.search,
             onValueChange = { viewModel.setSearchText(it) },
             placeholder = stringResource(R.string.search_friend),
             capitalization = true,
-            height = 50.dp,
+            height = 33.sdp,
             background = AppTheme.colors.onBackground,
             iconId = R.drawable.ic_search,
             horizontalPadding = 0.dp,
             isSearch = true
         )
 
-        Spacer(Modifier.height(10.dp))
+        Spacer(Modifier.height(8.sdp))
 
         when {
             state.users != null && state.isSearchUserLoading -> {
                 CircularProgressIndicator(
-                    strokeWidth = (2.5).dp,
-                    modifier = Modifier.size(24.dp).align(Alignment.CenterHorizontally),
+                    strokeWidth = (1.7).sdp,
+                    modifier = Modifier.size(17.sdp).align(Alignment.CenterHorizontally),
                     color = AppTheme.colors.complementary,
                     trackColor = AppTheme.colors.background,
                 )
@@ -112,12 +113,12 @@ fun NetworkScreen(
                     fontFamily = AppTheme.robotoFont,
                     fontWeight = FontWeight.Medium,
                     color = AppTheme.colors.text,
-                    fontSize = 17.sp,
+                    fontSize = (12.5).ssp,
                 )
 
                 LazyColumn(Modifier.fillMaxSize()) {
                     items(state.users) {
-                        Spacer(Modifier.height(10.dp))
+                        Spacer(Modifier.height(7.sdp))
                         UserListItem(it) { onNavigateToChat(it) }
                     }
                 }
@@ -126,9 +127,9 @@ fun NetworkScreen(
                 PlaceholderComponent(
                     iconId = R.drawable.ic_not_found,
                     label = stringResource(R.string.friend_not_found),
-                    iconSize = 150.dp,
-                    fontSize = 30.sp,
-                    marginTop = (-20).dp
+                    iconSize = 120.sdp,
+                    fontSize = 22.ssp,
+                    marginTop = (-16).sdp
                 )
             }
             else -> {
@@ -137,21 +138,21 @@ fun NetworkScreen(
                     fontFamily = AppTheme.robotoFont,
                     fontWeight = FontWeight.Medium,
                     color = AppTheme.colors.text,
-                    fontSize = 17.sp,
+                    fontSize = (12.5).ssp,
                 )
 
                 if (state.isSuggestedUsersLoading) {
-                    Spacer(Modifier.height(10.dp))
+                    Spacer(Modifier.height(7.sdp))
                     CircularProgressIndicator(
-                        strokeWidth = (2.5).dp,
-                        modifier = Modifier.size(24.dp).align(Alignment.CenterHorizontally),
+                        strokeWidth = (1.7).sdp,
+                        modifier = Modifier.size(17.sdp).align(Alignment.CenterHorizontally),
                         color = AppTheme.colors.complementary,
                         trackColor = AppTheme.colors.background,
                     )
                 } else {
                     LazyColumn(Modifier.fillMaxSize()) {
                         items(state.userSuggestions) {
-                            Spacer(Modifier.height(10.dp))
+                            Spacer(Modifier.height(7.sdp))
                             UserListItem(it) { onNavigateToChat(it) }
                         }
                     }

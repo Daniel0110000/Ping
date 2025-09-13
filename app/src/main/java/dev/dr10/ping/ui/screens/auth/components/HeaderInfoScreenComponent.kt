@@ -9,9 +9,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import dev.dr10.ping.ui.theme.AppTheme
+import network.chaintech.sdpcomposemultiplatform.sdp
+import network.chaintech.sdpcomposemultiplatform.ssp
 
 @Composable
 fun HeaderInfoScreenComponent(
@@ -25,17 +25,17 @@ fun HeaderInfoScreenComponent(
         text = title,
         fontFamily = AppTheme.robotoFont,
         fontWeight = FontWeight.Medium,
-        fontSize = 28.sp,
+        fontSize = 21.ssp,
         color = AppTheme.colors.text
     )
 
-    Spacer(modifier = Modifier.height(8.dp))
+    Spacer(modifier = Modifier.height(5.sdp))
 
     Text(
         text = description,
         fontFamily = AppTheme.robotoFont,
         fontWeight = FontWeight.Normal,
-        fontSize = 15.sp,
+        fontSize = 11.ssp,
         color = AppTheme.colors.textSecondary
     )
 }
