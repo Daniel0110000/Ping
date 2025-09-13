@@ -166,7 +166,9 @@ fun ChatScreen(
                 horizontalPadding = 0.dp,
                 singleLine = false,
                 background = AppTheme.colors.onBackground,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                isSend = true,
+                onSend = { viewModel.sendMessage() }
             )
 
             Spacer(Modifier.width(7.sdp))

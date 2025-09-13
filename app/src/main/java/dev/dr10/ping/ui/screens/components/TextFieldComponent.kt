@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -37,6 +38,7 @@ fun TextFieldComponent(
     modifier: Modifier = Modifier,
     value: String,
     onValueChange: (String) -> Unit,
+    onSend: () -> Unit = {},
     placeholder: String,
     height: Dp = 40.sdp,
     fontSize: TextUnit = 11.ssp,
@@ -49,6 +51,7 @@ fun TextFieldComponent(
     isNext: Boolean = false,
     isDone: Boolean = true,
     isSearch: Boolean = false,
+    isSend: Boolean = false,
     singleLine: Boolean = true,
 ) {
 
@@ -62,8 +65,9 @@ fun TextFieldComponent(
 
     val imeAction = when {
         isNext -> ImeAction.Next
-        isDone -> ImeAction.Done
         isSearch -> ImeAction.Search
+        isSend -> ImeAction.Send
+        isDone -> ImeAction.Done
         else -> ImeAction.Default
     }
 
@@ -105,6 +109,7 @@ fun TextFieldComponent(
                 imeAction = imeAction,
                 capitalization = if (capitalization) KeyboardCapitalization.Sentences else KeyboardCapitalization.Unspecified
             ),
+            keyboardActions = if (isSend) KeyboardActions(onSend = { onSend() }) else KeyboardActions.Default,
             visualTransformation = visualTransformation,
             decorationBox = { innerTextField ->
                 if (value.isEmpty()) {
