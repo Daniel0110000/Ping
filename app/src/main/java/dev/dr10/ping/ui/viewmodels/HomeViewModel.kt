@@ -11,6 +11,7 @@ import androidx.paging.PagingData
 import dev.dr10.ping.domain.models.RecentConversationModel
 import dev.dr10.ping.domain.usesCases.GetProfileImageUseCase
 import dev.dr10.ping.domain.usesCases.GetRecentConversationsUseCase
+import dev.dr10.ping.domain.usesCases.InitializeRealtimeNewMessagesUseCase
 import dev.dr10.ping.domain.usesCases.InitializeRealtimeRecentConversationsUseCase
 import dev.dr10.ping.domain.usesCases.UpdateLastConnectedUseCase
 import dev.dr10.ping.domain.usesCases.UpdateStatusUseCase
@@ -34,7 +35,8 @@ class HomeViewModel(
     private val getRecentConversationsUseCase: GetRecentConversationsUseCase,
     private val initializeRealtimeRecentConversationsUseCase: InitializeRealtimeRecentConversationsUseCase,
     private val updateStatusUseCase: UpdateStatusUseCase,
-    private val updateLastConnectedUseCase: UpdateLastConnectedUseCase
+    private val updateLastConnectedUseCase: UpdateLastConnectedUseCase,
+    private val initializeRealtimeNewMessagesUseCase: InitializeRealtimeNewMessagesUseCase
 ): ViewModel() {
 
     private val _state: MutableStateFlow<HomeState> = MutableStateFlow(HomeState())
@@ -53,6 +55,8 @@ class HomeViewModel(
     init {
         ProcessLifecycleOwner.get().lifecycle.addObserver(AppLifecycleObserver())
         viewModelScope.launch {
+            initializeRealtimeNewMessagesUseCase().onError { err -> updateState { copy(errorMessage = err.getErrorMessageId()) } }
+
             val recentConversationsDeferred = async(Dispatchers.IO) { getRecentConversationsUseCase() }
             val profileImageDeferred = async(Dispatchers.IO) { getProfileImageUseCase() }
             val realtimeConversationsDeferred = async(Dispatchers.IO) { initializeRealtimeRecentConversationsUseCase() }

@@ -9,7 +9,6 @@ import dev.dr10.ping.domain.models.MessageModel
 import dev.dr10.ping.domain.models.UserProfileModel
 import dev.dr10.ping.domain.usesCases.GetInitialUserPresence
 import dev.dr10.ping.domain.usesCases.GetMessagesUseCase
-import dev.dr10.ping.domain.usesCases.InitializeRealtimeChatUseCase
 import dev.dr10.ping.domain.usesCases.InitializeRealtimeUserPresenceUseCase
 import dev.dr10.ping.domain.usesCases.SendMessageUseCase
 import dev.dr10.ping.domain.utils.Constants
@@ -29,7 +28,6 @@ import kotlinx.coroutines.launch
 class ChatViewModel(
     private val sendMessageUseCase: SendMessageUseCase,
     private val getMessagesUseCase: GetMessagesUseCase,
-    private val initializeRealtimeChatUseCase: InitializeRealtimeChatUseCase,
     private val getInitialUserPresence: GetInitialUserPresence,
     private val initializeRealtimeUserPresenceUseCase: InitializeRealtimeUserPresenceUseCase
 ): ViewModel() {
@@ -38,7 +36,6 @@ class ChatViewModel(
     val state: StateFlow<ChatState> = _state.asStateFlow()
 
     private var receiverUserData: UserProfileModel? = null
-    private var currentChatChannel: RealtimeChannel? = null
     private var currentPresenceChannel: RealtimeChannel? = null
 
     private val _messages = MutableStateFlow<Flow<PagingData<MessageModel>>>(emptyFlow())
@@ -56,15 +53,10 @@ class ChatViewModel(
         fetchInitialUserPresence(data.userId)
         viewModelScope.launch {
             val messagesDeferred = async(Dispatchers.IO) { getMessagesUseCase(data.userId) }
-            val realtimeDeferred = async(Dispatchers.IO) { initializeRealtimeChatUseCase(data.userId) }
             val presenceDeferred = async(Dispatchers.IO) { initializeRealtimeUserPresenceUseCase(data.userId) }
 
             messagesDeferred.await()
                 .onSuccess { flow -> _messages.value = flow.cachedIn(viewModelScope) }
-                .onError { err -> updateState { copy(errorMessage = err.getErrorMessageId()) } }
-
-            realtimeDeferred.await()
-                .onSuccess { channel -> currentChatChannel = channel }
                 .onError { err -> updateState { copy(errorMessage = err.getErrorMessageId()) } }
 
             presenceDeferred.await()
@@ -115,8 +107,6 @@ class ChatViewModel(
         viewModelScope.launch {
             currentPresenceChannel?.unsubscribe()
             currentPresenceChannel = null
-            currentChatChannel?.unsubscribe()
-            currentChatChannel = null
         }
     }
 

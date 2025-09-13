@@ -9,14 +9,12 @@ import dev.dr10.ping.data.local.room.AppDatabase
 import dev.dr10.ping.data.local.room.MessageEntity
 import dev.dr10.ping.data.mappers.toMessageData
 import dev.dr10.ping.data.models.MessageData
-import dev.dr10.ping.data.models.NewMessageData
 import dev.dr10.ping.data.paging.MessagesRemoteMediator
 import dev.dr10.ping.domain.repositories.MessagesRepository
 import dev.dr10.ping.domain.utils.Constants
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.annotations.SupabaseExperimental
 import io.github.jan.supabase.postgrest.from
-import io.github.jan.supabase.postgrest.query.filter.FilterOperator
 import io.github.jan.supabase.realtime.PostgresAction
 import io.github.jan.supabase.realtime.channel
 import io.github.jan.supabase.realtime.postgresChangeFlow
@@ -60,24 +58,15 @@ class MessagesRepositoryImpl(
     /**
      * Subscribe to the [Constants.MESSAGES_TABLE] table and listen for new messages
      *
-     * @param conversationId The unique identifier of the chat
-     * @return A [NewMessageData] object containing the new messages and the channel
+     * @return A [Flow] of [MessageData] objects representing the new messages
      */
     @OptIn(SupabaseExperimental::class)
-    override suspend fun subscribeAndListenNewMessages(conversationId: String): NewMessageData {
-        val channel = supabaseService.channel(conversationId)
-        val insertChangeFlow = channel.postgresChangeFlow<PostgresAction.Insert>(schema = Constants.TABLE_SCHEMA) {
-            table = Constants.MESSAGES_TABLE
-            filter(Constants.RPC_MESSAGES_PARAM_CONVERSATION_ID, FilterOperator.EQ, conversationId)
-        }
+    override suspend fun subscribeAndListenNewMessages(): Flow<MessageData> {
+        val channel = supabaseService.channel(Constants.NEW_MESSAGES_CHANNEL_NAME)
+        val newMessagesFlow = channel.postgresChangeFlow<PostgresAction.Insert>(schema = Constants.TABLE_SCHEMA) { table = Constants.MESSAGES_TABLE }
         channel.subscribe()
 
-        val newMessage = insertChangeFlow.map { it.record.toMessageData() }
-
-        return NewMessageData(
-            newMessage = newMessage,
-            channel = channel
-        )
+        return newMessagesFlow.map { it.record.toMessageData() }
     }
 
     /**

@@ -21,6 +21,7 @@ object Constants {
     const val FCM_TOKEN_COLUMN = "fcm_token"
     const val CONVERSATIONS_TABLE = "conversations"
     const val MESSAGES_TABLE = "messages"
+    const val NEW_MESSAGES_CHANNEL_NAME = "messages_table_inserts_channel"
     const val TABLE_SCHEMA = "public"
     const val IS_LOGGED_IN = "is_logged_in"
     const val IS_PROFILE_SETUP_COMPLETED = "is_profile_setup_completed"
