@@ -4,13 +4,13 @@
 
     <!--Auth-->
     <string name="sign_up">Sign Up</string>
-    <string name="sign_up_description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</string>
+    <string name="sign_up_description">Welcome! Let’s create your account</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="sign_up_question">Already have an account?</string>
 
     <string name="sign_in">Sign In</string>
-    <string name="sign_in_description">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</string>
+    <string name="sign_in_description">Welcome back! Let’s get you signed in</string>
     <string name="sign_in_question">Don\'t have an account?</string>
 
     <string name="profile_image">Profile Image</string>
@@ -19,28 +19,27 @@
     <string name="finish">Finish</string>
 
     <string name="network">Network</string>
-    <string name="search_friend">Search friend</string>
-    <string name="suggestions">Suggestions for you</string>
+    <string name="search_friend">Search for a friend</string>
+    <string name="suggestions">Suggested for you</string>
     <string name="search_results">Search results</string>
     <string name="friend_not_found">Friend not found</string>
 
-    <string name="message">Message …</string>
-    <string name="expand">Expand</string>
+    <string name="message">Type a message…</string>
     <string name="online">Online</string>
     <string name="send">Send Message</string>
 
     <!--Errors-->
-    <string name="invalid_email">Invalid email</string>
-    <string name="empty_fields">Please fill all fields</string>
-    <string name="empty_profile_image">Please select a profile image</string>
-    <string name="password_too_short">Password must be at least 8 characters long</string>
+    <string name="invalid_email">Invalid email address</string>
+    <string name="empty_fields">Fill in all fields</string>
+    <string name="empty_profile_image">Choose a profile picture</string>
+    <string name="password_too_short">Password must be at least 8 characters</string>
     <string name="user_already_exists">User already exists</string>
-    <string name="user_cancelled_auth">User cancelled auth</string>
-    <string name="network_error">Network error</string>
-    <string name="bio_too_long">Bio must be less than 80 characters</string>
-    <string name="processing_image">Error processing the imagen</string>
-    <string name="user_not_authenticated">You are not authenticated. Please log in to continue</string>
-    <string name="invalid_credentials">Incorrect email or password. Please try again</string>
-    <string name="unknown_error">Unknown error</string>
+    <string name="user_cancelled_auth">Sign-in was cancelled</string>
+    <string name="network_error">Network error. Check your connection</string>
+    <string name="bio_too_long">Bio must be under 80 characters</string>
+    <string name="processing_image">Error processing image</string>
+    <string name="user_not_authenticated">Not signed in. Please log in</string>
+    <string name="invalid_credentials">Wrong email or password</string>
+    <string name="unknown_error">Something went wrong</string>
 
 </resources>
