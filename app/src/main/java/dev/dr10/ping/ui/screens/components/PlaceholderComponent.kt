@@ -24,7 +24,7 @@ fun PlaceholderComponent(
     label: String,
     iconSize: Dp = 100.sdp,
     fontSize: TextUnit = 30.ssp,
-    marginTop: Dp = (-20).sdp
+    marginTop: Dp = (-10).sdp
 ) = Box(
     modifier = Modifier
         .fillMaxSize()
@@ -51,7 +51,7 @@ fun PlaceholderComponent(
         Text(
             text = label,
             fontFamily = AppTheme.robotoFont,
-            fontWeight = FontWeight.SemiBold,
+            fontWeight = FontWeight.Bold,
             fontSize = fontSize,
             color = AppTheme.colors.onBackground,
             modifier = Modifier.constrainAs(nameApp) {

@@ -20,6 +20,6 @@ fun TopIconAppComponent() = Box(
     Image(
         painter = painterResource(id = R.drawable.ic_app),
         contentDescription = stringResource(R.string.app_name),
-        modifier = Modifier.size(35.sdp)
+        modifier = Modifier.size(32.sdp)
     )
 }
