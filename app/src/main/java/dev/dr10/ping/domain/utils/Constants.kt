@@ -25,23 +25,25 @@ object Constants {
     const val TABLE_SCHEMA = "public"
     const val IS_LOGGED_IN = "is_logged_in"
     const val IS_PROFILE_SETUP_COMPLETED = "is_profile_setup_completed"
+    const val IS_MESSAGES_AND_CONVERSATIONS_SYNCED  = "is_messages_and_conversations_synced"
 
     const val RPC_FUNCTION_NAME = "get_random_users"
     const val RPC_FUNCTION_PARAM = "excluded_id"
     const val PROFILE_IMAGES_BUCKET_PATH = "/storage/v1/object/public/$PROFILE_IMAGE_BUCKET/"
 
-    const val RPC_MESSAGES_NAME = "get_messages"
-    const val RPC_MESSAGES_PARAM_CONVERSATION_ID = "conversation_id"
-    const val RPC_MESSAGES_PARAM_LAST_TIMESTAMP = "last_timestamp"
-    const val RPC_MESSAGES_PARAM_LIMIT_COUNT = "limit_count"
-
     const val RPC_UPSERT_CONVERSATION_NAME = "upsert_conversation"
+    const val RPC_FETCH_ALL_CONVERSATIONS_NAME = "fetch_all_conversations"
+    const val RPC_FETCH_ALL_MESSAGES_NAME = "fetch_all_messages"
+    const val RPC_FETCH_NEW_MESSAGES_NAME = "fetch_new_messages"
+    const val RPC_FETCH_UPDATED_CONVERSATIONS_NAME = "fetch_updated_conversations"
 
     const val USER_PRESENCES_TABLE = "user_presences"
     const val RPC_UPDATE_LAST_CONNECTED = "update_last_connected"
     const val RPC_UPDATE_USER_STATUS = "update_user_status"
     const val RPC_USER_ID_PARAM = "p_user_id"
     const val RPC_IS_ONLINE_PARAM = "p_is_online"
+    const val RPC_LAST_MESSAGE_ID_PARAM = "p_last_message_id"
+    const val RPC_LAST_UPDATED_AT_PARAM = "p_last_updated_at"
 
     const val ACTIVE_RECENTLY_MESSAGE = "Active recently"
 

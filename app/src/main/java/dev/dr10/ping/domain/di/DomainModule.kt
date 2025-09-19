@@ -18,6 +18,8 @@ import dev.dr10.ping.domain.usesCases.SendMessageUseCase
 import dev.dr10.ping.domain.usesCases.SendNotificationUseCase
 import dev.dr10.ping.domain.usesCases.SignInWithEmailAndPasswordUseCase
 import dev.dr10.ping.domain.usesCases.SignUpWithEmailAndPasswordUseCase
+import dev.dr10.ping.domain.usesCases.SyncInitialMessagesAndConversationsUseCase
+import dev.dr10.ping.domain.usesCases.SyncNewMessagesAndConversationsUseCase
 import dev.dr10.ping.domain.usesCases.UpdateLastConnectedUseCase
 import dev.dr10.ping.domain.usesCases.UpdateStatusUseCase
 import org.koin.dsl.module
@@ -43,6 +45,8 @@ val domainModule = module {
     single { UpdateStatusUseCase(get(), get()) }
     single { UpdateLastConnectedUseCase(get(), get()) }
     single { InitializeRealtimeUserPresenceUseCase(get()) }
+    single { SyncInitialMessagesAndConversationsUseCase(get(), get(), get(), get()) }
+    single { SyncNewMessagesAndConversationsUseCase(get(), get(), get(), get()) }
 
     single { AppNotificationsManager() }
 }

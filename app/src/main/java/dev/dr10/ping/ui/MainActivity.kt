@@ -38,6 +38,7 @@ class MainActivity : ComponentActivity() {
             val viewModel: MainViewModel = koinViewModel()
             val isLogged = viewModel.isUserLoggedIn()
             val isCompletedProfile = viewModel.isProfileSetupCompleted()
+            val isInitialSyncCompleted = viewModel.isInitialSyncCompleted()
 
             splashScreen.setKeepOnScreenCondition { false }
             Scaffold(
@@ -56,6 +57,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.padding(innerPadding),
                     isLogged = isLogged,
                     isCompletedProfile = isCompletedProfile,
+                    isInitialSyncCompleted = isInitialSyncCompleted
                 ) { message ->
                     scope.launch { snackBarHostState.showSnackbar(getString(message)) }
                 }

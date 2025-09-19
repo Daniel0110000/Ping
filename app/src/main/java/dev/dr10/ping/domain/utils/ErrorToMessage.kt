@@ -14,5 +14,6 @@ fun ErrorType.getErrorMessageId(): Int = when(this) {
     ErrorType.USER_NOT_AUTHENTICATED -> R.string.user_not_authenticated
     ErrorType.INVALID_CREDENTIALS -> R.string.invalid_credentials
     ErrorType.USER_DATA_NOT_FOUND -> 0
+    ErrorType.SYNC_MESSAGES_AND_CONVERSATIONS -> R.string.sync_messages_and_conversations
     ErrorType.UNKNOWN_ERROR -> R.string.unknown_error
 }

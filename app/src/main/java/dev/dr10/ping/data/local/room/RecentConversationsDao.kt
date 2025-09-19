@@ -5,6 +5,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Upsert
 
 @Dao
 interface RecentConversationsDao {
@@ -18,7 +19,13 @@ interface RecentConversationsDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertRecentConversation(conversation: RecentConversationEntity)
 
+    @Upsert
+    suspend fun upsertRecentConversations(conversations: List<RecentConversationEntity>)
+
     @Query("UPDATE recent_conversations SET updated_at = :newUpdatedAt WHERE conversation_id = :conversationId")
     suspend fun updateUpdateAtField(conversationId: String, newUpdatedAt: String)
+
+    @Query("SELECT MAX(updated_at) FROM recent_conversations")
+    suspend fun getLastConversationUpdatedAt(): String?
 
 }

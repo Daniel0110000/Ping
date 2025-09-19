@@ -28,6 +28,9 @@
     <string name="online">Online</string>
     <string name="send">Send Message</string>
 
+    <string name="initial_sync_title">Completing initial setup</string>
+    <string name="initial_sync_description">Syncing your messages and conversations. This may take a few minutes.</string>
+
     <!--Errors-->
     <string name="invalid_email">Invalid email address</string>
     <string name="empty_fields">Fill in all fields</string>
@@ -40,6 +43,7 @@
     <string name="processing_image">Error processing image</string>
     <string name="user_not_authenticated">Not signed in. Please log in</string>
     <string name="invalid_credentials">Wrong email or password</string>
+    <string name="sync_messages_and_conversations">Failed to sync messages and conversations</string>
     <string name="unknown_error">Something went wrong</string>
 
 </resources>

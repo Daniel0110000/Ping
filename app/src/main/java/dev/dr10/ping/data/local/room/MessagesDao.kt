@@ -24,11 +24,7 @@ interface MessagesDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertMessageIfNoExists(message: MessageEntity)
 
-    @Query("""
-        SELECT * FROM messages 
-        WHERE conversation_id = :conversationId
-        ORDER BY created_at ASC LIMIT 1
-    """)
-    suspend fun getLastedMessage(conversationId: String): MessageEntity?
+    @Query("SELECT MAX(id) FROM messages")
+    suspend fun getLastMessageId(): Int?
 
 }

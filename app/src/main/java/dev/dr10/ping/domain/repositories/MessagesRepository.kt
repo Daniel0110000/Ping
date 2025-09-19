@@ -11,8 +11,15 @@ interface MessagesRepository {
 
     suspend fun getMessages(conversationId: String): Flow<PagingData<MessageEntity>>
 
+    suspend fun fetchAllMessages(userId: String): List<MessageData>
+
+    suspend fun fetchNewMessages(userId: String, lastMessageId: Int): List<MessageData>
+
+    suspend fun saveAllMessages(messages: List<MessageData>)
+
     suspend fun subscribeAndListenNewMessages(): Flow<MessageData>
 
     suspend fun insertNewMessage(message: MessageEntity)
 
+    suspend fun getLastMessageId(): Int?
 }

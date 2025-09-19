@@ -31,9 +31,12 @@ class UserProfileStore (
         private val PROFILE_IMAGE_NAME = stringPreferencesKey(Constants.USER_PROFILE_IMAGE_NAME)
         private val IS_LOGGED_IN = booleanPreferencesKey(Constants.IS_LOGGED_IN)
         private val IS_PROFILE_SETUP_COMPLETED = booleanPreferencesKey(Constants.IS_PROFILE_SETUP_COMPLETED)
+        private val IS_MESSAGES_AND_CONVERSATIONS_SYNCED  = booleanPreferencesKey(Constants.IS_MESSAGES_AND_CONVERSATIONS_SYNCED)
     }
 
     suspend fun loginCompleted() { context.dataStore.edit { preferences -> preferences[IS_LOGGED_IN] = true } }
+
+    suspend fun messagesAndConversationsSynced() { context.dataStore.edit { preferences -> preferences[IS_MESSAGES_AND_CONVERSATIONS_SYNCED] = true }  }
 
     /**
      * Saves user profile data to DataStore
@@ -78,5 +81,9 @@ class UserProfileStore (
 
     suspend fun isProfileSetupCompleted() = context.dataStore.data.map { preferences ->
         preferences[IS_PROFILE_SETUP_COMPLETED] ?: false
+    }.first()
+
+    suspend fun isMessagesAndConversationsSynced() = context.dataStore.data.map { preferences ->
+        preferences[IS_MESSAGES_AND_CONVERSATIONS_SYNCED ] ?: false
     }.first()
 }

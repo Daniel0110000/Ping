@@ -17,8 +17,11 @@ interface AuthRepository {
 
     suspend fun loginCompleted()
 
+    suspend fun messagesAndConversationsSynced()
+
     suspend fun isUserLoggedIn(): Boolean
     suspend fun isProfileSetupCompleted(): Boolean
+    suspend fun isMessagesAndConversationsSynced(): Boolean
 
     suspend fun localSaveProfileData(data: UserProfileData)
 

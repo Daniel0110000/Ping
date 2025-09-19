@@ -30,14 +30,14 @@ fun SignInScreen(
     viewModel: SignInViewModel = koinViewModel(),
     onErrorMessage: (Int) -> Unit,
     onNavigateToSignUp: () -> Unit,
-    onNavigateToHome: () -> Unit,
+    onNavigateToLoadingMessages: () -> Unit,
     onNavigateToProfileSetup: () -> Unit
 ) {
     val context = LocalContext.current
     val state = viewModel.state.collectAsState().value
 
     LaunchedEffect(state.isSignInSuccessful) {
-        if (state.isSignInSuccessful) onNavigateToHome()
+        if (state.isSignInSuccessful) onNavigateToLoadingMessages()
     }
 
     LaunchedEffect(state.errorMessage) {

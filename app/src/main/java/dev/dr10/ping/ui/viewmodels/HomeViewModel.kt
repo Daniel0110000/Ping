@@ -13,6 +13,7 @@ import dev.dr10.ping.domain.usesCases.GetProfileImageUseCase
 import dev.dr10.ping.domain.usesCases.GetRecentConversationsUseCase
 import dev.dr10.ping.domain.usesCases.InitializeRealtimeNewMessagesUseCase
 import dev.dr10.ping.domain.usesCases.InitializeRealtimeRecentConversationsUseCase
+import dev.dr10.ping.domain.usesCases.SyncNewMessagesAndConversationsUseCase
 import dev.dr10.ping.domain.usesCases.UpdateLastConnectedUseCase
 import dev.dr10.ping.domain.usesCases.UpdateStatusUseCase
 import dev.dr10.ping.domain.utils.getErrorMessageId
@@ -36,7 +37,8 @@ class HomeViewModel(
     private val initializeRealtimeRecentConversationsUseCase: InitializeRealtimeRecentConversationsUseCase,
     private val updateStatusUseCase: UpdateStatusUseCase,
     private val updateLastConnectedUseCase: UpdateLastConnectedUseCase,
-    private val initializeRealtimeNewMessagesUseCase: InitializeRealtimeNewMessagesUseCase
+    private val initializeRealtimeNewMessagesUseCase: InitializeRealtimeNewMessagesUseCase,
+    private val syncNewMessagesAndConversationsUseCase: SyncNewMessagesAndConversationsUseCase
 ): ViewModel() {
 
     private val _state: MutableStateFlow<HomeState> = MutableStateFlow(HomeState())
@@ -57,9 +59,13 @@ class HomeViewModel(
         viewModelScope.launch {
             initializeRealtimeNewMessagesUseCase().onError { err -> updateState { copy(errorMessage = err.getErrorMessageId()) } }
 
+            val syncNewMessagesAndConversationsDeferred = async(Dispatchers.IO) { syncNewMessagesAndConversationsUseCase() }
             val recentConversationsDeferred = async(Dispatchers.IO) { getRecentConversationsUseCase() }
             val profileImageDeferred = async(Dispatchers.IO) { getProfileImageUseCase() }
             val realtimeConversationsDeferred = async(Dispatchers.IO) { initializeRealtimeRecentConversationsUseCase() }
+
+            syncNewMessagesAndConversationsDeferred.await()
+                .onError { err -> updateState { copy(errorMessage = err.getErrorMessageId()) } }
 
             recentConversationsDeferred.await()
                 .onSuccess { conversations -> _recentConversations.value = conversations }

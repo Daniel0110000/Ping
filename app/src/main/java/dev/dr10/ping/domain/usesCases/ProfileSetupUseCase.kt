@@ -69,6 +69,9 @@ class ProfileSetupUseCase(
             authRepository.localSaveProfileData(userData)
             usersRepository.saveUserData(userData)
 
+            // Mark that the user's messages and conversations have been synced
+            authRepository.messagesAndConversationsSynced()
+
             // Create the initial presence for the new user
             presencesRepository.createInitialPresence(
                 PresenceData(currentUserId, true, "now()")

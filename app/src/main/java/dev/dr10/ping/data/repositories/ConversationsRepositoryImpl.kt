@@ -4,12 +4,12 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import androidx.room.withTransaction
 import dev.dr10.ping.data.local.room.AppDatabase
 import dev.dr10.ping.data.local.room.RecentConversationEntity
 import dev.dr10.ping.data.mappers.toJsonObject
 import dev.dr10.ping.data.mappers.toRecentConversationData
 import dev.dr10.ping.data.models.RecentConversationData
-import dev.dr10.ping.data.paging.RecentConversationsRemoteMediator
 import dev.dr10.ping.domain.extensions.toProfileImageUrl
 import dev.dr10.ping.domain.repositories.AuthRepository
 import dev.dr10.ping.domain.repositories.ConversationsRepository
@@ -23,6 +23,8 @@ import io.github.jan.supabase.realtime.channel
 import io.github.jan.supabase.realtime.postgresChangeFlow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
 
 class ConversationsRepositoryImpl(
     private val supabaseService: SupabaseClient,
@@ -44,29 +46,44 @@ class ConversationsRepositoryImpl(
     }
 
     /**
+     * Fetch all recent conversations of the current user
+     *
+     * @param userId The current user's ID
+     * @return All recent conversations of the current user
+     */
+    override suspend fun fetchAllRecentConversations(userId: String): List<RecentConversationData> =
+        supabaseService.postgrest.rpc(
+            function = Constants.RPC_FETCH_ALL_CONVERSATIONS_NAME,
+            parameters = buildJsonObject { put(Constants.RPC_USER_ID_PARAM, userId) }
+        ).decodeList<RecentConversationData>()
+
+    /**
+     * Fetch new recent conversations of the current user
+     *
+     * @param lastUpdatedAt The last updated time of the recent conversations saved in local database
+     * @param userId The current user's ID
+     * @return New recent conversations of the current user
+     */
+    override suspend fun fetchNewRecentConversations(lastUpdatedAt: String, userId: String): List<RecentConversationData> =
+        supabaseService.postgrest.rpc(
+            function = Constants.RPC_FETCH_UPDATED_CONVERSATIONS_NAME,
+            parameters = buildJsonObject {
+                put(Constants.RPC_USER_ID_PARAM, userId)
+                put(Constants.RPC_LAST_UPDATED_AT_PARAM, lastUpdatedAt)
+            }
+        ).decodeList<RecentConversationData>()
+
+    /**
      * Get all recent conversations of the current user using [Pager] and [androidx.paging.RemoteMediator]
      *
      * @return All recent conversations as [PagingData]
      */
     @OptIn(ExperimentalPagingApi::class)
-    override suspend fun getRecentConversations(): Flow<PagingData<RecentConversationEntity>> {
-        val currentUserId = authRepository.getProfileData()!!.userId
-        return Pager(
-            config = PagingConfig(
-                pageSize = 15,
-                prefetchDistance = 8,
-                enablePlaceholders = false
-            ),
-            remoteMediator = RecentConversationsRemoteMediator(
-                usersRepository = usersRepository,
-                supabaseService = supabaseService,
-                database = database,
-                currentUserId = currentUserId
-
-            ),
+    override suspend fun getRecentConversations(): Flow<PagingData<RecentConversationEntity>> =
+        Pager(
+            config = PagingConfig(pageSize = 15, enablePlaceholders = false),
             pagingSourceFactory = { database.recentConversationsDao().pagingResource() }
         ).flow
-    }
 
     /**
      * Insert new recent conversation to local database
@@ -75,6 +92,24 @@ class ConversationsRepositoryImpl(
      */
     override suspend fun insertNewRecentConversation(conversationEntity: RecentConversationEntity) {
         database.recentConversationsDao().insertRecentConversation(conversationEntity)
+    }
+
+    /**
+     * Save news recent conversations to local database
+     *
+     * @param conversations News recent conversations to be saved
+     */
+    override suspend fun saveNewsRecentConversations(conversations: List<RecentConversationEntity>) {
+        database.withTransaction { database.recentConversationsDao().insertRecentConversationsIfNotExists(conversations) }
+    }
+
+    /**
+     * Upsert recent conversations to local database
+     *
+     * @param conversationData Recent conversations to be upserted
+     */
+    override suspend fun localUpsertRecentConversations(conversationData: List<RecentConversationEntity>) {
+        database.withTransaction { database.recentConversationsDao().upsertRecentConversations(conversationData) }
     }
 
     /**
@@ -88,6 +123,13 @@ class ConversationsRepositoryImpl(
             newUpdatedAt = conversationEntity.updatedAt
         )
     }
+
+    /**
+     * Get the last updated time of a recent conversation
+     *
+     * @return The last updated time of the recent conversation
+     */
+    override suspend fun getLastConversationUpdatedAt(): String? = database.recentConversationsDao().getLastConversationUpdatedAt()
 
     /**
      * Subscribe to the [Constants.CONVERSATIONS_TABLE] table and listen for new or update conversations

@@ -7,6 +7,7 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import dev.dr10.ping.ui.screens.HomeContainerScreen
+import dev.dr10.ping.ui.screens.InitialSyncScreen
 import dev.dr10.ping.ui.screens.auth.ProfileSetupScreen
 import dev.dr10.ping.ui.screens.auth.SignInScreen
 import dev.dr10.ping.ui.screens.auth.SignUpScreen
@@ -16,12 +17,14 @@ fun NavHost(
     modifier: Modifier,
     isLogged: Boolean,
     isCompletedProfile: Boolean,
+    isInitialSyncCompleted: Boolean,
     onErrorMessage: (Int) -> Unit
 ) {
     val backStack = rememberNavBackStack(
         when {
             isLogged && isCompletedProfile -> NavDestination.Home
             isLogged -> NavDestination.SetupProfile
+            isInitialSyncCompleted -> NavDestination.InitialSync
             else -> NavDestination.SignIn
         }
     )
@@ -33,9 +36,9 @@ fun NavHost(
                 SignInScreen(
                     onErrorMessage = { onErrorMessage(it) },
                     onNavigateToSignUp = { backStack.add(NavDestination.SignUp) },
-                    onNavigateToHome = {
+                    onNavigateToLoadingMessages = {
                         backStack.clear()
-                        backStack.add(NavDestination.Home)
+                        backStack.add(NavDestination.InitialSync)
                     },
                     onNavigateToProfileSetup = {
                         backStack.clear()
@@ -51,9 +54,9 @@ fun NavHost(
                         backStack.clear()
                         backStack.add(NavDestination.SetupProfile)
                     },
-                    onNavigateToHome = {
+                    onNavigateToLoadingMessages = {
                         backStack.clear()
-                        backStack.add(NavDestination.Home)
+                        backStack.add(NavDestination.InitialSync)
                     }
                 )
             }
@@ -64,6 +67,14 @@ fun NavHost(
                     backStack.add(NavDestination.Home)
                 }
             ) }
+            entry<NavDestination.InitialSync> { InitialSyncScreen(
+                    onErrorMessage = { onErrorMessage(it) },
+                    onNavigateToHome = {
+                        backStack.clear()
+                        backStack.add(NavDestination.Home)
+                    }
+                )
+            }
             entry<NavDestination.Home> { HomeContainerScreen { onErrorMessage(it) } }
         }
     )

@@ -12,4 +12,6 @@ class MainViewModel(
 
     fun isProfileSetupCompleted(): Boolean = runBlocking { authRepository.isProfileSetupCompleted() }
 
+    fun isInitialSyncCompleted(): Boolean = runBlocking { authRepository.isMessagesAndConversationsSynced() }
+
 }

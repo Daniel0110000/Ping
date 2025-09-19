@@ -9,11 +9,21 @@ interface ConversationsRepository {
 
     suspend fun upsertRecentConversation(conversationData: RecentConversationData)
 
+    suspend fun fetchAllRecentConversations(userId: String): List<RecentConversationData>
+
+    suspend fun fetchNewRecentConversations(lastUpdatedAt: String, userId: String): List<RecentConversationData>
+
     suspend fun getRecentConversations(): Flow<PagingData<RecentConversationEntity>>
 
     suspend fun insertNewRecentConversation(conversationEntity: RecentConversationEntity)
 
+    suspend fun saveNewsRecentConversations(conversations: List<RecentConversationEntity>)
+
+    suspend fun localUpsertRecentConversations(conversationData: List<RecentConversationEntity>)
+
     suspend fun updateConversation(conversationEntity: RecentConversationEntity)
+
+    suspend fun getLastConversationUpdatedAt(): String?
 
     suspend fun subscribeToRecentConversations(): Flow<RecentConversationEntity?>
 }

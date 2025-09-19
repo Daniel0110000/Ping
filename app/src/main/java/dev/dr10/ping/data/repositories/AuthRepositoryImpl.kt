@@ -74,10 +74,12 @@ class AuthRepositoryImpl(
     override suspend fun getProfileData(): UserProfileData? = userProfileStore.getProfileData()
 
     override suspend fun loginCompleted() { userProfileStore.loginCompleted() }
+    override suspend fun messagesAndConversationsSynced() { userProfileStore.messagesAndConversationsSynced() }
 
     override suspend fun isUserLoggedIn(): Boolean = userProfileStore.isLoggedIn()
 
     override suspend fun isProfileSetupCompleted(): Boolean = userProfileStore.isProfileSetupCompleted()
+    override suspend fun isMessagesAndConversationsSynced(): Boolean = userProfileStore.isMessagesAndConversationsSynced()
 
     override suspend fun localSaveProfileData(data: UserProfileData) { userProfileStore.saveProfileData(data) }
 

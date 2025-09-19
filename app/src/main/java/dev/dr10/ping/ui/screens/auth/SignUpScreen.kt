@@ -31,7 +31,7 @@ fun SignUpScreen(
     onErrorMessage: (Int) -> Unit,
     onNavigateToSignIn: () -> Unit,
     onNavigateToSetupProfile: () -> Unit,
-    onNavigateToHome: () -> Unit
+    onNavigateToLoadingMessages: () -> Unit
 ) {
     val context = LocalContext.current
     val state = viewModel.state.collectAsState().value
@@ -48,7 +48,7 @@ fun SignUpScreen(
     }
 
     LaunchedEffect(state.isCompleteProfile) {
-        if (state.isCompleteProfile) onNavigateToHome()
+        if (state.isCompleteProfile) onNavigateToLoadingMessages()
     }
 
     Column(
