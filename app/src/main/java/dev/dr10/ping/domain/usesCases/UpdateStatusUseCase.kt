@@ -15,7 +15,7 @@ class UpdateStatusUseCase(
     operator fun invoke(isOnline: Boolean) = CoroutineScope(Dispatchers.IO).launch {
         try {
             // Retrieve the current user ID
-            val currentUserId = authRepository.getProfileData()!!.userId
+            val currentUserId = authRepository.getCurrentUserId()!!
             // Update the user status
             presencesRepository.updateUserStatus(currentUserId, isOnline)
         } catch (e: Exception) { Log.e(this.javaClass.simpleName, e.message.toString()) }

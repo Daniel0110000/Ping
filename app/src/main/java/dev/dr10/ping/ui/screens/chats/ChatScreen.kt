@@ -164,6 +164,7 @@ fun ChatScreen(
                 placeholder = stringResource(R.string.message),
                 height = 36.sdp,
                 horizontalPadding = 0.dp,
+                capitalization = true,
                 singleLine = false,
                 background = AppTheme.colors.onBackground,
                 modifier = Modifier.weight(1f),

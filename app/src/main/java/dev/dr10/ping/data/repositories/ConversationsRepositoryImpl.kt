@@ -137,7 +137,7 @@ class ConversationsRepositoryImpl(
      * @return A Flow with the new or update conversations
      */
     override suspend fun subscribeToRecentConversations(): Flow<RecentConversationEntity?> {
-        val currentUserId = authRepository.getProfileData()!!.userId
+        val currentUserId = authRepository.getCurrentUserId()!!
         val channel = supabaseService.channel("${Constants.CONVERSATIONS_TABLE}-$currentUserId")
         val recentConversationChangeFlow = channel.postgresChangeFlow<PostgresAction>(
             schema = Constants.TABLE_SCHEMA

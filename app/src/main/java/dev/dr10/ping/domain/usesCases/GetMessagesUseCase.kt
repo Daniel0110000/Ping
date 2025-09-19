@@ -20,7 +20,7 @@ class GetMessagesUseCase(
 
     suspend operator fun invoke(receiverId: String): Result<Flow<PagingData<MessageModel>>, ErrorType> = try {
         // Get the sender ID
-        val senderId = authRepository.getProfileData()!!.userId
+        val senderId = authRepository.getCurrentUserId()!!
         // Generate the chat ID
         val conversationId = MessageUtils.generateConversationId(senderId, receiverId)
         // Get the messages of the current user and the receiver

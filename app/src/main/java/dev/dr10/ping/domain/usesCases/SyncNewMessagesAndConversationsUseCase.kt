@@ -20,7 +20,7 @@ class SyncNewMessagesAndConversationsUseCase(
     suspend operator fun invoke(): Result<Boolean, ErrorType> {
         return try {
             // Get the current user id
-            val currentUserId = authRepository.getProfileData()!!.userId
+            val currentUserId = authRepository.getCurrentUserId()!!
 
             // Get the last message id at saved in local database and if it's null return false success
             val lastMessageId = messagesRepository.getLastMessageId()

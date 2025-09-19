@@ -19,7 +19,7 @@ class SyncInitialMessagesAndConversationsUseCase(
 
     suspend operator fun invoke(): Result<Boolean, ErrorType> = try {
         // Get the current user id
-        val currentUserId = authRepository.getProfileData()!!.userId
+        val currentUserId = authRepository.getCurrentUserId()!!
 
         // Fetch all messages and recent conversations for the current user
         val messages = messagesRepository.fetchAllMessages(currentUserId)

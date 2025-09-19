@@ -10,7 +10,7 @@ class UpdateLastConnectedUseCase(
 ) {
     suspend operator fun invoke() = try {
         // Retrieve the current user ID
-        val currentUserId = authRepository.getProfileData()!!.userId
+        val currentUserId = authRepository.getCurrentUserId()!!
         // Update the last connected time
         presencesRepository.updateLastConnected(currentUserId)
     } catch (e: Exception) { Log.d(this.javaClass.simpleName, e.message.toString()) }

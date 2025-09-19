@@ -10,8 +10,8 @@ class UpdateFCMTokenUseCase(
 
     suspend operator fun invoke(fcmToken: String) {
         // Get the current user's profile data and if it exists, update the FCM token
-        authRepository.getProfileData()?.let {
-            usersRepository.updateFcmToken(fcmToken, it.userId)
+        authRepository.getCurrentUserId()?.let {
+            usersRepository.updateFcmToken(fcmToken, it)
         }
     }
 

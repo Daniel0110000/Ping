@@ -15,6 +15,8 @@ interface AuthRepository {
 
     suspend fun getProfileData(): UserProfileData?
 
+    suspend fun getCurrentUserId(): String?
+
     suspend fun loginCompleted()
 
     suspend fun messagesAndConversationsSynced()

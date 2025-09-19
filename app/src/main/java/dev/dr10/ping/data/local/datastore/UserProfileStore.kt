@@ -75,6 +75,10 @@ class UserProfileStore (
         )
     }.firstOrNull()
 
+    suspend fun getUserId(): String? = context.dataStore.data.map {
+        preferences -> preferences[USER_ID]
+    }.firstOrNull()
+
     suspend fun isLoggedIn() = context.dataStore.data.map {
         preferences -> preferences[IS_LOGGED_IN] ?: false
     }.first()
