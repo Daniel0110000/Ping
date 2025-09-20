@@ -12,7 +12,7 @@ Messaging app for Android, developed with **Kotlin**, **Jetpack Compose**, and *
 - 🧑‍💻 Profile configuration  
 - 🔍 Friend search  
 - 💬 Real-time messaging  
-- 🕒 Always-synced recent conversations  
+- 🕒 Recent conversations always up-to-date 
 - 🔔 Push notifications for new messages
 - 🟢⚪ User status visibility (online/offline)
 
