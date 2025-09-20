@@ -14,6 +14,7 @@ Messaging application for Android devices, developed with **Kotlin**, **Jetpack 
 - 💬 Real-time messaging  
 - 🕒 Always-synced recent conversations  
 - 🔔 Push notifications for new messages
+- 🟢⚪ User status visibility (online/offline)
 
 ## 🛠️ Technologies Used
 - Kotlin  
