@@ -2,7 +2,7 @@
 <img src="https://github.com/Daniel0110000/Ping/blob/master/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.webp" width="150px"/>  
   
 # Ping
-Android Messaging App, developed with **Kotlin**, **Jetpack Compose**, and **Supabase**.
+Messaging app for Android, developed with **Kotlin**, **Jetpack Compose**, and **Supabase**.
 
 <img src="https://github.com/user-attachments/assets/8092e6d4-2e7f-45c4-a289-a6fd0d285e66" />
 </div>
